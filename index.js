@@ -7,6 +7,7 @@ const {
 } = require("@whiskeysockets/baileys");
 const pino = require("pino");
 const path = require("path");
+const { File } = require('megajs')
 const fs = require("fs");
 const crypto = require("crypto");
 const { eval: evaluate } = require("./lib/eval");
