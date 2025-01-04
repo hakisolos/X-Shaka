@@ -19,6 +19,7 @@
     "megajs": "*",
     "fs-extra": "^10.0.0",
     "sequelize": "*",
+    "sqlite3": "^5.1.7",
     "jimp": "^0.16.13",
     "moment-timezone": "^0.5.46",
     "node-cache": "^5.1.2",
