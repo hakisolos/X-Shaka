@@ -19,22 +19,29 @@ const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
 
 async function auth() {
-  if (!fs.existsSync(__dirname, 'lib', 'session','creds.json')) {
-    if (!CONFIG.app.session_name) return console.log('_session_id required_');
-    const cxl_data = CONFIG.app.session_name;
-    const mob = cxl_data.replace('Naxor~', '');
-    const filer = File.fromURL(`https://mega.nz/file/${mob}`);
-    filer.download((err, data) => {
-      if (err) throw err;
-      fs.writeFile(__dirname,'lib', 'session', 'creds.json', data, () => {
-              });
-    });
-  }}
+    const credsPath = path.join(__dirname, 'lib', 'session', 'creds.json');
+    if (!fs.existsSync(credsPath)) {
+        if (!CONFIG.app.session_name) {
+            console.log('_session_id required_');
+            return;
+        }
+        const cxl_data = CONFIG.app.session_name;
+        const mob = cxl_data.replace('Naxor~', '');
+        try {
+            const filer = File.fromURL(`https://mega.nz/file/${mob}`);
+            const data = await filer.download();
+            fs.writeFileSync(credsPath, data);
+            console.log('Session file downloaded and saved.');
+        } catch (err) {
+            console.error('Error downloading session file:', err);
+        }
+    }
+}
 
  async function startBot() {
         await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
-        let { state, saveCreds } = await useMultiFileAuthState(__dirname, 'lib', 'session')
+        let { state, saveCreds } = await useMultiFileAuthState(path.join(__dirname, 'lib', 'session'));
         const conn = makeWASocket({
             version: (await fetchLatestBaileysVersion()).version,
             printQRInTerminal: false,
