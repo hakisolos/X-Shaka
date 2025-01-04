@@ -16,7 +16,6 @@ const { maxUP, detectACTION } = require("./database/autolv");
 const { serialize, decodeJid } = require("./lib/messages");
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
-const CryptoJS = require('crypto-js');
 
 async function auth() {
   if (!fs.existsSync(__dirname, 'lib', 'session','creds.json')) {
@@ -34,7 +33,7 @@ async function auth() {
  async function startBot() {
         await CONFIG.app.sqlite3.sync();
         console.log('sync db_connected🍀');
-        let { state, saveCreds } = await useMultiFileAuthState(output, pino({ level: "silent" }));
+        let { state, saveCreds } = await useMultiFileAuthState(__dirname, 'lib', 'session')
         const conn = makeWASocket({
             version: (await fetchLatestBaileysVersion()).version,
             printQRInTerminal: false,
