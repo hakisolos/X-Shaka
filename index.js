@@ -32,7 +32,7 @@ async function auth() {
   }}
 
  async function startBot() {
-        await CONFIG.app.sqlite3.sync();
+        await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
         let { state, saveCreds } = await useMultiFileAuthState(__dirname, 'lib', 'session')
         const conn = makeWASocket({
