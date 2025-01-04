@@ -25,8 +25,7 @@ async function auth() {
     if (!fs.existsSync(credsPath)) {
         if (!CONFIG.app.session_name) {
             console.log('_session_id required_');
-            return;
-        }
+            return;}
         const cxl_data = CONFIG.app.session_name;
         const mob = cxl_data.replace('Naxor~', '');
         try {
@@ -34,16 +33,13 @@ async function auth() {
             const dataStream = await filer.download();
             const chunks = [];
             for await (const chunk of dataStream) {
-                chunks.push(chunk);
-            }
+                chunks.push(chunk);}
             const dataBuffer = Buffer.concat(chunks);
-
             fs.writeFileSync(credsPath, dataBuffer);
-            console.log('Session file downloaded and saved.');
+            console.log('Session file downloaded and saved');
         } catch (err) {
-            console.error('Error downloading session file:', err);
-        }
-    }
+            console.error(err);
+        }}
 }
 
  async function startBot() {
