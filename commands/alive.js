@@ -14,3 +14,22 @@ CreatePlug({
         });
     }
 });
+
+CreatePlug({
+    command: 'ping',
+    category: 'mics',
+    desc: 'latency',
+    execute: async (message, conn) => {
+        var start = Date.now(); 
+          await conn.send(message.user, {
+            text: 'Ping!'
+        });
+        var end = Date.now();
+        await message.react('🗣️');
+        await conn.send(message.user, {
+            text: `Pong! ${end - start}ms`
+        });
+    }
+});
+
+            
