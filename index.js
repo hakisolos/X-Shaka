@@ -115,12 +115,11 @@ async function sessionAuth(id) {
 
   conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
     await detectACTION(id);
-    var group = await groups(id);
+    var [group] = await groups(id);
     participants.forEach(participant => {
         if (action === "add" && group.on_welcome) {
             conn.sendMessage(id, group.welcome .replace('@pushname', participant.split('@')[0] || 'nigg') .replace('@gc_name', id) .replace('@number', participant.split('@')[0]) .replace('@time', new Date().toLocaleString()), 
-                { quoted: id }
-            );
+                { quoted: id });
         } else if (action === "remove" && group.on_goodbye) {
             conn.sendMessage(id,group.goodbye .replace('@pushname', participant.split('@')[0] || 'nigg') .replace('@gc_name', id) .replace('@time', new Date().toLocaleString()), 
                 { quoted: id }
