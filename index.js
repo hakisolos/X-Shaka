@@ -17,6 +17,8 @@ const { maxUP, detectACTION } = require("./database/autolv");
 const { serialize, decodeJid } = require("./lib/messages");
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
+const fetch = require('node-fetch'); 
+globalThis.fetch = fetch; 
 
 async function auth() {
     const credsPath = path.join(__dirname, 'lib', 'session', 'creds.json');
@@ -29,8 +31,14 @@ async function auth() {
         const mob = cxl_data.replace('Naxor~', '');
         try {
             const filer = File.fromURL(`https://mega.nz/file/${mob}`);
-            const data = await filer.download();
-            fs.writeFileSync(credsPath, data);
+            const dataStream = await filer.download();
+            const chunks = [];
+            for await (const chunk of dataStream) {
+                chunks.push(chunk);
+            }
+            const dataBuffer = Buffer.concat(chunks);
+
+            fs.writeFileSync(credsPath, dataBuffer);
             console.log('Session file downloaded and saved.');
         } catch (err) {
             console.error('Error downloading session file:', err);
