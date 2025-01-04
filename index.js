@@ -136,6 +136,5 @@ for (const recipient of recipients) {
 }
 
 
-startBot()
-})();
+startBot();
      
