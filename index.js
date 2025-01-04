@@ -116,20 +116,22 @@ async function auth() {
         if (connection === "open") {
         console.log("Connection established 👍");
          await getPlugins();
-           const mode = CONFIG.app.mode; const mods = CONFIG.app.mods; const mongodb_url = CONFIG.app.mongodb;
-             const _msg_ = [
-                `*Im Online Now*`,\n`Mode      : ${mode && mode.toLowerCase() === "private" ? "Private" : "Public"}`,\n`Prefix    : ${CONFIG.app.prefix}`,
-                `Mongodb   : ${mongodb_url && mongodb_url.trim() ? "✔️ Connected" : "❌ Not Connected"}`,
-                `Botname   : ${CONFIG.app.botname}`,
-            ].join("\n");
+           const mode = CONFIG.app.mode; 
+const mods = CONFIG.app.mods; 
+const _msg_ = [
+    "*I'm Online Now*\n",
+    `Mode      : ${mode && mode.toLowerCase() === "private" ? "Private" : "Public"}\n`,
+    `Prefix    : ${CONFIG.app.prefix}\n`,
+    `Botname   : ${CONFIG.app.botname}\n`
+].join("");
 
-            const recipients = [conn.user.id, ...CONFIG.app.mods];
-            for (const recipient of recipients) {
-                await conn.sendMessage(recipient, {
-                    text: "```" + _msg_ + "```",
-                });
-            }
-        }
+const recipients = [conn.user.id, ...CONFIG.app.mods];
+for (const recipient of recipients) {
+    await conn.sendMessage(recipient, {
+        text: "```" + _msg_ + "```",
+    });
+}
+    }
     });
 }
 
