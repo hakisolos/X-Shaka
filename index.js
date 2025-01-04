@@ -78,13 +78,10 @@ const CryptoJS = require('crypto-js');
                         ) {
                             await command.execute(message, conn, match, owner);
                         }
-                    } catch (err) {
-                        console.error("Command Execution Error:", err.message);
-                    }
+                    } catch (err) {}
                 }
             }
-        } catch (err) {
-            }
+        } catch (err) {}
     });
 
   conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
