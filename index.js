@@ -10,7 +10,7 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const { eval: evaluate } = require("./lib/eval");
-const { groups } = require("./database/group");
+const { groups, toggle } = require("./database/group");
 const { getPlugins } = require("./database/getPlugins");
 const { maxUP, detectACTION } = require("./database/autolv");
 const { serialize, decodeJid } = require("./lib/messages");
@@ -113,22 +113,25 @@ async function sessionAuth(id) {
             }
     });
 
-    conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
+  conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
     await detectACTION(id);
-    var group = await groups(id); 
+    var group = await groups(id);
     participants.forEach(participant => {
-        if (action === "add") {
-            conn.sendMessage(id, group.welcome.replace('@pushname', participant).replace('@gc_name', id).replace('@number', participant).replace('@time', new Date().toLocaleString()), { quoted: id });
-        } else if (action === "remove") {
-            conn.sendMessage(id, group.goodbye.replace('@pushname', participant).replace('@gc_name', id).replace('@time', new Date().toLocaleString()), { quoted: id });
-        }
+        if (action === "add" && group.on_welcome) {
+            conn.sendMessage(id, group.welcome .replace('@pushname', participant.split('@')[0] || 'nigg') .replace('@gc_name', id) .replace('@number', participant.split('@')[0]) .replace('@time', new Date().toLocaleString()), 
+                { quoted: id }
+            );
+        } else if (action === "remove" && group.on_goodbye) {
+            conn.sendMessage(id,group.goodbye .replace('@pushname', participant.split('@')[0] || 'nigg') .replace('@gc_name', id) .replace('@time', new Date().toLocaleString()), 
+                { quoted: id }
+            );}
     });
 });
 
     conn.ev.on("connection.update", async (update) => {
         const { connection } = update;
         if (connection === "open") {
-            console.log("Connection established 👍");
+        console.log("Connection established 👍");
          await getPlugins();
            const mode = CONFIG.app.mode; const mods = CONFIG.app.mods; const mongodb_url = CONFIG.app.mongodb;
              const _msg_ = [
