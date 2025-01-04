@@ -5,11 +5,10 @@ CreatePlug({
     command: 'gc',
     category: 'group',
     desc: 'Enable & disable',
-    execute: async (message, conn, match) => {
+    execute: async (message, conn, match, owner) => {
         var ongroup = message.isGroup;
         if(!ongroup) return;
-        var access = message.isBotAdmin;
-        if(!access) return message.reply('_um not an admin_');
+        if(!owner) return;
         if (match.length < 2) return message.reply('usage: gc <welcome/goodbye> <on/off>');
         const feature = args[0].toLowerCase() === 'welcome' ? 'on_welcome' : args[0].toLowerCase() === 'goodbye' ? 'on_goodbye' : null;
         const state = args[1].toLowerCase() === 'on';
