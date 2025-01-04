@@ -41,7 +41,8 @@ async function auth() {
  async function startBot() {
         await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
-        let { state, saveCreds } = await useMultiFileAuthState(path.join(__dirname, 'lib', 'session'));
+        const authPath = path.join(__dirname, 'lib', 'session');
+        let { state, saveCreds } = await useMultiFileAuthState(authPath);  
         const conn = makeWASocket({
             version: (await fetchLatestBaileysVersion()).version,
             printQRInTerminal: false,
