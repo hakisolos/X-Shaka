@@ -18,30 +18,7 @@ const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
 const CryptoJS = require('crypto-js');
 
-(async function () {
-const prefix = "Naxor~";
-const output = "./lib/session/";
-async function sessionAuth(id) {
-    const filePath = `${output}creds.json`;
-    if (!fs.existsSync(filePath)) {
-        if (!CONFIG.app.session_name.startsWith(prefix)) {
-            console.log("Invalid session ID!");
-        }
-        if (!fs.existsSync(output)) {
-            fs.mkdirSync(output, { recursive: true });
-        }
-        const randomID = CryptoJS.lib.WordArray.random(30).toString(CryptoJS.enc.Base64).substring(0, 30);
-        const _ID = id.replace(prefix, "");
-        const creds = {
-            id: _ID,
-            createdAt: new Date().toISOString(),
-            sessionData: `Session for ${randomID}`,
-        };
-        fs.writeFileSync(filePath, JSON.stringify(creds, null, 2), "utf8");
-    }
-}
-
-    async function startBot() {
+ async function startBot() {
         await CONFIG.app.sqlite3.sync();
         console.log('sync db_connected🍀');
         let { state, saveCreds } = await useMultiFileAuthState(output, pino({ level: "silent" }));
@@ -64,9 +41,7 @@ async function sessionAuth(id) {
             if (!messageObject) return;
             const _msg = JSON.parse(JSON.stringify(messageObject));
             const message = await serialize(_msg, conn);
-
             if (!message.message || message.key.remoteJid === "status@broadcast") return;
-
             if (
                 message.type === "protocolMessage" ||
                 message.type === "senderKeyDistributionMessage" ||
@@ -74,7 +49,6 @@ async function sessionAuth(id) {
                 message.type === ""
             )
                 return;
-
             await maxUP(message, conn);
             const { sender, isGroup, body } = message
             if (!body) return;
