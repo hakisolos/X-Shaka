@@ -18,6 +18,19 @@ const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
 const CryptoJS = require('crypto-js');
 
+async function auth() {
+  if (!fs.existsSync(__dirname + '/session/creds.json')) {
+    if (!CONFIG.app.session_name) return console.log('_session_id required_');
+    const cxl_data = CONFIG.app.session_name;
+    const mob = cxl_data.replace('Naxor~', '');
+    const filer = File.fromURL(`https://mega.nz/file/${mob}`);
+    filer.download((err, data) => {
+      if (err) throw err;
+      fs.writeFile(__dirname + '/session/creds.json', data, () => {
+              });
+    });
+  }}
+
  async function startBot() {
         await CONFIG.app.sqlite3.sync();
         console.log('sync db_connected🍀');
