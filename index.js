@@ -58,17 +58,18 @@ const create = () => {
 
     return logger;
 };
-
+var logger = create();
 const store = makeInMemoryStore({ logger: Pino({ level: 'silent',
 	}).child({ level: 'silent', }),
 	});
+
  async function startBot() {
         await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
         const authPath = path.join(__dirname, 'lib', 'session');
         let { state, saveCreds } = await useMultiFileAuthState(authPath);  
         const conn = makeWASocket({
-            logger: P({ level: "silent" }),
+            logger: logger,
             version: (await fetchLatestBaileysVersion()).version,
             printQRInTerminal: false,
             browser: Browsers.macOS("Chrome"),
