@@ -22,8 +22,8 @@ const fetch = require('node-fetch');
 globalThis.fetch = fetch; 
 
 async function auth() {
-    const credsPath = path.join(__dirname, 'lib', 'session', 'creds.json');
-    if (!fs.existsSync(credsPath)) {
+    const credz = path.join(__dirname, 'lib', 'session', 'creds.json');
+    if (!fs.existsSync(credz)) {
         if (!CONFIG.app.session_name) {
             console.log('_session_id required_');
             return;}
@@ -31,24 +31,24 @@ async function auth() {
         const mob = cxl_data.replace('Naxor~', '');
         try {
             const filer = File.fromURL(`https://mega.nz/file/${mob}`);
-            const dataStream = await filer.download();
+            const data_mode = await filer.download();
             const chunks = [];
-            for await (const chunk of dataStream) {
+            for await (const chunk of data_mode) {
                 chunks.push(chunk);}
-            const dataBuffer = Buffer.concat(chunks);
-            fs.writeFileSync(credsPath, dataBuffer);
-            console.log('Session file downloaded and saved');
+            const buf = Buffer.concat(chunks);
+            fs.writeFileSync(credz, buf);
+            console.log('Session file saved');
         } catch (err) {
             console.error(err);
         }}
 }
 auth();
-
+require('commands').EventEmitter.defaultMaxListeners = 2000;         
  async function startBot() {
         await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
-        const authPath = path.join(__dirname, 'lib', 'session');
-        let { state, saveCreds } = await useMultiFileAuthState(authPath);  
+        const auth_creds = path.join(__dirname, 'lib', 'session');
+        let { state, saveCreds } = await useMultiFileAuthState(auth_creds);  
         const conn = makeWASocket({
         logger: P({ level: 'silent' }),
         printQRInTerminal: false,
