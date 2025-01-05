@@ -6,7 +6,7 @@ const {
     makeCacheableSignalKeyStore,
     Browsers,
 } = require("@whiskeysockets/baileys");
-const P = require("pino");
+const Pino = require("pino");
 const path = require("path");
 const { File } = require('megajs')
 const fs = require("fs");
