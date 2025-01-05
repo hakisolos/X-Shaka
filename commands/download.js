@@ -1,6 +1,6 @@
 const { CreatePlug } = require('../lib/commands');
 const fetch = require('node-fetch');
-const facebook_dl, tiktok_dl = require('../lib/scrappers.js'); 
+const { facebook_dl, tiktok_dl } = require('../lib/scrappers.js'); 
 
 CreatePlug({
   command: 'fb',
@@ -29,5 +29,4 @@ CreatePlug({
     await conn.send(message.user, { video: { url: v_data.playUrl }, caption: `*comments:* ${v_data.commentCount}\n*share count:* ${v_data.shareCount}\n*music author:* ${v_data.musicAuthor}`, }, { quoted: message });
   },
 });
-    
-                                           
+      
