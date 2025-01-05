@@ -6,7 +6,7 @@ const {
     makeCacheableSignalKeyStore,
     Browsers,
 } = require("@whiskeysockets/baileys");
-const Pino = require("pino");
+const P = require("pino");
 const path = require("path");
 const { File } = require('megajs')
 const fs = require("fs");
@@ -44,41 +44,19 @@ async function auth() {
 }
 auth();
 
-const create = () => {
-    const logger = {
-        level: 'silent',
-        log(...args) { if (this.level !== 'silent') console.log(...args); },
-        info(...args) { if (this.level !== 'silent') console.info(...args); },
-        error(...args) { if (this.level !== 'silent') console.error(...args); },
-        warn(...args) { if (this.level !== 'silent') console.warn(...args); },
-        debug(...args) { if (this.level === 'debug') console.debug(...args); },
-        trace(...args) { if (this.level === 'trace') console.trace(...args); },
-        child() { return this; },
-    };
-
-    return logger;
-};
-
-var logger = create();
-const store = makeInMemoryStore({ logger: Pino({ level: 'silent',
-	}).child({ level: 'silent', }),
-	});
-
  async function startBot() {
         await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
         const authPath = path.join(__dirname, 'lib', 'session');
         let { state, saveCreds } = await useMultiFileAuthState(authPath);  
         const conn = makeWASocket({
-            logger: logger,
-            version: (await fetchLatestBaileysVersion()).version,
-            printQRInTerminal: false,
-            browser: Browsers.macOS("Chrome"),
-            auth: {
-                creds: state.creds,
-                keys: makeCacheableSignalKeyStore(state.keys),
-            },
-        });
+        logger: P({ level: 'silent' }),
+        printQRInTerminal: false,
+        browser: Browsers.macOS("Chrome"),
+        syncFullHistory: true,
+        auth: state,
+        version: (await fetchLatestBaileysVersion()).version,
+    })
 
  conn.ev.on("creds.update", saveCreds);
  conn.ev.on("messages.upsert", async ({ messages, type }) => {
