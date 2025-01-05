@@ -80,8 +80,7 @@ auth();
             const cmd_txt = body.trim().toLowerCase();
             const match = body.trim().split(/ +/).slice(1).join(" ");
             const iscmd = cmd_txt.startsWith(CONFIG.app.prefix.toLowerCase());
-            const owner =
-                decodeJid(conn.user.id) === sender || CONFIG.app.mods.includes(sender.split("@")[0]);
+            const owner = await decodeJid(conn.user.id) === sender || CONFIG.app.mods.includes(sender.split("@")[0]);
 
             console.log(
                 "------------------\n" +
