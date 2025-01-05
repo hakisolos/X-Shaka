@@ -14,7 +14,7 @@ CreatePlug({
     const max = hdUrl ? 'HD (720p)' : 'SD (360p)';
     const res = await fetch(video_version);
     if (!res.ok) return message.reply('err');
-    await conn.send(message.user, { video: { url: video_version }, caption: `\n*Quality*: ${max}` }, { quoted: message });
+    await conn.sendMessage(message.user, { video: { url: video_version }, caption: `\n*Quality*: ${max}` }, { quoted: message });
   },
 });
 
@@ -26,7 +26,7 @@ CreatePlug({
     if (!match) return message.reply('_Please provide a tiktok url_');
     const v_data = await tiktok_dl(match);
     if (!v_data) return message.reply('_Could not retrieve_');
-    await conn.send(message.user, { video: { url: v_data.playUrl }, caption: `*comments:* ${v_data.commentCount}\n*share count:* ${v_data.shareCount}\n*music author:* ${v_data.musicAuthor}`, }, { quoted: message });
+    await conn.sendMessage(message.user, { video: { url: v_data.playUrl }, caption: `*comments:* ${v_data.commentCount}\n*share count:* ${v_data.shareCount}\n*music author:* ${v_data.musicAuthor}`, }, { quoted: message });
   },
 });
       
