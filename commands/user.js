@@ -3,22 +3,22 @@ const translate = require('@vitalets/google-translate-api');
 const gTTS = require('gtts');
 const CONFIG = require('../config');
 
-
 CreatePlug({
     command: 'whois',
     category: 'misc',
     desc: 'fetch user details',
     execute: async (message, conn, match) => {
-        if(!match) return;
+        if (!match) return;
         const user = match || message.user;
         const { status, setAt } = await conn.fetchStatus(user).catch(() => ({}));
         const _image = await conn.profilePictureUrl(user, "image").catch(() => null);
         const name = user || message.pushName;
-        await conn.send(message.user, { image: { url: _image, caption: `@${name}\nStatus: ${status || 'astral'}\nLast Updated: ${setAt ? new Date(setAt).toLocaleString() : 'unknown'}`, mentions: [user]
-   
-        }
-               });
-       }
+        await conn.send(message.user, { 
+            image: { url: _image },
+            caption: `@${name}\nStatus: ${status || 'astral'}\nLast Updated: ${setAt ? new Date(setAt).toLocaleString() : 'unknown'}`,
+            mentions: [user]
+        });
+    }
 });
 
 CreatePlug({
@@ -30,12 +30,10 @@ CreatePlug({
         const media = await conn.downloadMediaMessage(message.message.viewOnceMessage);
         if (!media) return message.reply('_err_');
         const _img = message.message.viewOnceMessage.message.imageMessage;
-        if ((match === 'image' && _img) || (match === 'video' && !_img)) {
-            const options = _img
-                ? { image: media, caption: '*Your Image*' } 
-                : { video: media, caption: '*Your Video*' };
-            await conn.send(message.user, options);
-        } else {}
+        const options = _img
+            ? { image: media, caption: '*Your Image*' }
+            : { video: media, caption: '*Your Video*' };
+        await conn.send(message.user, options);
     }
 });
 
@@ -46,7 +44,7 @@ CreatePlug({
     execute: async (message, conn, match) => {
         if (!match) return;
         const [lang, ...text] = match.split(' ');
-        if (!lang || text.length === 0) return message.reply('!tr [language_] [text]');
+        if (!lang || text.length === 0) return message.reply('!tr [language] [text]');
         const result = await translate(text.join(' '), { to: lang }).catch(() => null);
         if (!result) return message.reply('_err_');
         message.reply(`${result.text}`);
@@ -58,19 +56,22 @@ CreatePlug({
     category: 'convert',
     desc: 'speech',
     execute: async (message, conn, match) => {
-        if (!match) return message.reply('_nned text_');
+        if (!match) return message.reply('_need text_');
         const tts = new gTTS(match, 'en');
         const path = '/tmp/tts.mp3';
         tts.save(path, async (err) => {
             if (err) return message.reply('_err_');
             await conn.send(message.user, { audio: { url: path }, mimetype: 'audio/mp4' });
-         });
+        });
     }
 });
 
 const getChats = async (conn) => {
     const chats = await conn.chats.all();
-    return { groups: chats.filter(chat => chat.id.endsWith('@g.us')), users: chats.filter(chat => !chat.id.endsWith('@g.us')) };
+    return { 
+        groups: chats.filter(chat => chat.id.endsWith('@g.us')),
+        users: chats.filter(chat => !chat.id.endsWith('@g.us'))
+    };
 };
 
 CreatePlug({
@@ -87,8 +88,10 @@ CreatePlug({
         for (const group of groups) {
             const gc_name = (await conn.groupMetadata(group.id)).subject || '_';
             await conn.send(group.id, { image: { url: _img }, caption: `${_msg}` });
-        }  for (const user of users) {
-            await conn.send(user.id, { image: { url: _img }, caption: `${_msg}` });}
+        }
+        for (const user of users) {
+            await conn.send(user.id, { image: { url: _img }, caption: `${_msg}` });
+        }
         await message.reply('*_success_*');
     }
 });
@@ -98,13 +101,13 @@ CreatePlug({
     category: 'admin',
     desc: 'groups',
     execute: async (message, conn, match, owner) => {
-        if(!owner) return;
-        const groups = await getChats(conn);
+        if (!owner) return;
+        const { groups } = await getChats(conn);
         const mime = await Promise.all(groups.map(async (group, index) => {
-            const nama = await conn.groupMetadata(group.id);
-            const nema = nama.subject;
-            return `${index + 1}. ${nema}\n   *Jid:* ${group.id}\n   *Id:* ${group.id}`;
-        })); await conn.send(message.user, { text: `*Groups:*\n${mime.join('\n\n')}`);
+            const name = (await conn.groupMetadata(group.id)).subject;
+            return `${index + 1}. ${name}\n   *Jid:* ${group.id}`;
+        }));
+        await conn.send(message.user, { text: `*Groups:*\n${mime.join('\n\n')}` });
     }
 });
 
@@ -118,4 +121,4 @@ CreatePlug({
         await conn.groupLeave(message.user);
     }
 });
-                    
+    
