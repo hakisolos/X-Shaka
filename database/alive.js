@@ -4,15 +4,19 @@ const os = require('os');
 
 const User = CONFIG.app.sdb.define('User', {
     username: { type: DataTypes.STRING, allowNull: false, unique: true, trim: true },
-    id: { type: DataTypes.STRING, allowNull: false },
+    id: { type: DataTypes.STRING, allowNull: false, primaryKey: true }, 
     platform: { type: DataTypes.STRING, defaultValue: 'unknown' },
     uptime: { type: DataTypes.STRING, defaultValue: '0s' },
     memoryUsage: { type: DataTypes.STRING, defaultValue: '0MB' },
-    alives: { type: DataTypes.STRING, defaultValue: `Bot Status:\n\nPlatform: {{platform}}\nUptime: {{uptime}}\nMemory Usage: {{memoryUsage}}\n\nI'm alive now 💘`,},
+    alives: { 
+        type: DataTypes.STRING, 
+        defaultValue: `Bot Status:\n\nPlatform: {{platform}}\nUptime: {{uptime}}\nMemory Usage: {{memoryUsage}}\n\nI'm alive now 💘`,
+    },
     createdAt: { type: DataTypes.DATE, defaultValue: Sequelize.NOW },
     isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
-}, { timestamps: false, });
-User.beforeCreate(async (user, options) => {
+}, { timestamps: false });
+
+User.beforeCreate(async (user) => {
     user.platform = os.platform();
     user.uptime = `${Math.floor(process.uptime() / 60)}m ${Math.floor(process.uptime() % 60)}s`;
     const memoryInMB = (os.totalmem() - os.freemem()) / (1024 * 1024);
