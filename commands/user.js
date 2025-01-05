@@ -13,7 +13,7 @@ CreatePlug({
         const { status, setAt } = await conn.fetchStatus(user).catch(() => ({}));
         const _image = await conn.profilePictureUrl(user, "image").catch(() => null);
         const name = user || message.pushName;
-        await conn.send(message.user, { 
+        await conn.sendMessage(message.user, { 
             image: { url: _image },
             caption: `@${name}\nStatus: ${status || 'astral'}\nLast Updated: ${setAt ? new Date(setAt).toLocaleString() : 'unknown'}`,
             mentions: [user]
@@ -33,7 +33,7 @@ CreatePlug({
         const options = _img
             ? { image: media, caption: '*Your Image*' }
             : { video: media, caption: '*Your Video*' };
-        await conn.send(message.user, options);
+        await conn.sendMessage(message.user, options);
     }
 });
 
@@ -61,7 +61,7 @@ CreatePlug({
         const path = '/tmp/tts.mp3';
         tts.save(path, async (err) => {
             if (err) return message.reply('_err_');
-            await conn.send(message.user, { audio: { url: path }, mimetype: 'audio/mp4' });
+            await conn.sendMessage(message.user, { audio: { url: path }, mimetype: 'audio/mp4' });
         });
     }
 });
@@ -87,10 +87,10 @@ CreatePlug({
         const _img = 'https://i.imgur.com/Lu1doPs.jpeg';
         for (const group of groups) {
             const gc_name = (await conn.groupMetadata(group.id)).subject || '_';
-            await conn.send(group.id, { image: { url: _img }, caption: `${_msg}` });
+            await conn.sendMessage(group.id, { image: { url: _img }, caption: `${_msg}` });
         }
         for (const user of users) {
-            await conn.send(user.id, { image: { url: _img }, caption: `${_msg}` });
+            await conn.sendMessage(user.id, { image: { url: _img }, caption: `${_msg}` });
         }
         await message.reply('*_success_*');
     }
@@ -107,7 +107,7 @@ CreatePlug({
             const name = (await conn.groupMetadata(group.id)).subject;
             return `${index + 1}. ${name}\n   *Jid:* ${group.id}`;
         }));
-        await conn.send(message.user, { text: `*Groups:*\n${mime.join('\n\n')}` });
+        await conn.sendMessage(message.user, { text: `*Groups:*\n${mime.join('\n\n')}` });
     }
 });
 
