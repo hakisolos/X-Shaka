@@ -1,6 +1,6 @@
 const { commands, CreatePlug } = require('../lib/commands');
 const { monospace } = require('../lib/monospace');
-const { pack } = require('./momgodb/botpic.js');
+const { pack } = require('./mongodb/botpic.js');
 const CONFIG = require('../config');
 
 CreatePlug({
