@@ -9,7 +9,7 @@ CreatePlug({
         await message.react('🗣️');
         const _user = await User.findOne({ where: { id: message.user } });
         const msg = _user ? _user.generateAliveMessage() : '_not active_';   
-        await conn.send(message.user, { text: msg });
+        await conn.sendMessage(message.user, { text: msg });
     }
 });
 
@@ -19,10 +19,10 @@ CreatePlug({
     desc: 'latency',
     execute: async (message, conn) => {
         const start = Date.now();
-        await conn.send(message.user, { text: 'Ping!' });
+        await conn.sendMessage(message.user, { text: 'Pinging!' });
         const end = Date.now();
         await message.react('🗣️');
-        await conn.send(message.user, { text: `Pong! ${end - start}ms` });
+        await conn.sendMessage(message.user, { text: `Pong! ${end - start}ms` });
     }
 });
         
