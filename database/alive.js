@@ -1,5 +1,5 @@
 const CONFIG = require('../config');
-const { DataTypes } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const os = require('os');
 
 const User = CONFIG.app.sdb.define('User', {
