@@ -1,11 +1,3 @@
-can you fix this error 
-
-TypeError: Cannot destructure property 'user' of '(0 , WABinary_1.jidDecode)(...)' as it is undefined.
-2025-01-05T22:49:49.925366+00:00 app[worker.1]: 0|xastral  |     at relayMessage (/root/Diegoson/node_modules/@whiskeysockets/baileys/lib/Socket/messages-send.js:277:17)
-2025-01-05T22:49:49.925366+00:00 app[worker.1]: 0|xastral  |     at Object.sendMessage (/root/Diegoson/node_modules/@whiskeysockets/baileys/lib/Socket/messages-send.js:681:23)
-2025-01-05T22:49:49.925385+00:00 app[worker.1]: 0|xastral  |     at async EventEmitter.<anonymous> (/root/Diegoson/index.js:143:5)
-
-
 const {
     default: makeWASocket,
     fetchLatestBaileysVersion,
