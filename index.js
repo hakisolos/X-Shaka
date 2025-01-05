@@ -46,7 +46,7 @@ auth();
        
  async function startBot() {
         await CONFIG.app.sdb.sync();
-        console.log('sync db_connected🍀');
+        console.log('Sequelize db_connected ✅');
         const auth_creds = path.join(__dirname, 'lib', 'session');
         let { state, saveCreds } = await useMultiFileAuthState(auth_creds);  
         const conn = makeWASocket({
