@@ -2,6 +2,7 @@ const {
     default: makeWASocket,
     fetchLatestBaileysVersion,
     useMultiFileAuthState,
+    makeInMemoryStore,
     makeCacheableSignalKeyStore,
     Browsers,
 } = require("@whiskeysockets/baileys");
