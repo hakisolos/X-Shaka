@@ -7,7 +7,7 @@ CreatePlug({
     command: 'menu',
     category: 'general',
     desc: 'types',
-    execute: async (message, conn) => {   
+    execute: async (message, conn) => {
         await message.react('🗣️');
         const gorized = commands.reduce((acc, cmd) => {
             if (!acc[cmd.category]) acc[cmd.category] = [];
@@ -28,6 +28,7 @@ CreatePlug({
                    `┃ ✦ Version : ${CONFIG.app.version}\n` +
                    `╰──────────╼`;
         };
+
         const _cxl = (category, cmds) => {
             return `╭───╼【 *${monospace(category.toUpperCase())}* 】\n` +
                    cmds.map(cmd => `┃ ∘ \`\`\`${cmd.toLowerCase()}\`\`\``).join('\n') + '\n' +
@@ -39,13 +40,10 @@ CreatePlug({
             msg += _cxl(category, cmds) + '\n\n';
         }
         msg += `made with 💘`;
-    await conn.send(message.user, { 
-        image: { url: pack.url }, 
-        caption: msg.trim() },
-        { quoted: message });
-        } catch (error) {
-            console.error(error.message);
-        }
+        await conn.send(message.user, { 
+            image: { url: pack.url }, 
+            caption: msg.trim() },
+            { quoted: message });
     }
 });
 
@@ -54,10 +52,10 @@ CreatePlug({
     category: 'general',
     desc: 'Display list',
     execute: async (message, conn) => {   
-       const dontAddCommandList = commands
+        const dontAddCommandList = commands
             .map((cmd, index) => `${index + 1}. ${monospace(cmd.command)}`)
             .join('\n');
         await conn.send(message.user, { text: dontAddCommandList }, { quoted: message });
     }
 });
-                  
+    
