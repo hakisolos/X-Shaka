@@ -43,7 +43,7 @@ async function auth() {
         }}
 }
 auth();
-require('commands').EventEmitter.defaultMaxListeners = 2000;         
+       
  async function startBot() {
         await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
@@ -54,6 +54,7 @@ require('commands').EventEmitter.defaultMaxListeners = 2000;
         printQRInTerminal: false,
         browser: Browsers.macOS("Chrome"),
         syncFullHistory: true,
+        emitOwnEvents: true,
         auth: state,
         version: (await fetchLatestBaileysVersion()).version,
     })
