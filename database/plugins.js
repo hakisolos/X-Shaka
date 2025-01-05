@@ -9,7 +9,7 @@ async function getPlugins() {
         try { require(path.join(dir, file)); commands.push(file); } 
         catch (err) { console.error(`erro ${file}: ${err.message}`); }
     });
-    console.log(`Plugins loaded: ${commands.length}`);
+    console.log(`Plugins loaded ✅\n Maximum ♎: ${commands.length}`);
     return commands;
 }
 
