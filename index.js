@@ -41,7 +41,7 @@ async function auth() {
             console.error(err);
         }}
 }
-auth();
+
  async function startBot() {
         await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
@@ -146,6 +146,6 @@ for (const recipient of recipients) {
     }
     });
 }
-
+auth();
 startBot();
      
