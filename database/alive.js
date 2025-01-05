@@ -1,8 +1,8 @@
-
+const CONFIG = require('../config');
 const { DataTypes } = require('sequelize');
 const os = require('os');
 
-const User = sequelize.define('User', {
+const User = CONFIG.app.sdb.define('User', {
     username: { type: DataTypes.STRING, allowNull: false, unique: true, trim: true },
     id: { type: DataTypes.STRING, allowNull: false },
     platform: { type: DataTypes.STRING, defaultValue: 'unknown' },
@@ -26,6 +26,6 @@ User.prototype.generateAliveMessage = function () {
         .replace('{{memoryUsage}}', this.memoryUsage);
 };
 
-sequelize.sync();
+CONFIG.app.sdb.sync();
 module.exports = User;
         
