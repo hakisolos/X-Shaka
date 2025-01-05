@@ -146,6 +146,9 @@ for (const recipient of recipients) {
     }
     });
 }
-auth();
-startBot();
+
+setTimeout(() => {
+  auth();     
+     startBot()
+}, 4000);
      
