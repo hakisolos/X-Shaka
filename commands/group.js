@@ -99,7 +99,7 @@ CreatePlug({
             tag: `${index + 1} @${participant.id.split('@')[0]}`}));
         const _mgs = message.body.slice(message.body.indexOf(' ') + 1).trim();
         const msg = `${_mgs}\n\n${mentions.map(m => m.tag).join('\n')}`;
-        await conn.send(
+        await conn.sendMessage(
             message.user,
             { text: msg, mentions: mentions.map(m => m.id) },
             { quoted: message }
@@ -118,9 +118,9 @@ CreatePlug({
         const desc = groupMetadata.desc;
         const count = groupMetadata.participants.length;
         const img = await conn.profilePictureUrl(message.user);
-        await conn.send(message.user, {
+        await conn.sendMessage(message.user, {
             image: { url: img }, 
-            caption: `*Name*: ${name}\n*Members*: ${count}\n*Desc*: ${desc}`
+            caption: `*Name*: ${name}\n*Members*: ${count}`
         });
     }
 });
