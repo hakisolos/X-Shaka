@@ -59,7 +59,9 @@ const create = () => {
     return logger;
 };
 
-const logger = create();
+const store = makeInMemoryStore({ logger: Pino({ level: 'silent',
+	}).child({ level: 'silent', }),
+	});
  async function startBot() {
         await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
