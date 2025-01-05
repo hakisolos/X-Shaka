@@ -40,7 +40,7 @@ CreatePlug({
             msg += _cxl(category, cmds) + '\n\n';
         }
         msg += `made with 💘`;
-        await conn.send(message.user, { 
+        await conn.sendMessage(message.user, { 
             image: { url: pack.url }, 
             caption: msg.trim() },
             { quoted: message });
@@ -55,7 +55,7 @@ CreatePlug({
         const dontAddCommandList = commands
             .map((cmd, index) => `${index + 1}. ${monospace(cmd.command)}`)
             .join('\n');
-        await conn.send(message.user, { text: dontAddCommandList }, { quoted: message });
+        await conn.sendMessage(message.user, { text: dontAddCommandList }, { quoted: message });
     }
 });
     
