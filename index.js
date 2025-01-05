@@ -5,7 +5,7 @@ const {
     makeCacheableSignalKeyStore,
     Browsers,
 } = require("@whiskeysockets/baileys");
-const pino = require("pino");
+const P = require("pino");
 const path = require("path");
 const { File } = require('megajs')
 const fs = require("fs");
@@ -48,10 +48,10 @@ auth();
         const authPath = path.join(__dirname, 'lib', 'session');
         let { state, saveCreds } = await useMultiFileAuthState(authPath);  
         const conn = makeWASocket({
+            logger: P({ level: "silent" }),
             version: (await fetchLatestBaileysVersion()).version,
             printQRInTerminal: false,
             browser: Browsers.macOS("Chrome"),
-            logger: pino({ level: "silent" }),
             auth: {
                 creds: state.creds,
                 keys: makeCacheableSignalKeyStore(state.keys),
