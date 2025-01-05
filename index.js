@@ -42,6 +42,24 @@ async function auth() {
         }}
 }
 auth();
+
+const create = () => {
+    const logger = { level: 'silent',  log(...args) {
+        if (this.level !== 'silent') console.log(...args);
+          }, info(...args) { if (this.level !== 'silent') 
+          }, error(...args) { if (this.level !== 'silent') 
+         }, warn(...args) { if (this.level !== 'silent') 
+        }, debug(...args) { if (this.level === 'debug') 
+        }, trace(...args) { if (this.level === 'trace') console.trace(...args);
+    }, child() {
+        return this; 
+        },
+    };
+
+    return logger;
+};
+
+const logger = create();
  async function startBot() {
         await CONFIG.app.sdb.sync();
         console.log('sync db_connected🍀');
