@@ -13,7 +13,7 @@ const crypto = require("crypto");
 const { eval: evaluate } = require("./lib/eval");
 const { groups, toggle } = require("./database/group");
 const { getPlugins } = require("./database/plugins");
-const { maxUP, detectACTION } = require("./database/autolv");
+const { announcementi } = require("./database/autolv");
 const { serialize, Client } = require("./lib/messages");
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
@@ -82,7 +82,6 @@ async function startBot() {
                 return;
             }
 
-            await maxUP(message, conn);
             const { user, isGroup, body } = message;
             if (!body) return;
             console.log(
@@ -100,7 +99,7 @@ async function startBot() {
     });
 
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
-        await detectACTION(id);
+        await announcementi(id);
         const [group] = await groups(id);
         for (const participant of participants) {
             const username = participant.split("@")[0] || "Guest";
