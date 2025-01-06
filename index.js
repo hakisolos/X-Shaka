@@ -50,8 +50,20 @@ async function auth() {
 }
 auth();
 
-
-
+async function startBot() {
+    await CONFIG.app.sdb.sync();
+    console.log("Sequelize db_connected ✅");
+    const auth_creds = path.join(__dirname, "lib", "session");
+    let { state, saveCreds } = await useMultiFileAuthState(auth_creds);
+    const conn = makeWASocket({
+        logger: P({ level: "silent" }),
+        printQRInTerminal: false,
+        browser: Browsers.macOS("Chrome"),
+        syncFullHistory: true,
+        emitOwnEvents: true,
+        auth: state,
+        version: (await fetchLatestBaileysVersion()).version,
+    });
 
     store.bind(conn.ev);
     await Client({ conn, store });
