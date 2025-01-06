@@ -75,6 +75,7 @@ await Client({ conn, store });
                 !message.type ||
                 message.type === ""
             )
+                if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0) store.groupMetadata = await hisoka.groupFetchAllParticipating();
                 return;
             await maxUP(message, conn);
             const { sender, isGroup, body } = message
