@@ -2,6 +2,7 @@
   "name": "x-astral",
   "version": "4.0.0",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "start": "pm2 start index.js --attach --name xastral",
     "stop":  "pm2 stop index.js"
