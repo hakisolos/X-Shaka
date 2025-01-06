@@ -91,17 +91,19 @@ await Client({ conn, store });
                 "------------------"
         );
         if (CONFIG.app.mode === 'true' && !message.isOwner) return;
-        const com = body.trim().split(/ +/).slice(1).join(" ").toLowerCase();
-        const command = commands.find((c) => c.command.toLowerCase() === com);
-        if (message.prefix && body.startsWith(message.prefix)) { 
-            const FromPrefix = body.substring(message.prefix.length).trim().split(' ')[0].toLowerCase();
-            const command = commands.find((c) => c.command.toLowerCase() === FromPrefix);
-            if (command) {
-                try {
-                    await command.execute(message, conn, match);
-                } catch (err) {
-                    console.error(err);
-                }
+        const _com = body.trim().split(/ +/).slice(1).join(" ");
+        if (typeof _com === 'string') {
+            const command = commands.find((c) => c.command.toLowerCase() === _com.toLowerCase());
+            if (message.prefix && typeof body === 'string' && body.startsWith(message.prefix)) {
+                const FromPrefix = body.substring(message.prefix.length).trim().split(' ')[0];
+                if (typeof FromPrefix === 'string') {
+                    const command = commands.find((c) => c.command.toLowerCase() === FromPrefix.toLowerCase());
+                    if (command) {
+                        try {
+                            await command.execute(message, conn, match);
+                        } catch (err) {
+                            console.error(err);
+                        }
             }
         }
     } catch (err) {
