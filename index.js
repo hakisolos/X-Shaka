@@ -67,7 +67,7 @@ await Client({ conn, store });
             const messageObject = messages?.[0];
             if (!messageObject) return;
             const _msg = JSON.parse(JSON.stringify(messageObject));
-            const message = await serialize(_msg, conn);
+            const message = await serialize(conn, _msg, store);
             if (!message.message || message.key.remoteJid === "status@broadcast") return;
             if (
                 message.type === "protocolMessage" ||
