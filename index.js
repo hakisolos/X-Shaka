@@ -157,11 +157,9 @@ async function startBot() {
         if (connection === "open") {
             console.log("Connection established ✅");
             await getPlugins();
-
-            const mode = CONFIG.app.mode;
-            const _msg_ = [
+             const _msg_ = [
                 "*I'm Online Now*\n",
-                `Mode      : ${mode && mode.toLowerCase() === "private" ? "Private" : "Public"}\n`,
+                `Mode      : ${CONFIG.app.mode}\n`,
                 `Prefix    : ${CONFIG.app.prefix}\n`,
                 `Botname   : ${CONFIG.app.botname}\n`,
             ].join("");
