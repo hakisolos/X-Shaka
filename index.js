@@ -59,6 +59,7 @@ auth();
         version: (await fetchLatestBaileysVersion()).version,
     })
 
+await Client({ conn, store });
  conn.ev.on("creds.update", saveCreds);
  conn.ev.on("messages.upsert", async ({ messages, type }) => {
         if (type !== "notify") return;
