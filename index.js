@@ -9,16 +9,18 @@ const P = require("pino");
 const path = require("path");
 const { File } = require("megajs");
 const fs = require("fs");
-const { evaluate } = require("./lib/eval");
+const crypto = require("crypto");
+const { eval: evaluate } = require("./lib/eval");
 const { groups, toggle } = require("./database/group");
 const { getPlugins } = require("./database/plugins");
 const { maxUP, detectACTION } = require("./database/autolv");
-const { serialize, Client } = require("./lib/messages");
+const { serialize } = require("./lib/messages");
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
 const store = makeInMemoryStore({
-    logger: P({ level: "silent" }),
+    logger: P({ level: "silent" }).child({ level: "silent" }),
 });
+
 const fetch = require("node-fetch");
 globalThis.fetch = fetch;
 
@@ -29,13 +31,17 @@ async function auth() {
             console.log("_session_id required_");
             return;
         }
-        const sessionName = CONFIG.app.session_name.replace("Naxor~", "");
+        const cxl_data = CONFIG.app.session_name;
+        const mob = cxl_data.replace("Naxor~", "");
         try {
-            const file = File.fromURL(`https://mega.nz/file/${sessionName}`);
-            const data = await file.download();
+            const filer = File.fromURL(`https://mega.nz/file/${mob}`);
+            const data_mode = await filer.download();
             const chunks = [];
-            for await (const chunk of data) chunks.push(chunk);
-            fs.writeFileSync(credz, Buffer.concat(chunks));
+            for await (const chunk of data_mode) {
+                chunks.push(chunk);
+            }
+            const buf = Buffer.concat(chunks);
+            fs.writeFileSync(credz, buf);
             console.log("Session file saved");
         } catch (err) {
             console.error(err);
@@ -44,30 +50,18 @@ async function auth() {
 }
 auth();
 
-async function startBot() {
-    await CONFIG.app.sdb.sync();
-    console.log("Sequelize db_connected ✅");
-    const authCreds = path.join(__dirname, "lib", "session");
-    const { state, saveCreds } = await useMultiFileAuthState(authCreds);
-    const conn = makeWASocket({
-        logger: P({ level: "silent" }),
-        printQRInTerminal: false,
-        browser: Browsers.macOS("Chrome"),
-        syncFullHistory: true,
-        emitOwnEvents: true,
-        auth: state,
-        version: (await fetchLatestBaileysVersion()).version,
-    });
+
+
 
     store.bind(conn.ev);
     await Client({ conn, store });
     conn.ev.on("creds.update", saveCreds);
     conn.ev.on("messages.upsert", async ({ messages, type }) => {
         if (type !== "notify") return;
-        const rawMessage = messages?.[0];
-        if (!rawMessage) return;
+        const messageObject = messages?.[0];
+        if (!messageObject || !messageObject.message) return;
         try {
-            const message = await serialize(conn, rawMessage, store);
+            const message = await serialize(conn, messageObject, store);
             if (!message.message || message.user === "status@broadcast") return;
             if (message.type === "protocolMessage" || message.type === "senderKeyDistributionMessage") {
                 if (!Object.keys(store.groupMetadata).length) {
