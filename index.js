@@ -88,7 +88,7 @@ await Client({ conn, store });
                 `user: ${sender}\nchat: ${isGroup ? "group" : "private"}\nmessage: ${match}\n` +
                 "------------------"
         );
-        
+        if (CONFIG.app.mode === 'true' && !message.isOwner) return;
         const com = body.trim().split(/ +/).slice(1).join(" ").toLowerCase();
         const command = commands.find((c) => c.command.toLowerCase() === com);
         if (message.prefix && body.startsWith(message.prefix)) { 
