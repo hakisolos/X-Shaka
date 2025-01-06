@@ -18,6 +18,7 @@ const { maxUP, detectACTION } = require("./database/autolv");
 const { default: serialize, Client } = require('./lib/messages');
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
+const store = makeInMemoryStore({ logger });
 const fetch = require('node-fetch'); 
 globalThis.fetch = fetch; 
 
@@ -58,7 +59,7 @@ auth();
         auth: state,
         version: (await fetchLatestBaileysVersion()).version,
     })
-
+store.bind(conn.ev);
 await Client({ conn, store });
  conn.ev.on("creds.update", saveCreds);
  conn.ev.on("messages.upsert", async ({ messages, type }) => {
