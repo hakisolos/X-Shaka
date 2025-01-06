@@ -13,7 +13,6 @@
     "axios": "^0.21.1",
     "@vitalets/google-translate-api": "*",
     "gtts": "*",
-    "file-type": "^19.0.0",
     "quick.db": "*",
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0",
