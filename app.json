@@ -12,6 +12,11 @@
 		"description": "Session ID key",
 		"required": true
 	},
+	 "MODE": {
+            "description": "public or private mode",
+            "required": false,
+            "value":"true"
+        },
 	"MODS": {
 		"description": "User ID with sudo permissions for the bot.",
 		"value": "27686881509",
