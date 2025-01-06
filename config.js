@@ -12,7 +12,7 @@ const CONFIG = {
         version: require('./package.json').version,
         env: process.env.NODE_ENV || 'development',
         prefix: process.env.COMMAND_PREFIX || '?',
-        mode: process.env.MODE || 'private',
+        mode: toBool(process.env.MODE || "true"),
         mods: process.env.MODS || '27686881509,27686567257',
         sdb: DATABASE_URL === "./database.db" ? new Sequelize({ dialect: "sqlite", storage: DATABASE_URL, logging: false }) : new Sequelize(DATABASE_URL, {dialect: "postgres", ssl: true, protocol: "postgres", dialectOptions: { native: true, ssl: { require: true, rejectUnauthorized: false },}, logging: false }),
     },
