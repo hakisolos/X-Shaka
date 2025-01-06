@@ -78,8 +78,8 @@ CreatePlug({
     command: 'broadcast',
     category: 'admin',
     desc: '_Broadcast msgs_',
-    execute: async (message, conn, match, owner) => {
-        if (!owner) return; 
+    execute: async (message, conn, match) => {
+        if (!message.isOwner) return; 
         if (!match) return await message.reply('_msg required_');
         const { groups, users } = await getChats(conn);
         if (!groups.length && !users.length) return;
@@ -100,8 +100,8 @@ CreatePlug({
     command: 'getgc',
     category: 'admin',
     desc: 'groups',
-    execute: async (message, conn, match, owner) => {
-        if (!owner) return;
+    execute: async (message, conn, match) => {
+        if (!message.isOwner) return;
         const { groups } = await getChats(conn);
         const mime = await Promise.all(groups.map(async (group, index) => {
             const name = (await conn.groupMetadata(group.id)).subject;
