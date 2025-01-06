@@ -128,7 +128,7 @@ await Client({ conn, store });
     conn.ev.on("connection.update", async (update) => {
         const { connection } = update;
         if (connection === "open") {
-        console.log("Connection established 👍");
+        console.log("Connection established ✅");
          await getPlugins();
            const mode = CONFIG.app.mode; 
 const mods = CONFIG.app.mods; 
