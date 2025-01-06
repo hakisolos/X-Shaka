@@ -3,15 +3,13 @@ const {
     fetchLatestBaileysVersion,
     useMultiFileAuthState,
     makeInMemoryStore,
-    makeCacheableSignalKeyStore,
     Browsers,
 } = require("@whiskeysockets/baileys");
 const P = require("pino");
 const path = require("path");
 const { File } = require("megajs");
 const fs = require("fs");
-const crypto = require("crypto");
-const { eval: evaluate } = require("./lib/eval");
+const { evaluate } = require("./lib/eval");
 const { groups, toggle } = require("./database/group");
 const { getPlugins } = require("./database/plugins");
 const { maxUP, detectACTION } = require("./database/autolv");
@@ -19,7 +17,7 @@ const { serialize, Client } = require("./lib/messages");
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
 const store = makeInMemoryStore({
-    logger: P({ level: "silent" }).child({ level: "silent" }),
+    logger: P({ level: "silent" }),
 });
 const fetch = require("node-fetch");
 globalThis.fetch = fetch;
@@ -31,17 +29,13 @@ async function auth() {
             console.log("_session_id required_");
             return;
         }
-        const cxl_data = CONFIG.app.session_name;
-        const mob = cxl_data.replace("Naxor~", "");
+        const sessionName = CONFIG.app.session_name.replace("Naxor~", "");
         try {
-            const filer = File.fromURL(`https://mega.nz/file/${mob}`);
-            const data_mode = await filer.download();
+            const file = File.fromURL(`https://mega.nz/file/${sessionName}`);
+            const data = await file.download();
             const chunks = [];
-            for await (const chunk of data_mode) {
-                chunks.push(chunk);
-            }
-            const buf = Buffer.concat(chunks);
-            fs.writeFileSync(credz, buf);
+            for await (const chunk of data) chunks.push(chunk);
+            fs.writeFileSync(credz, Buffer.concat(chunks));
             console.log("Session file saved");
         } catch (err) {
             console.error(err);
@@ -53,8 +47,8 @@ auth();
 async function startBot() {
     await CONFIG.app.sdb.sync();
     console.log("Sequelize db_connected ✅");
-    const auth_creds = path.join(__dirname, "lib", "session");
-    let { state, saveCreds } = await useMultiFileAuthState(auth_creds);
+    const authCreds = path.join(__dirname, "lib", "session");
+    const { state, saveCreds } = await useMultiFileAuthState(authCreds);
     const conn = makeWASocket({
         logger: P({ level: "silent" }),
         printQRInTerminal: false,
@@ -68,88 +62,61 @@ async function startBot() {
     store.bind(conn.ev);
     await Client({ conn, store });
     conn.ev.on("creds.update", saveCreds);
-
     conn.ev.on("messages.upsert", async ({ messages, type }) => {
         if (type !== "notify") return;
-
-        const messageObject = messages?.[0];
-        if (!messageObject) return;
-
+        const rawMessage = messages?.[0];
+        if (!rawMessage) return;
         try {
-            const _msg = JSON.parse(JSON.stringify(messageObject));
-            const message = await serialize(conn, _msg, store);
-
-            if (!message.message || message.key.remoteJid === "status@broadcast") return;
-            if (
-                message.type === "protocolMessage" ||
-                message.type === "senderKeyDistributionMessage" ||
-                !message.type ||
-                message.type === ""
-            ) {
-                if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0)
+            const message = await serialize(conn, rawMessage, store);
+            if (!message.message || message.user === "status@broadcast") return;
+            if (message.type === "protocolMessage" || message.type === "senderKeyDistributionMessage") {
+                if (!Object.keys(store.groupMetadata).length) {
                     store.groupMetadata = await conn.groupFetchAllParticipating();
+                }
                 return;
             }
 
             await maxUP(message, conn);
-            const { sender, isGroup, body } = message;
+            const { user, isGroup, body } = message;
             if (!body) return;
-
-            const match = body.trim().split(/ +/).slice(1).join(" ");
             console.log(
-                "------------------\n" +
-                    `user: ${sender}\nchat: ${isGroup ? "group" : "private"}\nmessage: ${match}\n` +
-                    "------------------"
+                `\nUser: ${user}\nChat: ${isGroup ? "Group" : "Private"}\nMessage: ${body.trim()}\n`
             );
-
             if (CONFIG.app.mode === "true" && !message.isOwner) return;
-
-            const _com = body.trim().split(/ +/).slice(1).join(" ");
-            if (typeof _com === "string") {
-                const command = commands.find((c) => c.command.toLowerCase() === _com.toLowerCase());
-                if (message.prefix && typeof body === "string" && body.startsWith(message.prefix)) {
-                    const FromPrefix = body.substring(message.prefix.length).trim().split(" ")[0];
-                    if (typeof FromPrefix === "string") {
-                        const command = commands.find(
-                            (c) => c.command.toLowerCase() === FromPrefix.toLowerCase()
-                        );
-                        if (command) {
-                            await command.execute(message, conn, match);
-                        }
-                    }
-                }
+            const commandName = body.slice(message.prefix.length).trim().split(" ")[0];
+            const command = commands.find((cmd) => cmd.command.toLowerCase() === commandName.toLowerCase());
+            if (command) {
+                await command.execute(message, conn, body.split(" ").slice(1).join(" "));
             }
         } catch (err) {
-            console.error("Error processing message:", err);
+            console.error(err);
         }
     });
 
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
         await detectACTION(id);
         const [group] = await groups(id);
-
-        participants.forEach((participant) => {
+        for (const participant of participants) {
+            const username = participant.split("@")[0] || "Guest";
             if (action === "add" && group.on_welcome) {
-                conn.sendMessage(
+                await conn.sendMessage(
                     id,
                     group.welcome
-                        .replace("@pushname", participant.split("@")[0] || "Guest")
+                        .replace("@pushname", username)
                         .replace("@gc_name", id)
-                        .replace("@number", participant.split("@")[0])
-                        .replace("@time", new Date().toLocaleString()),
-                    { quoted: id }
+                        .replace("@number", username)
+                        .replace("@time", new Date().toLocaleString())
                 );
             } else if (action === "remove" && group.on_goodbye) {
-                conn.sendMessage(
+                await conn.sendMessage(
                     id,
                     group.goodbye
-                        .replace("@pushname", participant.split("@")[0] || "Guest")
+                        .replace("@pushname", username)
                         .replace("@gc_name", id)
-                        .replace("@time", new Date().toLocaleString()),
-                    { quoted: id }
+                        .replace("@time", new Date().toLocaleString())
                 );
             }
-        });
+        }
     });
 
     conn.ev.on("connection.update", async (update) => {
@@ -157,8 +124,9 @@ async function startBot() {
         if (connection === "open") {
             console.log("Connection established ✅");
             await getPlugins();
-             const _msg_ = [
-                "*I'm Online Now*\n",
+
+            const message = [
+                "*Im Online Now*\n",
                 `Mode      : ${CONFIG.app.mode}\n`,
                 `Prefix    : ${CONFIG.app.prefix}\n`,
                 `Botname   : ${CONFIG.app.botname}\n`,
@@ -166,14 +134,10 @@ async function startBot() {
 
             const recipients = [conn.user.id, ...CONFIG.app.mods];
             for (const recipient of recipients) {
-                await conn.sendMessage(recipient, {
-                    text: "```" + _msg_ + "```",
-                });
+                await conn.sendMessage(recipient, { text: "```" + message + "```" });
             }
         }
     });
 }
 
-setTimeout(() => {
-    startBot();
-}, 3000);
+setTimeout(startBot, 3000);
