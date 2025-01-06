@@ -62,55 +62,50 @@ auth();
 await Client({ conn, store });
  conn.ev.on("creds.update", saveCreds);
  conn.ev.on("messages.upsert", async ({ messages, type }) => {
-        if (type !== "notify") return;
-        try {
-            const messageObject = messages?.[0];
-            if (!messageObject) return;
-            const _msg = JSON.parse(JSON.stringify(messageObject));
-            const message = await serialize(conn, _msg, store);
-            if (!message.message || message.key.remoteJid === "status@broadcast") return;
-            if (
-                message.type === "protocolMessage" ||
-                message.type === "senderKeyDistributionMessage" ||
-                !message.type ||
-                message.type === ""
-            )
-                if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0) store.groupMetadata = await hisoka.groupFetchAllParticipating();
-                return;
-            await maxUP(message, conn);
-            const { sender, isGroup, body } = message
-            if (!body) return;
-            const cmd_txt = body.trim().toLowerCase();
-            const match = body.trim().split(/ +/).slice(1).join(" ");
-            const iscmd = cmd_txt.startsWith(CONFIG.app.prefix.toLowerCase());
-            const owner = conn.user?.id
-                ? decodeJid(conn.user.id) === sender
-                : false;
-            console.log(
-                "------------------\n" +
-                    `user: ${sender}\nchat: ${isGroup ? "group" : "private"}\nmessage: ${cmd_txt}\n` +
-                    "------------------"
-            );
-
-            if (CONFIG.app.mode === "private" && iscmd && !owner) {
-                return;
-            }
-            if (cmd_txt.startsWith(CONFIG.app.prefix.toLowerCase()) && iscmd) {
-                const args = cmd_txt.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
-                const command = commands.find((c) => c.command.toLowerCase() === args);
-                if (command) {
-                    try {
-                        if (
-                            (CONFIG.app.mode === "private" && owner) ||
-                            CONFIG.app.mode === "public"
-                        ) {
-                            await command.execute(message, conn, match, owner);
-                        }
-                    } catch (err) {}
+    if (type !== "notify") return;
+    try {
+        const messageObject = messages?.[0];
+        if (!messageObject) return;
+        const _msg = JSON.parse(JSON.stringify(messageObject));
+        const message = await serialize(conn, _msg, store);
+        if (!message.message || message.key.remoteJid === "status@broadcast") return;
+        if (
+            message.type === "protocolMessage" ||
+            message.type === "senderKeyDistributionMessage" ||
+            !message.type ||
+            message.type === ""
+        ) {
+            if (store.groupMetadata && Object.keys(store.groupMetadata).length === 0) 
+                store.groupMetadata = await conn.groupFetchAllParticipating();
+            return;
+        }
+        await maxUP(message, conn);
+        const { sender, isGroup, body } = message;
+        if (!body) return;
+        const match = body.trim().split(/ +/).slice(1).join(" ");
+        console.log(
+            "------------------\n" +
+                `user: ${sender}\nchat: ${isGroup ? "group" : "private"}\nmessage: ${match}\n` +
+                "------------------"
+        );
+        
+        const com = body.trim().split(/ +/).slice(1).join(" ").toLowerCase();
+        const command = commands.find((c) => c.command.toLowerCase() === com);
+        if (message.prefix && body.startsWith(message.prefix)) { 
+            const FromPrefix = body.substring(message.prefix.length).trim().split(' ')[0].toLowerCase();
+            const command = commands.find((c) => c.command.toLowerCase() === FromPrefix);
+            if (command) {
+                try {
+                    await command.execute(message, conn, match);
+                } catch (err) {
+                    console.error(err);
                 }
             }
-        } catch (err) {}
-    });
+        }
+    } catch (err) {
+        console.error(err);
+    }
+});
 
   conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
     await detectACTION(id);
@@ -152,5 +147,6 @@ for (const recipient of recipients) {
 
 setTimeout(() => {     
      startBot()
-}, 4000);
-     
+}, 3000);
+
+    
