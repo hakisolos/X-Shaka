@@ -18,7 +18,8 @@ const { maxUP, detectACTION } = require("./database/autolv");
 const { default: serialize, Client } = require('./lib/messages');
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
-const store = makeInMemoryStore({ logger });
+const store = makeInMemoryStore({
+logger: P({level: 'silent',}).child({level: 'silent',}),});
 const fetch = require('node-fetch'); 
 globalThis.fetch = fetch; 
 
