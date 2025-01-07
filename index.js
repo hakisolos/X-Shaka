@@ -113,31 +113,38 @@ async function startBot() {
         }
     }
 });
-           
-    conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
-        const [group] = await groups(id);
-        for (const participant of participants) {
-            const username = participant.split("@")[0] || "Guest";
-            if (action === "add" && group.on_welcome) {
+
+conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
+    const [group] = await groups(id);
+    for (const participant of participants) {
+        const username = participant.split("@")[0] || "Guest";
+        const tm = new Date().toLocaleString();
+        if (action === "add" && group.on_welcome) {
+            const cm = typeof group.welcome === "string" ? group.welcome : null;
+            if (cm) {
                 await conn.sendMessage(
                     id,
-                    group.welcome
+                    cm
                         .replace("@pushname", username)
                         .replace("@gc_name", id)
                         .replace("@number", username)
-                        .replace("@time", new Date().toLocaleString())
+                        .replace("@time", tm)
                 );
-            } else if (action === "remove" && group.on_goodbye) {
+            }
+        } else if (action === "remove" && group.on_goodbye) {
+           const vm = typeof group.goodbye === "string" ? group.goodbye : null;
+            if (vm) {
                 await conn.sendMessage(
                     id,
-                    group.goodbye
+                    vm
                         .replace("@pushname", username)
                         .replace("@gc_name", id)
-                        .replace("@time", new Date().toLocaleString())
+                        .replace("@time", tm)
                 );
             }
         }
-    });
+    }
+});
 
     conn.ev.on("connection.update", async (update) => {
         const { connection } = update;
