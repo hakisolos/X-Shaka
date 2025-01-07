@@ -68,11 +68,15 @@ async function startBot() {
     store.bind(conn.ev);
     conn.ev.on("creds.update", saveCreds);
     conn.ev.on('messages.upsert', async ({ messages }) => {
-    const mek = messages[0];
-    if (!mek.message) return;
-    const message = await serialize(mek, conn);
-    if (!message || !message.key) {
-        console.error("Invalid:", message);
+    const msg = messages[0];
+    if (!msg.message) return;  
+
+    msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
+        ? msg.message.ephemeralMessage.message
+        : msg.message;
+    const message = await serialize(msg, conn);
+    if (!message || !message.key || ! message.body) {
+        console.error("Invalid message:", message);
         return;
     }
 
@@ -88,16 +92,18 @@ async function startBot() {
         return;
     }
 
-    const txt = message.body.trim().toLowerCase();
+    const mek = message.body.trim().toLowerCase();
     const match = message.body.trim().split(/ +/).slice(1).join(" ");
-    const isCmd = txt.startsWith(CONFIG.app.prefix.toLowerCase());
+    const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     if (isCmd) {
-        const cmd = txt.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
-        const command = commands.find((c) => c.command.toLowerCase() === cmd.toLowerCase());
+        const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
+        const command = commands.find((c) => c.command.toLowerCase() === args);
         if (command) {
             try {
-                await command.execute(msg, conn, match);
-            } catch (err) {}
+                await command.execute(message, conn, match);
+            } catch (err) {
+                console.error(err);
+            }
         } else {}
     }
 });
