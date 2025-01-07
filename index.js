@@ -73,7 +73,7 @@ async function startBot() {
     msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
         ? msg.message.ephemeralMessage.message
         : msg.message;
-     const message = await serialize(msg, conn);
+    const message = await serialize(msg, conn);
     if (!message || !message.key || !message.body) {
         console.error(message);
         return;
@@ -93,9 +93,12 @@ async function startBot() {
 
     const mek = message.body.trim();
     const match = mek.slice(1).trim();                                                    
-    if (mek.startsWith('>')) {
-        await evaluate(match, message, conn); 
-        return;
+        if (mek.startsWith('>')) {
+        if (message.sender !== me) return; 
+        const code = mek.slice(1).trim();
+        let result = eval(code);
+        if (result instanceof Promise) result = await result; 
+        conn.sendMessage(message.key.remoteJid, `\`\`\`js\n${result}\n\`\`\``, { quoted: message });
     }
 
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
@@ -111,7 +114,7 @@ async function startBot() {
         }
     }
 });
-                                    
+           
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
         const [group] = await groups(id);
         for (const participant of participants) {
