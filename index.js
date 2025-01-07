@@ -90,13 +90,14 @@ async function startBot() {
         }
         return;
     }
+    const match = message.body.split(" ").slice(1).join(" ");
     if (CONFIG.app.mode === "true" && !message.isOwner) return;
     if (!message.body.startsWith(CONFIG.app.prefix)) return;
     const cmds = message.body.slice(message.prefix.length).trim().split(" ")[0];
     const command = commands.find((cmd) => cmd.command.toLowerCase() === cmds.toLowerCase());
     if (command) {
         try {
-            await command.execute(message, conn, message.body.split(" ").slice(1).join(" "));
+            await command.execute(message, conn, match);
         } catch (err) {
             console.error(err);
         }
