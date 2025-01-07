@@ -10,6 +10,7 @@ CreatePlug({
     if (!match) return message.reply('_Please provide a Facebook URL_');
     const { "HD (720p)": hdUrl, "SD (360p)": sdUrl } = await facebook_dl(match);
     if (!hdUrl && !sdUrl) return message.reply('Not available');
+    await message.reply('_Downloading..._');
     const video_version = hdUrl || sdUrl;
     const max = hdUrl ? 'HD (720p)' : 'SD (360p)';
     const res = await fetch(video_version);
@@ -24,6 +25,7 @@ CreatePlug({
   desc: 'Download tiktok vid',
   execute: async (message, conn, match) => {
     if (!match) return message.reply('_Please provide a tiktok url_');
+    await message.reply('_Downloading..._');
     const v_data = await tiktok_dl(match);
     if (!v_data) return message.reply('_Could not retrieve_');
     await conn.sendMessage(message.user, { video: { url: v_data.playUrl }, caption: `*comments:* ${v_data.commentCount}\n*share count:* ${v_data.shareCount}\n*music author:* ${v_data.musicAuthor}`, }, { quoted: message });
