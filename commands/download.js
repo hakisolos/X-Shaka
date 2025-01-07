@@ -1,6 +1,6 @@
 const { CreatePlug } = require('../lib/commands');
 const fetch = require('node-fetch');
-const  facebook_dl, tiktok_dl  = require('../lib/scrappers.js'); 
+const { facebook_dl, tiktok_dl }  = require('../lib/scrappers.js'); 
 
 CreatePlug({
   command: 'fb',
