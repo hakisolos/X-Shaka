@@ -8,7 +8,7 @@ CreatePlug({
     category: 'general',
     desc: 'types',
     execute: async (message, conn) => {
-        await message.react('🗣️');
+      //  await message.react('🗣️');
         const gorized = commands.reduce((acc, cmd) => {
             if (!acc[cmd.category]) acc[cmd.category] = [];
             acc[cmd.category].push(cmd.command);
