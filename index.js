@@ -94,6 +94,7 @@ async function startBot() {
 
     const mek = message.body.trim().toLowerCase();
     const match = message.body.trim().split(/ +/).slice(1).join(" ");
+    await evaluate(match);           
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     if (isCmd) {
         const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
