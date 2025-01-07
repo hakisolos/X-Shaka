@@ -94,8 +94,8 @@ async function startBot() {
     const mek = message.body.trim();
     const match = mek.slice(1).trim();                                                    
         if (mek.startsWith('>')) {
-        if (message.sender !== me) return; 
-        const code = mek.slice(1).trim();
+        if (message.sender !== me || CONFIG.app.mods) return; 
+        const code = match;
         let result = eval(code);
         if (result instanceof Promise) result = await result; 
         conn.sendMessage(message.key.remoteJid, `\`\`\`js\n${result}\n\`\`\``, { quoted: message });
