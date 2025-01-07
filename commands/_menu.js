@@ -7,7 +7,7 @@ CreatePlug({
     category: 'general',
     desc: 'types',
     execute: async (message, conn) => {
-        await message.react('🗣️');
+       // await message.react('🗣️');
         if (!Array.isArray(commands)) {
             await message.reply('not_found');
             return;
