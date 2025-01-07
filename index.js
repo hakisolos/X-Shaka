@@ -135,18 +135,7 @@ async function startBot() {
         if (connection === "open") {
             console.log("Connection established ✅");
             await getPlugins();
-
-            const message = [
-                "*Im Online Now*\n",
-                `Mode      : ${CONFIG.app.mode}\n`,
-                `Prefix    : ${CONFIG.app.prefix}\n`,
-                `Botname   : ${CONFIG.app.botname}\n`,
-            ].join("");
-
-            const recipients = [conn.user.id, ...CONFIG.app.mods];
-            for (const recipient of recipients) {
-                await conn.sendMessage(recipient, { text: "```" + message + "```" });
-            }
+            console.log('Wabot is online now ✅');
         }
     });
 }
