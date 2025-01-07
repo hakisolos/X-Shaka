@@ -14,7 +14,7 @@ const { eval: evaluate } = require("./lib/eval");
 const { groups, toggle } = require("./database/group");
 const { getPlugins } = require("./database/plugins");
 const { announcementi } = require("./database/autolv");
-const { serialize, Client } = require("./lib/messages");
+const { serialize } = require("./lib/messages");
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
 const store = makeInMemoryStore({
@@ -66,14 +66,13 @@ async function startBot() {
     });
 
     store.bind(conn.ev);
-    await Client({ conn, store });
     conn.ev.on("creds.update", saveCreds);
     conn.ev.on('messages.upsert', async ({ messages }) => {
-    const asena = messages[0];
-    if (!asena.message) return;
-    const message = await serialize(conn, asena, store);
+    const mek = messages[0];
+    if (!mek.message) return;
+    const message = await serialize(mek, conn);
     if (!message || !message.key) {
-        console.error("Invalid message:", message);
+        console.error("Invalid:", message);
         return;
     }
 
@@ -88,18 +87,19 @@ async function startBot() {
         }
         return;
     }
-    if (!message.prefix) return;
-    const cmdName = message.command.toLowerCase();
-    if (CONFIG.app.mode === "true" && !message.isOwner) return;
-    const command = commands.find((cmd) => cmd.command.toLowerCase() === cmdName);
-    if (command) {
-        try {
-            const match = message.args.join(' ');
-            await command.execute(message, conn, match);
-        } catch (err) {
-            console.error(err);
-        }
-    } else {}
+
+    const txt = message.body.trim().toLowerCase();
+    const match = message.body.trim().split(/ +/).slice(1).join(" ");
+    const isCmd = txt.startsWith(CONFIG.app.prefix.toLowerCase());
+    if (isCmd) {
+        const cmd = txt.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
+        const command = commands.find((c) => c.command.toLowerCase() === cmd.toLowerCase());
+        if (command) {
+            try {
+                await command.execute(msg, conn, match);
+            } catch (err) {}
+        } else {}
+    }
 });
                                     
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
