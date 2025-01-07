@@ -68,39 +68,41 @@ async function startBot() {
     store.bind(conn.ev);
     await Client({ conn, store });
     conn.ev.on("creds.update", saveCreds);
-    conn.ev.on('messages.upsert', async ({ msgz }) => {
-        const asena = msgz[0];
-        if (!asena.message) return;
-        asena.message = (Object.keys(asena.message)[0] === 'ephemeralMessage') ? asena.message.ephemeralMessage.message : asena.message;
-        const message = await serialize(conn, asena, store);
-        if (! message || !message.key) {
-            console.error(message);
-            return;
+    conn.ev.on('messages.upsert', async ({ messages }) => {
+    const asena = messages[0];
+    if (!asena.message) return;
+    asena.message = Object.keys(asena.message)[0] === 'ephemeralMessage'
+        ? asena.message.ephemeralMessage.message
+        : asena.message;
+    const message = await serialize(conn, asena, store);
+    if (!message || !message.key) {
+        console.error("Invalid message:", message);
+        return;
+    }
+    const me = conn.user.id;
+    if (
+        message.sender !== me &&
+        ['protocolMessage', 'reactionMessage'].includes(message.type) &&
+        message.key.remoteJid === 'status@broadcast'
+    ) {
+      if (!Object.keys(store.groupMetadata).length) {
+            store.groupMetadata = await conn.groupFetchAllParticipating();
         }
-        const me = m.key.remoteJid;
-        if (message.sender !== me && message.type !== 'protocolMessage' &&message.type !== 'reactionMessage' && message.key.remoteJid === 'status@broadcast') 
-        if (!Object.keys(store.groupMetadata).length) {
-                    store.groupMetadata = await conn.groupFetchAllParticipating();
-                }
-                return;
-            }
-
-            const { user, isGroup, body } = message;
-            if (!body) return;
-            console.log(
-                `\nUser: ${user}\nChat: ${isGroup ? "Group" : "Private"}\nMessage: ${body.trim()}\n`
-            );
-            if (CONFIG.app.mode === "true" && !message.isOwner) return;
-            const commandName = body.slice(message.prefix.length).trim().split(" ")[0];
-            const command = commands.find((cmd) => cmd.command.toLowerCase() === commandName.toLowerCase());
-            if (command) {
-                await command.execute(message, conn, body.split(" ").slice(1).join(" "));
-            }
+        return;
+    }
+    if (CONFIG.app.mode === "true" && !message.isOwner) return;
+    if (!message.body.startsWith(CONFIG.app.prefix)) return;
+    const cmds = message.body.slice(message.prefix.length).trim().split(" ")[0];
+    const command = commands.find((cmd) => cmd.command.toLowerCase() === cmds.toLowerCase());
+    if (command) {
+        try {
+            await command.execute(message, conn, message.body.split(" ").slice(1).join(" "));
         } catch (err) {
             console.error(err);
         }
-    });
-
+    }
+});
+                                    
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
         await announcementi(id);
         const [group] = await groups(id);
