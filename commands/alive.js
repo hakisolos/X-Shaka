@@ -6,7 +6,7 @@ CreatePlug({
     category: 'general',
     desc: 'alive',
     execute: async (message, conn) => {
-        await message.react('🗣️');
+        //await message.react('🗣️');
         const _user = await User.findOne({ where: { id: message.user } });
         const msg = _user ? _user.generateAliveMessage() : '_not active_';   
         await conn.sendMessage(message.user, { text: msg });
@@ -21,7 +21,7 @@ CreatePlug({
         const start = Date.now();
         await conn.sendMessage(message.user, { text: 'Pinging!' });
         const end = Date.now();
-        await message.react('🗣️');
+      //  await message.react('🗣️');
         await conn.sendMessage(message.user, { text: `Pong! ${end - start}ms` });
     }
 });
