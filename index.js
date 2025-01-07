@@ -69,14 +69,14 @@ async function startBot() {
     conn.ev.on("creds.update", saveCreds);
     conn.ev.on('messages.upsert', async ({ messages }) => {
     const msg = messages[0];
-    if (!msg.message) return;  
+    if (!msg.message) return;
 
     msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
         ? msg.message.ephemeralMessage.message
         : msg.message;
-    const message = await serialize(msg, conn);
-    if (!message || !message.key || ! message.body) {
-        console.error("Invalid message:", message);
+     const message = await serialize(msg, conn);
+    if (!message || !message.key || !message.body) {
+        console.error(message);
         return;
     }
 
@@ -92,20 +92,24 @@ async function startBot() {
         return;
     }
 
-    const mek = message.body.trim().toLowerCase();
-    const match = message.body.trim().split(/ +/).slice(1).join(" ");
-    await evaluate(match);           
+    const mek = message.body.trim();
+    if (mek.startsWith('>')) {
+        const match = mek.slice(1).trim(); 
+        await evaluate(match, message, conn); 
+        return;
+    }
+
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     if (isCmd) {
         const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
         const command = commands.find((c) => c.command.toLowerCase() === args);
         if (command) {
             try {
-                await command.execute(message, conn, match);
+                await command.execute(message, conn, args);
             } catch (err) {
                 console.error(err);
             }
-        } else {}
+        }
     }
 });
                                     
