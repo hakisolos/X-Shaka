@@ -10,7 +10,6 @@ const path = require("path");
 const { File } = require("megajs");
 const fs = require("fs");
 const crypto = require("crypto");
-const { eval: evaluate } = require("./lib/eval");
 const { groups, toggle } = require("./database/group");
 const { getPlugins } = require("./database/plugins");
 const { serialize } = require("./lib/messages");
