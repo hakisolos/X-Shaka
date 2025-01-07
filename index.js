@@ -13,7 +13,6 @@ const crypto = require("crypto");
 const { eval: evaluate } = require("./lib/eval");
 const { groups, toggle } = require("./database/group");
 const { getPlugins } = require("./database/plugins");
-const { announcementi } = require("./database/autolv");
 const { serialize } = require("./lib/messages");
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
@@ -105,7 +104,7 @@ async function startBot() {
         const command = commands.find((c) => c.command.toLowerCase() === args);
         if (command) {
             try {
-                await command.execute(message, conn, args);
+                await command.execute(message, conn, args, match);
             } catch (err) {
                 console.error(err);
             }
@@ -114,7 +113,6 @@ async function startBot() {
 });
                                     
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
-        await announcementi(id);
         const [group] = await groups(id);
         for (const participant of participants) {
             const username = participant.split("@")[0] || "Guest";
