@@ -92,8 +92,8 @@ async function startBot() {
     }
 
     const mek = message.body.trim();
+    const match = mek.slice(1).trim();                                                    
     if (mek.startsWith('>')) {
-        const match = mek.slice(1).trim(); 
         await evaluate(match, message, conn); 
         return;
     }
