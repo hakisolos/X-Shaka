@@ -68,15 +68,18 @@ async function startBot() {
     store.bind(conn.ev);
     await Client({ conn, store });
     conn.ev.on("creds.update", saveCreds);
-    conn.ev.on("messages.upsert", async ({ messages, type }) => {
-        if (type !== "notify") return;
-        const messageObject = messages?.[0];
-        if (!messageObject || !messageObject.message) return;
-        try {
-            const message = await serialize(conn, messageObject, store);
-            if (!message.message || message.user === "status@broadcast") return;
-            if (message.type === "protocolMessage" || message.type === "senderKeyDistributionMessage") {
-                if (!Object.keys(store.groupMetadata).length) {
+    conn.ev.on('messages.upsert', async ({ msgz }) => {
+        const asena = msgz[0];
+        if (!asena.message) return;
+        asena.message = (Object.keys(asena.message)[0] === 'ephemeralMessage') ? asena.message.ephemeralMessage.message : asena.message;
+        const message = await serialize(conn, asena, store);
+        if (! message || !message.key) {
+            console.error(message);
+            return;
+        }
+        const me = m.key.remoteJid;
+        if (message.sender !== me && message.type !== 'protocolMessage' &&message.type !== 'reactionMessage' && message.key.remoteJid === 'status@broadcast') 
+        if (!Object.keys(store.groupMetadata).length) {
                     store.groupMetadata = await conn.groupFetchAllParticipating();
                 }
                 return;
