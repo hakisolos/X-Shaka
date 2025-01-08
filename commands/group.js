@@ -1,6 +1,21 @@
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
+    command: 'group',
+    category: 'group',
+    desc: 'Change the group privacy settings',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if(!message.isBotAdmin) return message.reply('_not admin_');
+        if (!message.isAdmin) return;
+        if (!match || !['open', 'closed'].includes(match)) return message.reply('use "open" or "closed" for the group privacy');
+        const setting = match === 'open' ? 'not_announcement' : 'announcement';
+        await conn.groupSettingUpdate(message.user, setting);
+        message.reply(`Group set: "${match}"`);
+    },
+});
+
+CreatePlug({
     command: 'clearchat',
     category: 'group',
     desc: 'Clear all messages',
