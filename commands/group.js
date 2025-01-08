@@ -1,6 +1,25 @@
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
+    command: 'kickall',
+    category: 'group',
+    desc: 'kick all_',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if(!message.isBotAdmin) return;
+        if (!message.isAdmin) return;
+        const memb = await conn.groupMetadata(message.user);
+        const part = memb.participants.filter(member => !member.admin);
+        const parti = part.map(member => member.id);
+        if (parti.length === 0) return;
+        for (let i = 0; i < parti.length; i++) {
+            await conn.groupParticipantsUpdate(message.user, [parti[i]], 'remove');
+            await new Promise(resolve => setTimeout(resolve, 500)); 
+        }
+    },
+});
+
+CreatePlug({
     command: 'lockinvite',
     category: 'group',
     desc: 'Lock the group invite',
