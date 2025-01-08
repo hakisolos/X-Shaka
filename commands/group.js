@@ -165,4 +165,18 @@ CreatePlug({
         await message.reply(`*Group Link*:\nhttps://chat.whatsapp.com/${_invites}`);
     }
 });
-        
+
+CreatePlug({
+    command: 'setname',
+    category: 'group',
+    desc: 'Change the group name',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if(!message.isBotAdmin) return;
+        if (!message.isAdmin) return;
+        if (!match) return message.reply('_Please provide a name_');
+        await conn.groupUpdateSubject(message.user, match);
+        message.reply(`_Group name_: "${match}"`);
+    },
+});
+
