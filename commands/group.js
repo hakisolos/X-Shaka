@@ -20,7 +20,26 @@ CreatePlug({
     },
 });
 
-
+CreatePlug({
+    command: 'demote',
+    category: 'group',
+    desc: 'Demote members',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if (!message.isBotAdmin) return message.reply('_um not an admin_');
+        if (!message.isAdmin) return;
+        if (!match) return message.reply('_Please mention the user_');
+        let target;
+        if (message.message.extendedTextMessage && message.message.extendedTextMessage.contextInfo) {
+        target = message.message.extendedTextMessage.contextInfo.mentionedJid[0];
+        } else {
+        target = match.includes('@s.whatsapp.net') ? match : match + '@s.whatsapp.net';}
+        if (!target) return;
+        await conn.groupParticipantsUpdate(message.user, [target], 'demote');
+        message.reply(`_demoted_ ${target.replace('@s.whatsapp.net', '')}`);
+    },
+});
+    
 CreatePlug({
     command: 'mute',
     category: 'group',
