@@ -3,33 +3,41 @@ const { CreatePlug } = require('../lib/commands');
 CreatePlug({
     command: 'kick',
     category: 'group',
-    desc: 'Remove a member from the group',
+    desc: 'Remove a member from the group.',
     execute: async (message, conn, match) => {
-        if (!message.isGroup) return;
-        if (!message.isBotAdmin) return message.reply('_not admin_');
-        if (!message.isAdmin) return;
-        if (!match) return message.reply('_Please mention a memb_');
+        if (!message.isGroup) return message.reply('This command can only be used in groups.');
+        if (!message.isBotAdmin) return message.reply('I need admin privileges to remove members.');
+        if (!message.isAdmin) return message.reply('You need to be a group admin to use this command.');
+        if (!match) return message.reply('Please mention or provide the number of the user you want to kick.');
+
         let target;
+
+        // If the command is "kick all", remove everyone except the bot and mention all users
         if (match.toLowerCase() === 'all') {
             const data = await conn.groupMetadata(message.user);
             const participants = data.participants;
-            const isbot = conn.user.id; 
-            const memb = participants.filter(p => p.id !== isbot).map(p => p.id);
-            if (memb.length === 0) return;
-            await conn.groupParticipantsUpdate(message.user, memb, 'remove');
-            return message.reply('_All members removed_');}
+            const botJid = conn.user.id; // Get the bot's own ID
+            const membersToKick = participants.filter(p => p.id !== botJid); // Exclude the bot
+            if (membersToKick.length === 0) return message.reply('There are no members to remove.');
+           const mentions = membersToKick.map(p => `@${p.id.split('@')[0]}`);
+            await conn.sendMessage(message.user, { text: `bye ${mentions.join(', ')}`, mentions: membersToKick.map(p => p.id) });
+            await conn.groupParticipantsUpdate(message.chat, membersToKick.map(p => p.id), 'remove');
+            return message.reply('All members except the bot have been removed.');
+        }
+
         if (message.message.extendedTextMessage?.contextInfo?.mentionedJid[0]) {
             target = message.message.extendedTextMessage.contextInfo.mentionedJid[0];
         } else if (match.includes('@s.whatsapp.net')) {
             target = match;
         } else {
-        target = match + '@s.whatsapp.net'; }
-        if (!target) return;
+            target = match + '@s.whatsapp.net'; // Assuming match is just the username part
+        }
+        if (!target) return message.reply('Could not determine the user to remove.');
         await conn.groupParticipantsUpdate(message.user, [target], 'remove')
-            .then(() => message.reply(`_removed_ ${target.replace('@s.whatsapp.net', '')}.`))
+            .then(() => message.reply(`removed ${target.replace('@s.whatsapp.net', '')}.`))
             .catch((error) => { 
                 console.error(error); 
-                message.reply('err'); 
+                message.reply('Failed to remove the user. Ensure I have the necessary permissions.'); 
             });
     },
 });
@@ -58,8 +66,8 @@ CreatePlug({
         const participants = data.participants;
         const messages = await conn.loadMessages(message.user, 100);
         for (const msg of messages) {
-            if (msg.key.isFromMe) continue;
-            await conn.sendMessage(message.user, { delete: { remoteJid: message.user, isFromMe: false, messageId: msg.key.id } });
+            if (msg.key.fromMe) continue;
+            await conn.sendMessage(message.user, { delete: { remoteJid: message.user, fromMe: false, messageId: msg.key.id } });
         }
     },
 });
