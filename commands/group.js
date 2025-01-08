@@ -16,6 +16,20 @@ CreatePlug({
 });
 
 CreatePlug({
+    command: 'unmute',
+    category: 'group',
+    desc: 'Unmute the group',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if (!message.isBotAdmin) return message.reply('_not an admin_');
+        if (!message.isAdmin) return;
+        const data = await conn.groupMetadata(message.user);
+        if (!data.announce) return message.reply('_The group already opened_');
+        await conn.groupSettingUpdate(message.user, 'not_announcement');
+        },
+});
+
+CreatePlug({
     command: 'kick',
     category: 'group',
     desc: 'Remove a member from the group.',
