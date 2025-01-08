@@ -29,12 +29,12 @@ CreatePlug({
     await message.reply('_Downloading..._');
     
     const v_data = await tiktok_dl(match);
+        console.log('TikTok video data:', v_data);
     
     if (!v_data || !v_data.playUrl) {
       return message.reply('_Could not retrieve the video or the video URL is missing._');
     }
 
-    // Send the TikTok video with caption
     await conn.sendMessage(message.user, {
       video: { url: v_data.playUrl },
       caption: `*comments:* ${v_data.commentCount}\n*share count:* ${v_data.shareCount}\n*music author:* ${v_data.musicAuthor}`,
