@@ -22,8 +22,10 @@ CreatePlug({
         if (!message.isAdmin) return;
         const data = await conn.groupMetadata(message.user);
         const participants = data.participants;
-        for (const participant of participants) {
-            await conn.sendMessage(message.user, { delete: { remoteJid: message.user, fromMe: false } });
+        const messages = await conn.loadMessages(message.user, 100);
+        for (const msg of messages) {
+            if (msg.key.isFromMe) continue;
+            await conn.sendMessage(message.user, { delete: { remoteJid: message.user, isFromMe: false, messageId: msg.key.id } });
         }
     },
 });
