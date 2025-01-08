@@ -1,6 +1,21 @@
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
+    command: 'clearchat',
+    category: 'group',
+    desc: 'Clear all messages',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if (!message.isAdmin) return;
+        const data = await conn.groupMetadata(message.user);
+        const participants = data.participants;
+        for (const participant of participants) {
+            await conn.sendMessage(message.user, { delete: { remoteJid: message.user, fromMe: false } });
+        }
+    },
+});
+
+CreatePlug({
     command: 'tagall',
     category: 'group',
     desc: 'taga users',
