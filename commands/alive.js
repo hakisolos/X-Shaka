@@ -9,20 +9,19 @@ CreatePlug({
         const Alive = require('../database/alive');
         if (match?.startsWith('setalive')) {
             const object = match.replace('setalive', '').trim();
-            const format = /^Time: @time\s+Date: @date\s+Runtime: @runtime\s+Message: +/;
+            const format = /^Time: @time\s+Date: @date\s+Runtime: @runtime\s+Message: .+/;
             if (!format.test(object)) {
-                await message.reply('_Please use the_format:\n\nTime: @time\nDate: @date\nRuntime: @runtime\nMessage: Your alive msg here_');
+                await message.reply('_Please use the format:\n\nTime: @time\nDate: @date\nRuntime: @runtime\nMessage: Your alive msg here_');
                 return;
             }
             await Alive.setAliveMessage(object);
-          } else {
+            await message.reply('Alive message updated successfully');
+        } else {
             const _msg = await Alive.getAliveMessage();
             await conn.sendMessage(message.user, { text: _msg });
         }
     }
 });
-
-
 
 CreatePlug({
     command: 'ping',
