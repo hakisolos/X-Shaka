@@ -72,7 +72,6 @@ async function startBot() {
         : msg.message;
     const message = await serialize(msg, conn);
     if (!message || !message.key || !message.body) {
-        console.error(message);
         return;
     }
 
