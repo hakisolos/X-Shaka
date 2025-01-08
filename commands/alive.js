@@ -4,24 +4,22 @@ const CONFIG = require('../config');
 CreatePlug({
     command: 'alive',
     category: 'general',
-    desc: 'alive msg',
-    execute: async (message, conn, match) => {
-        const Alive = require('../database/alive');
-        if (match?.startsWith('setalive')) {
-            const object = match.replace('setalive', '').trim();
-            const format = /^Time: @time\s+Date: @date\s+Runtime: @runtime\s+Message: .+/;
-            if (!format.test(object)) {
-                await message.reply('_Please use the format:\n\nTime: @time\nDate: @date\nRuntime: @runtime\nMessage: Your alive msg here_');
-                return;
-            }
-            await Alive.setAliveMessage(object);
-            await message.reply('Alive message updated successfully');
-        } else {
-            const _msg = await Alive.getAliveMessage();
-            await conn.sendMessage(message.user, { text: _msg });
-        }
+    desc: 'alive',
+    execute: async (message, conn) => {
+        const platform = process.platform;
+        const runtime = process.version;
+        const uptime = process.uptime();
+        const usage = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
+        const status = `\`\`\`
+Bot Status:
+
+Platform: ${platform}
+Uptime: ${Math.floor(uptime / 60)}m ${Math.floor(uptime % 60)}s
+Memory Usage: ${usage}MB\n\nMade with ❣️
+\`\`\``;
+        await conn.sendMessage(message.user, { text: status }, {quoted: message});
     }
-});
+});                     
 
 CreatePlug({
     command: 'ping',
