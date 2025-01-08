@@ -1,5 +1,19 @@
 const { CreatePlug } = require('../lib/commands');
 
+CreatePlug({
+    command: 'mute',
+    category: 'group',
+    desc: 'Mute the group',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if (!message.isBotAdmin) return message.reply('_not_admin_');
+        if (!message.isAdmin) return;
+        const data = await conn.groupMetadata(message.user);
+        if (data.announce) return message.reply('_The group is already muted_');
+        await conn.groupSettingUpdate(message.user, 'announcement');
+        message.reply('_The group now_muted_');
+    },
+});
 
 CreatePlug({
     command: 'kick',
