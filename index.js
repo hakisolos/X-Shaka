@@ -89,13 +89,12 @@ async function startBot() {
 
     const mek = message.body.trim();
     const match = mek.slice(1).trim();                                                    
-        if (mek.startsWith('>')) {
-        if (message.sender !== me || CONFIG.app.mods) return; 
-        const code = match;
-        let result = eval(code);
-        if (result instanceof Promise) result = await result; 
-        conn.sendMessage(message.key.remoteJid, `\`\`\`js\n${result}\n\`\`\``, { quoted: message });
-    }
+      if (match.startsWith('>')) {
+       if (!me) continue;
+       let evaled = await eval(match.slice(2));
+       if (typeof evaled !== 'string') evaled = util.inspect(evaled);
+     return message.reply(evaled);
+  }
 
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     if (isCmd) {
