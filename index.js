@@ -7,6 +7,7 @@ const {
 } = require("@whiskeysockets/baileys");
 const P = require("pino");
 const path = require("path");
+const util = require('util');
 const { File } = require("megajs");
 const fs = require("fs");
 const { getPlugins } = require("./database/plugins");
