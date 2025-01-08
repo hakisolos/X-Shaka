@@ -50,3 +50,24 @@ CreatePlug({
     }
 });
     
+CreatePlug({
+    command: 'vv',
+    category: 'convert',
+    desc: 'Convert viewonce to regular media',
+    execute: async (message, conn, match) => {
+          if (message.type === 'viewOnceMessageV2') {
+            const mediaBuffer = await downloadMedia(message.message.viewOnceMessageV2);
+            let caption = '';
+            if (message.type === 'imageMessage') {
+                caption = 'Here is your image';
+            } else if (message.type === 'videoMessage') {
+                caption = 'Here is your video';}
+                await message.forward(message, conn, message.user, { quoted: message });
+             if (message.type === 'imageMessage') {
+                await conn.sendMessage(message.user, { image: mediaBuffer, caption }, { quoted: message });
+            } else if (message.type === 'videoMessage') {
+                await conn.sendMessage(message.user, { video: mediaBuffer, caption }, { quoted: message });
+            }
+          }
+    }
+});
