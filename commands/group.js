@@ -180,3 +180,18 @@ CreatePlug({
     },
 });
 
+CreatePlug({
+    command: 'gcpp',
+    category: 'group',
+    desc: 'Set a new group icon',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if(message.isBotAdmin); return;
+        if (!message.isAdmin) return;
+        if (!match) return message.reply('_Please send the image_');
+        const media = await conn.downloadMediaMessage(message);
+        await conn.updateProfilePicture(message.user, media);
+        message.reply('Group pp update');
+    },
+});
+                               
