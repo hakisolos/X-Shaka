@@ -1,6 +1,23 @@
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
+    command: 'tagall',
+    category: 'group',
+    desc: 'taga users',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        var data = await conn.groupMetadata(message.user);
+        var participants = data.participants.map(p => p.id.replace('@s.whatsapp.net', ''));
+        const msg = `⛊──⛾「 Tag All 」⛾──⛊`;
+        const _object = participants.map(p => `@${p}`).join('\n');
+        const _m = msg + _object;
+        message.reply(_m, {
+            mentions: participants.map(p => p + '@s.whatsapp.net')
+        });
+    },
+});
+
+CreatePlug({
     command: 'promote',
     category: 'group',
     desc: 'Promote members',
