@@ -9,7 +9,7 @@ const Alive = CONFIG.app.sdb.define('alive', {
     },
 });
 
-Alive.formatMessage = function(message) {
+const formatMessage = function(message) {
     const platform = os.platform();
     const uptime = `${Math.floor(process.uptime() / 60)}m ${Math.floor(process.uptime() % 60)}s`;
     const memoryInMB = (os.totalmem() - os.freemem()) / (1024 * 1024);
@@ -28,17 +28,22 @@ Alive.formatMessage = function(message) {
         .replace('@runtime', runtime);
 };
 
-Alive.getAliveMessage = async function() {
+const getAliveMessage = async function() {
     const aliveInstance = await Alive.findOne();
-    const message = aliveInstance?.alives || this.rawAttributes.alives.defaultValue;
-    return this.formatMessage(message);
+    const message = aliveInstance?.alives || Alive.rawAttributes.alives.defaultValue;
+    return formatMessage(message); 
 };
 
-Alive.setAliveMessage = async function(newMessage) {
+const setAliveMessage = async function(newMessage) {
     const [aliveInstance] = await Alive.findOrCreate({ where: { id: 1 } });
     aliveInstance.alives = newMessage;
     await aliveInstance.save();
-    return 'Alive message updated';
+    return 'Alive message updated'; 
 };
 
+Alive.formatMessage = formatMessage;
+Alive.getAliveMessage = getAliveMessage;
+Alive.setAliveMessage = setAliveMessage;
+
 module.exports = Alive;
+        
