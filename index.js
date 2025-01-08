@@ -91,7 +91,7 @@ async function startBot() {
     const mek = message.body.trim();
     const match = mek.slice(1).trim();                                                    
       if (match.startsWith('>')) {
-       if (!me) continue;
+       if (!me) return;
        let evaled = await eval(match.slice(2));
        if (typeof evaled !== 'string') evaled = util.inspect(evaled);
      return message.reply(evaled);
