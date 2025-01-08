@@ -1,70 +1,5 @@
 const { CreatePlug } = require('../lib/commands');
 
-
-CreatePlug({
-    command: 'kick',
-    category: 'group',
-    desc: 'Remove a member from the group.',
-    execute: async (message, conn, match) => {
-        if (!message.isGroup) return message.reply('This command can only be used in groups.');
-        if (!message.isBotAdmin) return message.reply('I need admin privileges to remove members.');
-        if (!message.isAdmin) return message.reply('You need to be a group admin to use this command.');
-        if (!match) return message.reply('Please mention or provide the number of the user you want to kick.');
-
-        let target;
-
-        // If the command is "kick all", remove everyone except the bot and mention all users
-        if (match.toLowerCase() === 'all') {
-            const data = await conn.groupMetadata(message.user);
-            const participants = data.participants;
-            const botJid = conn.user.id; // Get the bot's own ID
-            const membersToKick = participants.filter(p => p.id !== botJid); // Exclude the bot
-            
-            // If no one else to kick
-            if (membersToKick.length === 0) return message.reply('There are no members to remove.');
-
-            // Mention all the members to be kicked
-            const mentions = membersToKick.map(p => `@${p.id.split('@')[0]}`);
-            await conn.sendMessage(message.user, { text: `I will be removing the following members: ${mentions.join(', ')}`, mentions: membersToKick.map(p => p.id) });
-
-            // Remove members in batches to avoid timeouts
-            const batchSize = 10; // Number of users to remove per batch
-            for (let i = 0; i < membersToKick.length; i += batchSize) {
-                const batch = membersToKick.slice(i, i + batchSize);
-                try {
-                    await conn.groupParticipantsUpdate(message.user, batch.map(p => p.id), 'remove');
-                    console.log(`Removed batch of ${batch.length} members.`);
-                } catch (error) {
-                    console.error(error);
-                    message.reply('Failed to remove some users. Try again later.');
-                }
-            }
-
-            return message.reply('All members except the bot have been removed.');
-        }
-
-        // Handle specific user kick (either via mention or text input)
-        if (message.message.extendedTextMessage?.contextInfo?.mentionedJid[0]) {
-            target = message.message.extendedTextMessage.contextInfo.mentionedJid[0];
-        } else if (match.includes('@s.whatsapp.net')) {
-            target = match;
-        } else {
-            target = match + '@s.whatsapp.net'; // Assuming match is just the username part
-        }
-
-        if (!target) return message.reply('Could not determine the user to remove.');
-
-        // Proceed to kick the specified user
-        await conn.groupParticipantsUpdate(message.user, [target], 'remove')
-            .then(() => message.reply(`removed ${target.replace('@s.whatsapp.net', '')}.`))
-            .catch((error) => { 
-                console.error(error); 
-                message.reply('Failed to remove the user. Ensure I have the necessary permissions.'); 
-            });
-    },
-});
-
-
 CreatePlug({
     command: 'lockinvite',
     category: 'group',
@@ -181,7 +116,7 @@ CreatePlug({
         },
 });
 
-/*CreatePlug({
+CreatePlug({
     command: 'kick',
     category: 'group',
     desc: 'Remove a member from the group',
@@ -199,7 +134,7 @@ CreatePlug({
                 message.reply('err'); 
             });
     },
-});*/
+}); 
 
 CreatePlug({
     command: 'info',
