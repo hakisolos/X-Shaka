@@ -1,6 +1,19 @@
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
+    command: 'lockinvite',
+    category: 'group',
+    desc: 'Lock the group invite',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if(!message.isBotAdmin) return message.reply('_um not admin_');
+        if (!message.isAdmin) return;
+        await conn.groupSettingUpdate(message.user, 'locked');
+        message.reply('_Done_');
+    },
+});
+
+CreatePlug({
     command: 'group',
     category: 'group',
     desc: 'Change the group privacy settings',
