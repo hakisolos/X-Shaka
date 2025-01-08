@@ -16,29 +16,6 @@ CreatePlug({
     }
 });
 
-const getChats = async (conn) => {
-    const chats = await conn.chats.all();
-    return { 
-        groups: chats.filter(chat => chat.id.endsWith('@g.us')),
-        users: chats.filter(chat => !chat.id.endsWith('@g.us'))
-    };
-};
-
-CreatePlug({
-    command: 'getgc',
-    category: 'admin',
-    desc: 'groups',
-    execute: async (message, conn, match) => {
-        if (!message.isFromMe) return;
-        const { groups } = await getChats(conn);
-        const mime = await Promise.all(groups.map(async (group, index) => {
-            const name = (await conn.groupMetadata(group.id)).subject;
-            return `${index + 1}. ${name}\n   *Jid:* ${group.id}`;
-        }));
-        await conn.sendMessage(message.user, { text: `*Groups:*\n${mime.join('\n\n')}` });
-    }
-});
-
 CreatePlug({
     command: 'leave',
     category: 'admin',
@@ -50,24 +27,4 @@ CreatePlug({
     }
 });
     
-CreatePlug({
-    command: 'vv',
-    category: 'convert',
-    desc: 'Convert viewonce to regular media',
-    execute: async (message, conn, match) => {
-          if (message.type === 'viewOnceMessageV2') {
-            const mediaBuffer = await downloadMedia(message.message.viewOnceMessageV2);
-            let caption = '';
-            if (message.type === 'imageMessage') {
-                caption = 'Here is your image';
-            } else if (message.type === 'videoMessage') {
-                caption = 'Here is your video';}
-                await message.forward(message, conn, message.user, { quoted: message });
-             if (message.type === 'imageMessage') {
-                await conn.sendMessage(message.user, { image: mediaBuffer, caption }, { quoted: message });
-            } else if (message.type === 'videoMessage') {
-                await conn.sendMessage(message.user, { video: mediaBuffer, caption }, { quoted: message });
-            }
-          }
-    }
-});
+                                                           
