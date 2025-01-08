@@ -1,6 +1,40 @@
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
+    command: 'kick',
+    category: 'group',
+    desc: 'Remove a member from the group',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if (!message.isBotAdmin) return message.reply('_not admin_');
+        if (!message.isAdmin) return;
+        if (!match) return message.reply('_Please mention a memb_');
+        let target;
+        if (match.toLowerCase() === 'all') {
+            const data = await conn.groupMetadata(message.user);
+            const participants = data.participants;
+            const isbot = conn.user.id; 
+            const memb = participants.filter(p => p.id !== isbot).map(p => p.id);
+            if (memb.length === 0) return;
+            await conn.groupParticipantsUpdate(message.user, memb, 'remove');
+            return message.reply('_All members removed_');}
+        if (message.message.extendedTextMessage?.contextInfo?.mentionedJid[0]) {
+            target = message.message.extendedTextMessage.contextInfo.mentionedJid[0];
+        } else if (match.includes('@s.whatsapp.net')) {
+            target = match;
+        } else {
+        target = match + '@s.whatsapp.net'; }
+        if (!target) return;
+        await conn.groupParticipantsUpdate(message.user, [target], 'remove')
+            .then(() => message.reply(`_removed_ ${target.replace('@s.whatsapp.net', '')}.`))
+            .catch((error) => { 
+                console.error(error); 
+                message.reply('err'); 
+            });
+    },
+});
+
+CreatePlug({
     command: 'lockinvite',
     category: 'group',
     desc: 'Lock the group invite',
@@ -116,7 +150,7 @@ CreatePlug({
         },
 });
 
-CreatePlug({
+/*CreatePlug({
     command: 'kick',
     category: 'group',
     desc: 'Remove a member from the group',
@@ -134,7 +168,7 @@ CreatePlug({
                 message.reply('err'); 
             });
     },
-});
+});*/
 
 CreatePlug({
     command: 'info',
