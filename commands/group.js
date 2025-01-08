@@ -1,6 +1,27 @@
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
+    command: 'promote',
+    category: 'group',
+    desc: 'Promote members',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if (!message.isBotAdmin) return message.reply('_not an admin_');
+        if (!message.isAdmin) return;
+        if (!match) return message.reply('_Please mention the user_');
+        let target; 
+        if (message.message.extendedTextMessage && message.message.extendedTextMessage.contextInfo) {
+            target = message.message.extendedTextMessage.contextInfo.mentionedJid[0];
+        } else {
+            target = match.includes('@s.whatsapp.net') ? match : match + '@s.whatsapp.net';}
+        if (!target) return;
+        await conn.groupParticipantsUpdate(message.user, [target], 'promote');
+        message.reply(`_promoted_ ${target.replace('@s.whatsapp.net', '')} as admin`);
+    },
+});
+
+
+CreatePlug({
     command: 'mute',
     category: 'group',
     desc: 'Mute the group',
