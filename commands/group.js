@@ -14,21 +14,6 @@ CreatePlug({
 });
 
 CreatePlug({
-    command: 'group',
-    category: 'group',
-    desc: 'Change the group privacy settings',
-    execute: async (message, conn, match) => {
-        if (!message.isGroup) return;
-        if(!message.isBotAdmin) return message.reply('_not admin_');
-        if (!message.isAdmin) return;
-        if (!match || !['open', 'closed'].includes(match)) return message.reply('use "open" or "closed" for the group privacy');
-        const setting = match === 'open' ? 'not_announcement' : 'announcement';
-        await conn.groupSettingUpdate(message.user, setting);
-        message.reply(`Group set: "${match}"`);
-    },
-});
-
-CreatePlug({
     command: 'clearchat',
     category: 'group',
     desc: 'Clear all messages',
@@ -51,7 +36,7 @@ CreatePlug({
         if (!message.isGroup) return;
         var data = await conn.groupMetadata(message.user);
         var participants = data.participants.map(p => p.id.replace('@s.whatsapp.net', ''));
-        const msg = `⛊──⛾「 Tag All 」⛾──⛊`;
+        const msg = `⛊──⛾「 Tag All 」⛾──⛊\n`;
         const _object = participants.map(p => `@${p}`).join('\n');
         const _m = msg + _object;
         message.reply(_m, {
