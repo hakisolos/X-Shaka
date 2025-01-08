@@ -15,8 +15,7 @@ CreatePlug({
                 return;
             }
             await Alive.setAliveMessage(object);
-            await conn.sendMessage(message.user, { text: "Alive set successfully" });
-        } else {
+          } else {
             const _msg = await Alive.getAliveMessage();
             await conn.sendMessage(message.user, { text: _msg });
         }
