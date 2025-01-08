@@ -25,10 +25,19 @@ CreatePlug({
   desc: 'Download tiktok vid',
   execute: async (message, conn, match) => {
     if (!match) return message.reply('_Please provide a tiktok url_');
+    
     await message.reply('_Downloading..._');
+    
     const v_data = await tiktok_dl(match);
-    if (!v_data) return message.reply('_Could not retrieve_');
-    await conn.sendMessage(message.user, { video: { url: v_data.playUrl }, caption: `*comments:* ${v_data.commentCount}\n*share count:* ${v_data.shareCount}\n*music author:* ${v_data.musicAuthor}`, }, { quoted: message });
+    
+    if (!v_data || !v_data.playUrl) {
+      return message.reply('_Could not retrieve the video or the video URL is missing._');
+    }
+
+    // Send the TikTok video with caption
+    await conn.sendMessage(message.user, {
+      video: { url: v_data.playUrl },
+      caption: `*comments:* ${v_data.commentCount}\n*share count:* ${v_data.shareCount}\n*music author:* ${v_data.musicAuthor}`,
+    }, { quoted: message });
   },
 });
-      
