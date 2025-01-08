@@ -1,35 +1,44 @@
 const CONFIG = require('../config');
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const os = require('os');
 
-const User = CONFIG.app.sdb.define('User', {
-    username: { type: DataTypes.STRING, allowNull: false, unique: true, trim: true },
-    id: { type: DataTypes.STRING, allowNull: false, primaryKey: true }, 
-    platform: { type: DataTypes.STRING, defaultValue: 'unknown' },
-    uptime: { type: DataTypes.STRING, defaultValue: '0s' },
-    memoryUsage: { type: DataTypes.STRING, defaultValue: '0MB' },
+const Alive = CONFIG.app.sdb.define('alive', {
     alives: { 
-        type: DataTypes.STRING, 
+        type: DataTypes.STRING,
         defaultValue: `Bot Status:\n\nPlatform: {{platform}}\nUptime: {{uptime}}\nMemory Usage: {{memoryUsage}}\n\nI'm alive now 💘`,
     },
-    createdAt: { type: DataTypes.DATE, defaultValue: Sequelize.NOW },
-    isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
-}, { timestamps: false });
-
-User.beforeCreate(async (user) => {
-    user.platform = os.platform();
-    user.uptime = `${Math.floor(process.uptime() / 60)}m ${Math.floor(process.uptime() % 60)}s`;
-    const memoryInMB = (os.totalmem() - os.freemem()) / (1024 * 1024);
-    user.memoryUsage = `${memoryInMB.toFixed(2)}MB`;
 });
 
-User.prototype.generateAliveMessage = function () {
-    return this.alives
-        .replace('{{platform}}', this.platform)
-        .replace('{{uptime}}', this.uptime)
-        .replace('{{memoryUsage}}', this.memoryUsage);
+Alive.formatMessage = function(message) {
+    const platform = os.platform();
+    const uptime = `${Math.floor(process.uptime() / 60)}m ${Math.floor(process.uptime() % 60)}s`;
+    const memoryInMB = (os.totalmem() - os.freemem()) / (1024 * 1024);
+    const memoryUsage = `${memoryInMB.toFixed(2)}MB`;
+    const now = new Date();
+    const time = now.toLocaleTimeString();
+    const date = now.toLocaleDateString();
+    const runtime = uptime;
+
+    return message
+        .replace('{{platform}}', platform)
+        .replace('{{uptime}}', uptime)
+        .replace('{{memoryUsage}}', memoryUsage)
+        .replace('@time', time)
+        .replace('@date', date)
+        .replace('@runtime', runtime);
 };
 
-CONFIG.app.sdb.sync();
-module.exports = User;
-        
+Alive.getAliveMessage = async function() {
+    const aliveInstance = await Alive.findOne();
+    const message = aliveInstance?.alives || this.rawAttributes.alives.defaultValue;
+    return this.formatMessage(message);
+};
+
+Alive.setAliveMessage = async function(newMessage) {
+    const [aliveInstance] = await Alive.findOrCreate({ where: { id: 1 } });
+    aliveInstance.alives = newMessage;
+    await aliveInstance.save();
+    return 'Alive message updated';
+};
+
+module.exports = Alive;
