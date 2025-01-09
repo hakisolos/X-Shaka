@@ -49,7 +49,7 @@ auth();
 
 async function startBot() {
     await CONFIG.app.sdb.sync();
-    console.log("Sequelize db_connected ✅");
+    console.log("Sequelize connected ✅");
     const auth_creds = path.join(__dirname, "lib", "session");
     let { state, saveCreds } = await useMultiFileAuthState(auth_creds);
     const conn = makeWASocket({
@@ -105,6 +105,21 @@ if (CONFIG.app.mode === true && !message.isowner) return;
         }
     }
 });
+
+conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
+  const time = new Date().toLocaleTimeString();
+  for (let participant of participants) {
+    const img = await conn.profilePictureUrl(participant, "image");
+    let message = "";
+    if (action === "add") message = `_Welcome mate_ ${participant}\n _Time_: ${time}`;
+    else if (action === "remove") message = `_Another mate out_ ${participant}\n_Time_: ${time}`;
+    else if (action === "promote") message = `_Congrats_ ${participant}\n _Youve been promoted_`;
+    else if (action === "demote") message = `${participant}\n_Youve been demoted_`;
+    if (message) {
+      await conn.sendMessage(id, { text: message, previewType: 'image', image: { url: img } });
+       }
+      }
+   });
 
     conn.ev.on("connection.update", async (update) => {
         const { connection } = update;
