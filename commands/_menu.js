@@ -7,7 +7,7 @@ CreatePlug({
     category: 'general',
     desc: 'types',
     execute: async (message, conn) => {
-       // await message.react('🗣️');
+        await message.react('🗣️');
         if (!Array.isArray(commands)) {
             await message.reply('not_found');
             return;
@@ -28,6 +28,7 @@ CreatePlug({
             return `╭──╼【 ${monospace((CONFIG.app.botname || 'BOT').toUpperCase())} 】\n` +
                    `┃ ✦ Prefix  : ${CONFIG.app.prefix || '/'}\n` +
                    `┃ ✦ User    : ${message.pushName || 'unknown'}\n` +
+                   `┃ ✦ Mode    : ${process.env.MODE}\n` +
                    `┃ ✦ Date    : ${date}\n` +
                    `┃ ✦ Time    : ${time}\n` +
                    `┃ ✦ Version : ${CONFIG.app.version || '1.0.0'}\n` +
@@ -44,8 +45,8 @@ CreatePlug({
         for (const [category, cmds] of Object.entries(gorized)) {
             msg += _cxl(category, cmds) + '\n\n';
         }
-        msg += `made with 💘`;
-        const sent = await conn.sendMessage(message.user, { text: msg.trim() }, { quoted: message });
+        msg += `made with ❣️`;
+        const sent = await conn.send(message.user, { text: msg.trim() }, { quoted: message });
         if (!sent) {
             await message.reply('err');
         }
