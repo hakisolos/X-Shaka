@@ -88,7 +88,7 @@ async function startBot() {
 
 if (CONFIG.app.mode === true && !message.isowner) return;
    // const match = (typeof message.body === 'string' && message.body.trim().split(/\s+/).slice(1).join(" ")) || '';
-    const match = body.trim().split(/ +/).slice(1).join(" ");
+    const match = message.body.trim().split(/ +/).slice(1).join(" ");
     if (match.startsWith('>') && (message.sender === conn.user.id || CONFIG.app.mods.includes(message.sender))) {
     let evaled = await eval(match.slice(2));
     if (typeof evaled !== 'string') evaled = util.inspect(evaled);
