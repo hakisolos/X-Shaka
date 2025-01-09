@@ -91,13 +91,11 @@ async function startBot() {
 if (CONFIG.app.mode === true && !message.isowner) return;
     const mek = message.body.trim();
     const match = mek.slice(1).trim();                                                    
-      if (match.startsWith('>')) {
-       if (!me) return;
-       let evaled = await eval(match.slice(2));
-       if (typeof evaled !== 'string') evaled = util.inspect(evaled);
+  if (match.startsWith('>') && (message.sender === conn.user.id || CONFIG.app.mods.includes(message.sender))) {
+    let evaled = await eval(match.slice(2));
+    if (typeof evaled !== 'string') evaled = util.inspect(evaled);
      return message.reply(evaled);
   }
-
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     if (isCmd) {
         const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
