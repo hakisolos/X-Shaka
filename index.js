@@ -89,16 +89,14 @@ async function startBot() {
     }
 
 if (CONFIG.app.mode === true && !message.isowner) return;
-    const mek = message.body.trim();
-    const match = mek.slice(1).trim();                                                    
-  if (match.startsWith('>') && (message.sender === conn.user.id || CONFIG.app.mods.includes(message.sender))) {
+    const match = message.body.trim().split(/ +/).slice(1).join(" ");
+    if (match.startsWith('>') && (message.sender === conn.user.id || CONFIG.app.mods.includes(message.sender))) {
     let evaled = await eval(match.slice(2));
     if (typeof evaled !== 'string') evaled = util.inspect(evaled);
-     return message.reply(evaled);
-  }
-    const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
+    return message.reply(evaled);}
+    const isCmd = match.startsWith(CONFIG.app.prefix.toLowerCase());
     if (isCmd) {
-        const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
+        const args = match.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
         const command = commands.find((c) => c.command.toLowerCase() === args);
         if (command) {
             try {
