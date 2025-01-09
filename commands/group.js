@@ -1,6 +1,33 @@
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
+    command: 'kick',
+    category: 'group',
+    desc: 'Kick members by country code or kick all members',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup || !message.isBotAdmin || !message.isAdmin) return;
+        const arg = match[1];
+        if (arg === 'all') {
+            const { participants } = await conn.groupMetadata(message.user);
+            const com = participants.filter(member => !member.admin && member.id !== conn.user.id);
+            if (com.length === 0) return;
+            for (const user of com) {
+                await conn.groupParticipantsUpdate(message.user, [user.id], 'remove');
+                await new Promise(resolve => setTimeout(resolve, 500)); }
+            return message.reply(`${arg.length} _user(s) removed_`); }
+          if (!arg || isNaN(arg.replace('+', ''))) {
+            return message.reply('Please provide a valid country code (e.g., `kick +27`).');}
+        const { participants } = await conn.groupMetadata(message.user);
+        const cam = participants.filter(member => member.id.split('@')[0].startsWith(arg.replace('+', '')));
+        if (cam.length === 0) return;
+        for (const user of cam) {
+            await conn.groupParticipantsUpdate(message.user, [user.id], 'remove');
+            await new Promise(resolve => setTimeout(resolve, 500)); }
+        return message.reply(`${cam.length} _user(s) removed_`);
+    },
+});
+                    
+/*CreatePlug({
     command: 'kickall',
     category: 'group',
     desc: 'kick all_',
@@ -17,7 +44,7 @@ CreatePlug({
             await new Promise(resolve => setTimeout(resolve, 500)); 
         }
     },
-});
+});*/
 
 CreatePlug({
     command: 'lockinvite',
@@ -136,7 +163,7 @@ CreatePlug({
 });
 
 CreatePlug({
-    command: 'kick',
+    command: 'remove',
     category: 'group',
     desc: 'Remove a member from the group',
     execute: async (message, conn, match) => {
