@@ -73,10 +73,8 @@ async function startBot() {
         : msg.message;
     const message = await serialize(msg, conn);
     if (!message || !message.key || !message.body) {
-        return;
-    }
-
-    const me = conn.user.id;
+        return;}
+    const me = message.key.remoteJid;
     if (
         message.sender !== me &&
         ['protocolMessage', 'reactionMessage'].includes(message.type) &&
