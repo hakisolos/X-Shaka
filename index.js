@@ -88,6 +88,7 @@ async function startBot() {
         return;
     }
 
+if (CONFIG.app.mode === true && !message.isowner) return;
     const mek = message.body.trim();
     const match = mek.slice(1).trim();                                                    
       if (match.startsWith('>')) {
