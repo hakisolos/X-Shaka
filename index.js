@@ -117,10 +117,10 @@ conn.ev.on("group-participants.update", async ({ id, participants, action }) => 
     else if (action === "promote") message = `_Congrats_ ${participant}\n _Youve been promoted_`;
     else if (action === "demote") message = `${participant}\n_Youve been demoted_`;
     if (message) {
-      await conn.sendMessage(id, { text: message, previewType: 'image', image: { url: img } });
-       }
-      }
-   });
+      await conn.sendMessage(id, { text: message, image: { url: img } });
+    }
+  }
+});
 
     conn.ev.on("connection.update", async (update) => {
         const { connection } = update;
