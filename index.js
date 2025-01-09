@@ -3,6 +3,7 @@ const {
     fetchLatestBaileysVersion,
     useMultiFileAuthState,
     makeInMemoryStore,
+    makeCacheableSignalKeyStore,
     Browsers,
 } = require("@whiskeysockets/baileys");
 const P = require("pino");
