@@ -53,12 +53,15 @@ async function startBot() {
     const auth_creds = path.join(__dirname, "lib", "session");
     let { state, saveCreds } = await useMultiFileAuthState(auth_creds);
     const conn = makeWASocket({
-        logger: P({ level: "silent" }),
+       // logger: P({ level: "silent" }),
+        auth: {
+            creds: state.creds,
+            keys: makeCacheableSignalKeyStore(state.keys, logger),
+        },
         printQRInTerminal: false,
         browser: Browsers.macOS("Chrome"),
         syncFullHistory: true,
         emitOwnEvents: true,
-        auth: state,
         version: (await fetchLatestBaileysVersion()).version,
     });
 
