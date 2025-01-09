@@ -18,7 +18,7 @@ Platform: ${platform}
 Uptime: ${Math.floor(uptime / 60)}m ${Math.floor(uptime % 60)}s
 Memory Usage: ${usage}MB\n\nMade with ❣️
 \`\`\``;
-        await conn.send(message.user, { text: status }, {quoted: message});
+        await conn.sendMessage(message.user, { text: status }, {quoted: message});
     }
 });                     
 
@@ -28,10 +28,10 @@ CreatePlug({
     desc: 'latency',
     execute: async (message, conn) => {
         const start = Date.now();
-        await conn.send(message.user, { text: '_' });
+        await conn.sendMessage(message.user, { text: '_' });
         const end = Date.now();
         await message.react('🗣️');
-        await conn.send(message.user, { text: `Pong! ${end - start}ms` });
+        await conn.sendMessage(message.user, { text: `Pong! ${end - start}ms` });
     }
 });
         
