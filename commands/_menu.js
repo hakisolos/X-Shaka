@@ -46,7 +46,7 @@ CreatePlug({
             msg += _cxl(category, cmds) + '\n\n';
         }
         msg += `made with ❣️`;
-        const sent = await conn.sendMessage(message.user, { text: msg.trim() }, { quoted: message });
+        const sent = await conn.send(message.user, { text: msg.trim() }, { quoted: message });
         if (!sent) {
             await message.reply('err');
         }
