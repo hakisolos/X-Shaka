@@ -65,49 +65,47 @@ async function startBot() {
 
     store.bind(conn.ev);
     conn.ev.on("creds.update", saveCreds);
-    conn.ev.on('messages.upsert', async ({ messages }) => {
-        const msg = messages[0];
-        if (!msg.message) return;
+    conn.ev.on("messages.upsert", async ({ messages }) => {
+    const msg = messages[0];
+    if (!msg.message) return;
 
-        msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
-            ? msg.message.ephemeralMessage.message
-            : msg.message;
-        const message = await serialize(msg, conn);
-        if (!message || !message.key || !message.body) {
-            return;
+    msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
+        ? msg.message.ephemeralMessage.message
+        : msg.message;
+    const message = await serialize(msg, conn);
+    if (!message || !message.key || !message.body) {
+        return;
+    }
+    const me = message.key.remoteJid;
+    if (
+        message.sender !== me &&
+        ['protocolMessage', 'reactionMessage'].includes(message.type) &&
+        message.key.remoteJid === 'status@broadcast'
+    ) {
+        if (!Object.keys(store.groupMetadata).length) {
+            store.groupMetadata = await conn.groupFetchAllParticipating();
         }
-        const me = message.key.remoteJid;
-        if (
-            message.sender !== me &&
-            ['protocolMessage', 'reactionMessage'].includes(message.type) &&
-            message.key.remoteJid === 'status@broadcast'
-        ) {
-            if (!Object.keys(store.groupMetadata).length) {
-                store.groupMetadata = await conn.groupFetchAllParticipating();
-            }
-            return;
-        }
+        return;
+    }
 
-        if (CONFIG.app.mode === true && !message.isowner) return;
-        const mek = message.body.trim().toLowerCase();
-        const match = mek.split(/ +/).slice(1).join(" ");
-        const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
-        console.log("------------------\n" +`user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` +"------------------"
-        );
-        if (mek.startsWith(CONFIG.app.prefix.toLowerCase()) && iscmd) {
-            const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
-            if (args) {
-                const command = commands.find((c) => c.command.toLowerCase() === args);
-                if (command) {
-                    try {
-                        await command.execute(message, conn, args, match);
-                    } catch (err) {
-                        console.error(err);
-                    }
-                }
+    if (CONFIG.app.mode === true && !message.isowner) return;
+    const mek = message.body.trim().toLowerCase();
+    const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
+    console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
+    if (iscmd) {
+        const args = mek.slice(CONFIG.app.prefix.length).trim().split(/ +/);
+        const c = args.shift().toLowerCase();
+        const match = args.join(" ");
+        const command = commands.find((c) => c.command.toLowerCase() === c);
+        if (command) {
+            try {
+                await command.execute({ conn, message, args, match });
+            } catch (err) {
+                console.error(`${c}:`, err);
             }
         }
-    });
+    }
+});
 
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
