@@ -114,7 +114,7 @@ conn.ev.on("group-participants.update", async ({ id, participants, action }) => 
     const img = await conn.profilePictureUrl(participant, "image");
     let message = "";
     if (action === "add") message = `_Welcome mate_ ${participant}\n _Time_: ${time}`;
-    else if (action === "remove") message = `_Another mate out_ ${participant}\n_Time_: ${time}`;
+    else if (action === "remove") message = `_Until next time mate_ ${participant}\n_Time_: ${time}`;
     else if (action === "promote") message = `_Congrats_ ${participant}\n _Youve been promoted_`;
     else if (action === "demote") message = `${participant}\n_Youve been demoted_`;
     if (message) {
