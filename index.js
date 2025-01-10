@@ -90,18 +90,18 @@ async function startBot() {
 
     if (CONFIG.app.mode === true && !message.isowner) return;
     const mek = message.body.trim().toLowerCase();
-    const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
+    const iscmd = mek.startsWith(`${CONFIG.app.prefix}+`);
     console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
     if (iscmd) {
-        const args = mek.slice(CONFIG.app.prefix.length).trim().split(/ +/);
-        const c = args.shift().toLowerCase();
+        const args = mek.slice(`${CONFIG.app.prefix}+`.length).trim().split(/ +/);
+        const cmdName = args.shift().toLowerCase();  
         const match = args.join(" ");
-        const command = commands.find((c) => c.command.toLowerCase() === c);
+        const command = commands.find((c) => c.command.toLowerCase() === cmdName);
         if (command) {
             try {
                 await command.execute({ conn, message, args, match });
             } catch (err) {
-                console.error(`${c}:`, err);
+                console.error(`${cmdName}:`, err);
             }
         }
     }
