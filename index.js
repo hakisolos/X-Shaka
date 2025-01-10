@@ -104,7 +104,7 @@ if (match) {
             }
         }
     }
-}
+}});
 
 conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
   const time = new Date().toLocaleTimeString();
