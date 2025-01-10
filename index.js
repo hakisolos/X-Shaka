@@ -1,3 +1,4 @@
+//
 const {
     default: makeWASocket,
     fetchLatestBaileysVersion,
@@ -89,6 +90,7 @@ async function startBot() {
         }
 
         if (CONFIG.app.mode === true && !message.isowner) return;
+
         const mek = message.body.trim().toLowerCase();
         const match = mek.split(/ +/).slice(1).join(" ");
         const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
@@ -144,4 +146,3 @@ async function startBot() {
 }
 
 setTimeout(startBot, 3000);
-        
