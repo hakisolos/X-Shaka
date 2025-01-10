@@ -35,3 +35,12 @@ CreatePlug({
     }
 });
         
+CreatePlug({
+    command: 'runtime',
+    category: 'mics',
+    desc: 'Shows bot runtime',
+    execute: async (message, conn) => {
+        await message.react('🗣️');
+        await message.reply(`Bot uptime: ${process.uptime()} seconds`);
+    }
+});
