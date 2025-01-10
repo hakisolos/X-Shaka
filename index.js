@@ -57,27 +57,44 @@ async function startBot() {
     const msg = messages[0];
     if (!msg.message) return;
     msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage' ? msg.message.ephemeralMessage.message : msg.message;
+
     const message = await serialize(msg, conn);
     if (!message || !message.key || !message.body) return;
+
     const me = message.key.remoteJid;
     if (message.sender !== me && ['protocolMessage', 'reactionMessage'].includes(message.type) && message.key.remoteJid === 'status@broadcast') {
         if (!Object.keys(store.groupMetadata).length) store.groupMetadata = await conn.groupFetchAllParticipating();
-        return;}
+        return;
+    }
+
     if (CONFIG.app.mode === true && !message.isowner) return;
+
     const mek = message.body.trim().toLowerCase();
     const commandPrefix = CONFIG.app.prefix;
+    
     if (mek.startsWith(commandPrefix)) {
-        const args = mek.slice(commandPrefix.length).trim().split(/ +/), cmdName = args.shift().toLowerCase(), match = args.join(" ");
+        const args = mek.slice(commandPrefix.length).trim().split(/ +/);
+        const cmdName = args.shift().toLowerCase();
+        const match = args.join(" ");
+        
+        // Find the command using the cmdName
         const command = commands.find((c) => c.command.toLowerCase() === cmdName);
+        
         if (command) {
             try {
+                // Execute the command
                 await command.execute({ conn, message, args, match });
-                if (message.body && command.on === message.body) await command.on({ conn, message, args, match });
+                
+                // If the message body equals the 'on' value for the command, execute 'on' method
+                if (message.body && command.on === message.body) {
+                    await command.on({ conn, message, args, match });
+                }
             } catch (err) {
-                console.error(err);
-            }}
-     }
-  });
+                console.error(`${cmdName} failed with error:`, err);
+            }
+        }
+    }
+});
 
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
