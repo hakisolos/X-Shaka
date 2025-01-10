@@ -84,17 +84,13 @@ async function startBot() {
             try {
                 // Execute the command
                 await command.execute({ conn, message, args, match });
-                
-                // If the message body equals the 'on' value for the command, execute 'on' method
-                if (message.body && command.on === message.body) {
-                    await command.on({ conn, message, args, match });
-                }
             } catch (err) {
                 console.error(`${cmdName} failed with error:`, err);
             }
         }
     }
 });
+
 
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
