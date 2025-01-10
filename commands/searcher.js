@@ -1,4 +1,3 @@
-
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
@@ -6,6 +5,7 @@ CreatePlug({
     category: 'search',
     desc: 'Search on Google',
     execute: async (message, conn, match) => {
+        const { googleSearch } = require('../lib/scrappers');
         if (!match) return message.reply('_Please provide a query to search_');
         const results = await googleSearch(match).catch(() => null);
         if (!results) return;
