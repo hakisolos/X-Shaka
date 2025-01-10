@@ -66,64 +66,72 @@ async function startBot() {
     store.bind(conn.ev);
     conn.ev.on("creds.update", saveCreds);
     conn.ev.on('messages.upsert', async ({ messages }) => {
-    const msg = messages[0];
-    if (!msg.message) return;
+        const msg = messages[0];
+        if (!msg.message) return;
 
-    msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
-        ? msg.message.ephemeralMessage.message
-        : msg.message;
-    const message = await serialize(msg, conn);
-    if (!message || !message.key || !message.body) {
-        return;}
-    const me = message.key.remoteJid;
-    if (
-        message.sender !== me &&
-        ['protocolMessage', 'reactionMessage'].includes(message.type) &&
-        message.key.remoteJid === 'status@broadcast'
-    ) {
-        if (!Object.keys(store.groupMetadata).length) {
-            store.groupMetadata = await conn.groupFetchAllParticipating();
+        msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
+            ? msg.message.ephemeralMessage.message
+            : msg.message;
+        const message = await serialize(msg, conn);
+        if (!message || !message.key || !message.body) {
+            return;
         }
-        return;
-    }
+        const me = message.key.remoteJid;
+        if (
+            message.sender !== me &&
+            ['protocolMessage', 'reactionMessage'].includes(message.type) &&
+            message.key.remoteJid === 'status@broadcast'
+        ) {
+            if (!Object.keys(store.groupMetadata).length) {
+                store.groupMetadata = await conn.groupFetchAllParticipating();
+            }
+            return;
+        }
 
-if (CONFIG.app.mode === true && !message.isowner) return;
-const mek = message.body.trim();
-const match = mek.slice(1).trim();
-if (match) {
-    if (match.startsWith(CONFIG.app.prefix.toLowerCase())) {
-        const args = match.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
-        if (args) {
-            const command = commands.find((c) => c.command.toLowerCase() === args);
-            if (command) {
-                try {
-                    await command.execute(message, conn, args, match);
-                } catch (err) {
-                    console.error(err);
+        if (CONFIG.app.mode === true && !message.isowner) return;
+        const mek = message.body.trim().toLowerCase();
+        const match = mek.split(/ +/).slice(1).join(" ");
+        const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
+
+        console.log(
+            "------------------\n" +
+            `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` +
+            "------------------"
+        );
+
+        if (mek.startsWith(CONFIG.app.prefix.toLowerCase()) && iscmd) {
+            const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
+            if (args) {
+                const command = commands.find((c) => c.command.toLowerCase() === args);
+                if (command) {
+                    try {
+                        await command.execute(message, conn, args, match);
+                    } catch (err) {
+                        console.error(err);
+                    }
                 }
             }
         }
-    }
-}});
+    });
 
-conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
-  const time = new Date().toLocaleTimeString();
-  for (let participant of participants) {
-    const img = await conn.profilePictureUrl(participant, "image");
-    let message = "";
-    if (action === "add") message = `_Welcome mate_ ${participant}\n _Time_: ${time}`;
-    else if (action === "remove") message = `_Until next time mate_ ${participant}\n_Time_: ${time}`;
-    else if (action === "promote") message = `_Congrats_ ${participant}\n _Youve been promoted_`;
-    else if (action === "demote") message = `${participant}\n_Youve been demoted_`;
-    if (message) {
-      await conn.sendMessage(id, { 
-        text: message, 
-        image: { url: img },
-        caption: message 
-      });
-    }
-  }
-});
+    conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
+        const time = new Date().toLocaleTimeString();
+        for (let participant of participants) {
+            const img = await conn.profilePictureUrl(participant, "image");
+            let message = "";
+            if (action === "add") message = `_Welcome mate_ ${participant}\n _Time_: ${time}`;
+            else if (action === "remove") message = `_Until next time mate_ ${participant}\n_Time_: ${time}`;
+            else if (action === "promote") message = `_Congrats_ ${participant}\n _Youve been promoted_`;
+            else if (action === "demote") message = `${participant}\n_Youve been demoted_`;
+            if (message) {
+                await conn.sendMessage(id, { 
+                    text: message, 
+                    image: { url: img },
+                    caption: message 
+                });
+            }
+        }
+    });
 
     conn.ev.on("connection.update", async (update) => {
         const { connection } = update;
@@ -136,3 +144,4 @@ conn.ev.on("group-participants.update", async ({ id, participants, action }) => 
 }
 
 setTimeout(startBot, 3000);
+        
