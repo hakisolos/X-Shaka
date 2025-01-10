@@ -15,35 +15,23 @@ const { getPlugins } = require("./database/plugins");
 const { serialize } = require("./lib/messages");
 const { commands } = require("./lib/commands");
 const CONFIG = require("./config");
-const store = makeInMemoryStore({
-    logger: P({ level: "silent" }).child({ level: "silent" }),
-});
-
+const store = makeInMemoryStore({logger: P({ level: "silent" }).child({ level: "silent" }),});
 const fetch = require("node-fetch");
 globalThis.fetch = fetch;
 
 async function auth() {
     const credz = path.join(__dirname, "lib", "session", "creds.json");
     if (!fs.existsSync(credz)) {
-        if (!CONFIG.app.session_name) {
-            console.log("_session_id required_");
-            return;
-        }
-        const cxl_data = CONFIG.app.session_name;
-        const mob = cxl_data.replace("Naxor~", "");
-        try {
-            const filer = File.fromURL(`https://mega.nz/file/${mob}`);
+        if (!CONFIG.app.session_name) { console.log("_session_id required_"); return; }
+        const mob = CONFIG.app.session_name.replace("Naxor~", "");
+        try { const filer = File.fromURL(`https://mega.nz/file/${mob}`);
             const data_mode = await filer.download();
             const chunks = [];
-            for await (const chunk of data_mode) {
-                chunks.push(chunk);
-            }
+            for await (const chunk of data_mode) chunks.push(chunk);
             const buf = Buffer.concat(chunks);
             fs.writeFileSync(credz, buf);
             console.log("Session file saved");
-        } catch (err) {
-            console.error(err);
-        }
+        } catch (err) { console.error(err); }
     }
 }
 auth();
