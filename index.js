@@ -3,7 +3,6 @@ const {
     fetchLatestBaileysVersion,
     useMultiFileAuthState,
     makeInMemoryStore,
-    makeCacheableSignalKeyStore,
     Browsers,
 } = require("@whiskeysockets/baileys");
 const P = require("pino");
@@ -91,16 +90,19 @@ async function startBot() {
         if (CONFIG.app.mode === true && !message.isowner) return;
 
         const mek = message.body.trim().toLowerCase();
-        const match = mek.split(/ +/).slice(1).join(" ");
+        const match = mek.split(/ +/).slice(1).join(" ");  // This gets the full query after the command
         const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
 
         console.log("------------------\n" +`user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` +"------------------");
 
+        // Check if it's a valid command
         if (iscmd) {
-            const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
+            const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0].toLowerCase();  // Extract the command name
             const command = commands.find((c) => c.command.toLowerCase() === args);
+
             if (command) {
                 try {
+                    // Now pass the full match (query) after the command to the command handler
                     await command.execute(message, conn, args, match);
                 } catch (err) {
                     console.error(err);
@@ -140,4 +142,4 @@ async function startBot() {
 }
 
 setTimeout(startBot, 3000);
-        
+    
