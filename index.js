@@ -1,4 +1,3 @@
-//
 const {
     default: makeWASocket,
     fetchLatestBaileysVersion,
@@ -90,17 +89,11 @@ async function startBot() {
         }
 
         if (CONFIG.app.mode === true && !message.isowner) return;
-
         const mek = message.body.trim().toLowerCase();
         const match = mek.split(/ +/).slice(1).join(" ");
         const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
-
-        console.log(
-            "------------------\n" +
-            `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` +
-            "------------------"
+        console.log("------------------\n" +`user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` +"------------------"
         );
-
         if (mek.startsWith(CONFIG.app.prefix.toLowerCase()) && iscmd) {
             const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
             if (args) {
