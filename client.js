@@ -76,29 +76,26 @@ async function startBot() {
         message.key.remoteJid === 'status@broadcast'
     ) {
         if (!Object.keys(store.groupMetadata).length) {
-            store.groupMetadata = await conn.groupFetchAllParticipating();
-        }
+            store.groupMetadata = await conn.groupFetchAllParticipating();}
         return;
     }
 
     if (CONFIG.app.mode === true && !message.isowner) return;
     const mek = message.body.trim().toLowerCase();
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
-    const match = mek.slice(CONFIG.app.prefix.length).trim(); 
+    const textt = mek.slice(CONFIG.app.prefix.length).trim(); 
     console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
     if (isCmd) {
         const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
-        const isC = mek.match(pattern);
+        const commando = mek.textt(pattern);
         if (isC) {
-            const command = isC[2]; 
-          
-            const textt = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
-            const args = textt.split(" "); // splitted Array of Your given text, keep it in mind!
-
+            const command = commando[2]; 
+            const args = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
+            const match = args.split(" "); 
             const dun = commands.find((c) => c.command.toLowerCase() === command);
             if (dun) {
                 try {
-                    await dun.execute(message, conn, textt, args);
+                    await dun.execute(message, conn, match);
                 } catch (err) {
                     console.error(err);
                 }
@@ -137,3 +134,4 @@ async function startBot() {
 }
 
 setTimeout(startBot, 3000)
+    
