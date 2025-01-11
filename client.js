@@ -59,51 +59,30 @@ async function startBot() {
     store.bind(conn.ev);
     conn.ev.on('creds.update', saveCreds);
     conn.ev.on('messages.upsert', async ({ messages }) => {
-    if (messages.type !== 'notify') return;
-    var message = serialize(JSON.parse(JSON.stringify(messages.messages[0])), conn);
-    if (!message.message) return;
-    if (message.key && message.key.remoteJid === 'status@broadcast') return;
-    if (message.type === 'protocolMessage' || message.type === 'senderKeyDistributionMessage' || !message.type || message.type === '') return;
-        if (!Object.keys(store.groupMetadata).length) {
-                store.groupMetadata = await conn.groupFetchAllParticipating();
-            }
-            return;
-     }
-      let { type, body } = message;
-        if (CONFIG.app.mode === true && !CONFIG.app.mods) return;
-        const mek = message.body.trim().toLowerCase();
-        const match = mek.split(/ +/).slice(1).join(" ");
-        const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
-        console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? 'group' : 'private'}\nmessage: ${body || type}\n` + "------------------");
-        if (mek.startsWith(CONFIG.app.prefix.toLowerCase()) && iscmd) {
-            const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
-            if (args) {
-                const command = commands.find((c) => c.command.toLowerCase() === args);
-                if (command) {
-                    try {
-                        await command.execute(message, conn, args, match);
-                    } catch (err) {
-                        console.error(err);
-                    }
-                }
-            }
-        }
-
-          if (!match) {
-            const teks = await eval(`(async () => { ${kode === ">>" ? "return" : ""} ${q}})()`);
-            await message.reply(util.format(teks)); }
-        if (message.body.startsWith('$')) {
-            if (!imessage.isowner) return; 
-            exec(message.body.slice(2), (err, stdout) => {
-                if (err) {
-                    message.reply(`\n${err.message}`);
-                    return;}
-                if (stdout) {
-                    message.reply(stdout);
-                }
-            });
-        }
-    });
+   if (messages.type !== 'notify') return;
+  const message = serialize(messages.messages[0], conn);
+  if (!message.message) return;
+  if (message.key && message.key.remoteJid === 'status@broadcast') return;
+  if (message.type === 'protocolMessage' || message.type === 'senderKeyDistributionMessage' || !message.type || message.type === '') return;
+  if (!Object.keys(store.groupMetadata).length) {
+    store.groupMetadata = await conn.groupFetchAllParticipating(); }
+  let { type, body } = message;
+  const match = body.trim().split(/ +/).slice(1);
+  if (CONFIG.app.mode && !CONFIG.app.mods) return; 
+  const iscmd = body.startsWith(CONFIG.app.prefix);
+  console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? 'group' : 'private'}\nmessage: ${body || type}\n` + "------------------");
+  if (iscmd) {
+    const cnd = match[0]; 
+    const command = commands.find((c) => c.command.toLowerCase() ==cnd.toLowerCase());
+    if (command) {
+      try {
+        await command.execute(message, conn, match);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
 
     conn.ev.on('group-participants.update', async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
