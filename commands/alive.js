@@ -31,7 +31,7 @@ CreatePlug({
         await conn.sendMessage(message.user, { text: '_' });
         const end = Date.now();
         await message.react('🗣️');
-        await conn.sendMessage(message.user, { text: `Pong! ${end - start}ms` });
+        await conn.sendMessage(message.user, { text: `\`\`\`Pong! ${end - start}ms\`\`\`` });
     }
 });
 
