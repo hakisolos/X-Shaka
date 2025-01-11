@@ -58,31 +58,34 @@ async function startBot() {
 
     store.bind(conn.ev);
     conn.ev.on('creds.update', saveCreds);
-    conn.ev.on('messages.upsert', async ({ messages }) => {
-   if (messages.type !== 'notify') return;
-  const message = serialize(messages.messages[0], conn);
+conn.ev.on('messages.upsert', async ({ messages }) => {
+  if (messages.type !== 'notify') return;
+  const message = serialize(messages.messages[0], conn); // Use serialize function to process the message
   if (!message.message) return;
   if (message.key && message.key.remoteJid === 'status@broadcast') return;
   if (message.type === 'protocolMessage' || message.type === 'senderKeyDistributionMessage' || !message.type || message.type === '') return;
   if (!Object.keys(store.groupMetadata).length) {
-    store.groupMetadata = await conn.groupFetchAllParticipating(); }
+    store.groupMetadata = await conn.groupFetchAllParticipating();
+  }
+
   let { type, body } = message;
   const match = body.trim().split(/ +/).slice(1);
   if (CONFIG.app.mode && !CONFIG.app.mods) return; 
   const iscmd = body.startsWith(CONFIG.app.prefix);
   console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? 'group' : 'private'}\nmessage: ${body || type}\n` + "------------------");
   if (iscmd) {
-    const cnd = match[0]; 
-    const command = commands.find((c) => c.command.toLowerCase() ==cnd.toLowerCase());
+    const commandText = match[0]; 
+    const command = commands.find((c) => c.command.toLowerCase() === commandText.toLowerCase());
     if (command) {
       try {
         await command.execute(message, conn, match);
       } catch (err) {
-        console.error(err);
+        console.error('Error executing command:', err);
       }
     }
   }
 });
+
 
     conn.ev.on('group-participants.update', async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
