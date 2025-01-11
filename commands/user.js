@@ -5,9 +5,9 @@ CreatePlug({
     command: 'tts',
     category: 'convert',
     desc: 'speech',
-    execute: async (message, conn, match) => {
-        if (!match) return message.reply('_need text_');
-        const tts = new gTTS(match, 'en');
+    execute: async (message, conn, args) => {
+        if (!args) return message.reply('_need text_');
+        const tts = new gTTS(args, 'en');
         const path = '/tmp/tts.mp3';
         tts.save(path, async (err) => {
             if (err) return message.reply('_err_');
@@ -20,8 +20,8 @@ CreatePlug({
     command: 'leave',
     category: 'admin',
     desc: 'gc_leave',
-    execute: async (message, conn, match) => {
-        const isAdmin = conn.user.id;
+    execute: async (message, conn) => {
+        const isAdmin = message.isowner;
         if (!isAdmin) return;
         await conn.groupLeave(message.user);
     }
