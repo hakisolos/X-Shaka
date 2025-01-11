@@ -60,6 +60,7 @@ async function startBot() {
     conn.ev.on('creds.update', saveCreds);
 conn.ev.on('messages.upsert', async ({ messages }) => {
   if (messages.type !== 'notify') return;
+
   const message = serialize(messages.messages[0], conn); // Use serialize function to process the message
   if (!message.message) return;
   if (message.key && message.key.remoteJid === 'status@broadcast') return;
@@ -69,12 +70,14 @@ conn.ev.on('messages.upsert', async ({ messages }) => {
   }
 
   let { type, body } = message;
-  const match = body.trim().split(/ +/).slice(1);
-  if (CONFIG.app.mode && !CONFIG.app.mods) return; 
-  const iscmd = body.startsWith(CONFIG.app.prefix);
-  console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? 'group' : 'private'}\nmessage: ${body || type}\n` + "------------------");
+  const match = body.trim().split(/ +/).slice(1); // Match after the prefix
+    if (CONFIG.app.mode && !CONFIG.app.mods) return;
+const iscmd = body.startsWith(CONFIG.app.prefix);
+    console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? 'group' : 'private'}\nmessage: ${body || type}\n` + "------------------");
+
   if (iscmd) {
     const commandText = match[0]; 
+    if (!commandText) return;
     const command = commands.find((c) => c.command.toLowerCase() === commandText.toLowerCase());
     if (command) {
       try {
@@ -82,10 +85,11 @@ conn.ev.on('messages.upsert', async ({ messages }) => {
       } catch (err) {
         console.error('Error executing command:', err);
       }
+    } else {
+      console.log('Command not found:', commandText);
     }
   }
 });
-
 
     conn.ev.on('group-participants.update', async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
