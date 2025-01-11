@@ -55,9 +55,9 @@ CreatePlug({
     execute: async (message, conn) => {
         await message.react('📝');
         if (!Array.isArray(commands)) return;
-        let _cmd = `\`\`\`*Commands List:*\n\`\`\``;
+        let _cmd = `\`\`\`*Commands List:*\n\n\`\`\``;
         commands.forEach(cmd => {
-        _cmd += `\`\`\`∘ ${cmd.command.toLowerCase()}\n${cmd.desc}\n\`\`\``;});
+        _cmd += `\`\`\`∘ ${cmd.command.toLowerCase()}\n\n${cmd.desc}\n\`\`\``;});
         const sent = await conn.sendMessage(message.user, { text: _cmd.trim() }, { quoted: message });
         if (!sent) {
             await message.reply('err');
