@@ -66,7 +66,7 @@ async function startBot() {
     console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
     if (isCmd) {
         const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
-        const commando = mek.textt(pattern);
+        const commando = mek.match(pattern);
         if (isC) { const command = commando[2]; 
             const args = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
             const match = args.split(" "); 
