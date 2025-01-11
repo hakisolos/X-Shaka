@@ -34,13 +34,16 @@ CreatePlug({
         await conn.sendMessage(message.user, { text: `Pong! ${end - start}ms` });
     }
 });
-        
+
 CreatePlug({
     command: 'runtime',
     category: 'mics',
     desc: 'Shows bot runtime',
     execute: async (message, conn) => {
+        const { runtime } = require('../lib/functions');
         await message.react('🗣️');
-        await message.reply(`Bot uptime: ${process.uptime()} seconds`);
+        const uptime = process.uptime();
+        const txt = await runtime(uptime);
+        await message.reply(`\`\`\`Bot uptime: ${txt}\`\`\``); 
     }
 });
