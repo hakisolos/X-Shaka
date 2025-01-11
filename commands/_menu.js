@@ -5,16 +5,12 @@ const CONFIG = require('../config');
 CreatePlug({
     command: 'menu',
     category: 'general',
-    desc: 'types',
+    desc: 'types of cmds',
     execute: async (message, conn) => {
         await message.react('🗣️');
-        if (!Array.isArray(commands)) {
-            await message.reply('not_found');
-            return;
-        }
-
+        if (!Array.isArray(commands)) return;
         const gorized = commands.reduce((acc, cmd) => {
-            if (!cmd || !cmd.category || !cmd.command) return acc; // Skip invalid commands
+            if (!cmd || !cmd.category || !cmd.command) return acc; 
             if (!acc[cmd.category]) acc[cmd.category] = [];
             acc[cmd.category].push(cmd.command);
             return acc;
@@ -25,27 +21,30 @@ CreatePlug({
             const date = now.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' });
             const time = now.toLocaleTimeString('en-ZA', { timeZone: 'Africa/Johannesburg' });
 
-            return `╭──╼【 ${monospace((CONFIG.app.botname || 'BOT').toUpperCase())} 】\n` +
+            return `\`\`\`\n` +
+                   `╭──╼【 ${monospace((CONFIG.app.botname || 'BOT').toUpperCase())} 】\n` +
                    `┃ ✦ Prefix  : ${CONFIG.app.prefix || '/'}\n` +
                    `┃ ✦ User    : ${message.pushName || 'unknown'}\n` +
                    `┃ ✦ Mode    : ${process.env.MODE}\n` +
                    `┃ ✦ Date    : ${date}\n` +
                    `┃ ✦ Time    : ${time}\n` +
-                   `┃ ✦ Version : ${CONFIG.app.version || '1.0.0'}\n` +
-                   `╰──────────╼`;
+                   `┃ ✦ Version : ${CONFIG.app.version || '4.0.0'}\n` +
+                   `╰──────────╼\n` +
+                   `\`\`\``;
         };
 
         const _cxl = (category, cmds) => {
             return `╭───╼【 *${monospace(category.toUpperCase())}* 】\n` +
-                   cmds.map(cmd => `┃ ∘ \`\`\`${cmd.toLowerCase()}\`\`\``).join('\n') + '\n' +
+                   `\`\`\`\n` +
+                   cmds.map(cmd => `∘ ${cmd.toLowerCase()}`).join('\n') + '\n' +
+                   `\`\`\`\n` +
                    `╰──────────╼`;
         };
 
-       let msg = namo() + '\n\n';
-        for (const [category, cmds] of Object.entries(gorized)) {
-            msg += _cxl(category, cmds) + '\n\n';
-        }
-        msg += `made with ❣️`;
+        let msg = namo() + '\n\n';
+       for (const [category, cmds] of Object.entries(gorized)) {
+            msg += _cxl(category, cmds) + '\n\n'; }
+        msg += `\`\`\`made with ❣️\n\`\`\``;
         const sent = await conn.sendMessage(message.user, { text: msg.trim() }, { quoted: message });
         if (!sent) {
             await message.reply('err');
@@ -53,16 +52,21 @@ CreatePlug({
     }
 });
 
-
 CreatePlug({
     command: 'list',
     category: 'general',
-    desc: 'Display list',
-    execute: async (message, conn) => {   
-        const dontAddCommandList = commands
-            .map((cmd, index) => `${index + 1}. ${monospace(cmd.command)}`)
-            .join('\n');
-        await conn.sendMessage(message.user, { text: dontAddCommandList }, { quoted: message });
+    desc: 'Display commands list_',
+    execute: async (message, conn) => {
+        await message.react('📝');
+        if (!Array.isArray(commands)) return;
+        let _cmd = `\`\`\`*Commands List:*\n\`\`\``;
+        commands.forEach(cmd => {
+        _cmd += `\`\`\`∘ ${cmd.command.toLowerCase()}\n${cmd.desc}\n\`\`\``;});
+        const sent = await conn.sendMessage(message.user, { text: _cmd.trim() }, { quoted: message });
+        if (!sent) {
+            await message.reply('err');
+        }
     }
 });
-    
+
+                                                                                 
