@@ -61,25 +61,14 @@ async function startBot() {
     conn.ev.on('messages.upsert', async ({ messages }) => {
     const msg = messages[0];
     if (!msg.message) return;
-
-    msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
-        ? msg.message.ephemeralMessage.message
-        : msg.message;
+    msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage' ? msg.message.ephemeralMessage.message : msg.message;
     const message = await serialize(msg, conn);
-    if (!message || !message.key || !message.body) {
-        return;
-    }
+    if (!message || !message.key || !message.body) return;
     const me = message.key.remoteJid;
-    if (
-        message.sender !== me &&
-        ['protocolMessage', 'reactionMessage'].includes(message.type) &&
-        message.key.remoteJid === 'status@broadcast'
-    ) {
-        if (!Object.keys(store.groupMetadata).length) {
-            store.groupMetadata = await conn.groupFetchAllParticipating();}
+    if (message.sender !== me && ['protocolMessage', 'reactionMessage'].includes(message.type) && message.key.remoteJid === 'status@broadcast') {
+        if (!Object.keys(store.groupMetadata).length) store.groupMetadata = await conn.groupFetchAllParticipating();
         return;
     }
-
     if (CONFIG.app.mode === true && !message.isowner) return;
     const mek = message.body.trim().toLowerCase();
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
@@ -88,21 +77,17 @@ async function startBot() {
     if (isCmd) {
         const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
         const commando = mek.textt(pattern);
-        if (isC) {
-            const command = commando[2]; 
+        if (isC) { const command = commando[2]; 
             const args = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
             const match = args.split(" "); 
             const dun = commands.find((c) => c.command.toLowerCase() === command);
             if (dun) {
-                try {
-                    await dun.execute(message, conn, match);
+                try { await dun.execute(message, conn, match);
                 } catch (err) {
                     console.error(err);
-                }
-            }
+                } }}
         }
-    }
-});
+   });
 
     conn.ev.on('group-participants.update', async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
