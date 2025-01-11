@@ -95,21 +95,24 @@ async function startBot() {
         console.log("------------------\n" +`user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` +"------------------");
 
         if (iscmd) {
-            // Step 1: Extract the command and the rest of the query
-            const arg = mek.slice(CONFIG.app.prefix.length).trim().split(/ +/); // Split by spaces after the prefix
-            const args = arg[0].toLowerCase(); // The first word after the prefix is the command
-            const match = arg.slice(1).join(" "); // Everything after the command is the query
+            // Step 1: Extract command name and query
+            const args = mek.slice(CONFIG.app.prefix.length).trim().split(/ +/); // Split by spaces
+            const commandName = args[0].toLowerCase(); // Command name is the first argument
+            const match = args.slice(1).join(" "); // The rest is the query
 
-            // Step 2: Find the matching command
-            const command = commands.find((c) => c.command.toLowerCase() === arg);
+            // Step 2: Find the matching command from your list of commands
+            const command = commands.find((c) => c.command.toLowerCase() === commandName);
 
             if (command) {
                 try {
-                    // Step 3: Pass the full query to the command handler
-                    await command.execute(message, conn, args, match);
+                    // Step 3: Execute the command
+                    await command.execute(message, conn, commandName, match);
                 } catch (err) {
-                    console.error(err);
+                    console.error("Error executing command:", err);
                 }
+            } else {
+                // If no matching command is found
+                console.log(`No command found for: ${commandName}`);
             }
         }
     });
