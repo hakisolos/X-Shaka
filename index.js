@@ -106,7 +106,13 @@ async function startBot() {
             if (command) {
                 try {
                     // Step 3: Execute the command
-                    await command.execute(message, conn, commandName, match);
+                    if (match || command.requiresQuery === false) {
+                        // If the command requires no query or has a valid match
+                        await command.execute(message, conn, commandName, match);
+                    } else {
+                        // If the command expects a query but no query is provided
+                        await conn.sendMessage(message.key.remoteJid, { text: `This command requires a query. Example usage: ${CONFIG.app.prefix}${commandName} <query>` });
+                    }
                 } catch (err) {
                     console.error("Error executing command:", err);
                 }
