@@ -59,29 +59,18 @@ async function startBot() {
     store.bind(conn.ev);
     conn.ev.on('creds.update', saveCreds);
     conn.ev.on('messages.upsert', async ({ messages }) => {
-        const msg = messages[0];
-        if (!msg.message) return;
-
-        msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
-            ? msg.message.ephemeralMessage.message
-            : msg.message;
-        const message = await serialize(msg, conn);
-        if (!message || !message.key || !message.body) {
-            return;
-        }
-        const me = message.key.remoteJid;
-        if (
-            message.sender !== me &&
-            ['protocolMessage', 'reactionMessage'].includes(message.type) &&
-            message.key.remoteJid === 'status@broadcast'
-        ) {
-            if (!Object.keys(store.groupMetadata).length) {
+    if (messages.type !== 'notify') return;
+    var message = serialize(JSON.parse(JSON.stringify(messages.messages[0])), conn);
+    if (!message.message) return;
+    if (message.key && message.key.remoteJid === 'status@broadcast') return;
+    if (message.type === 'protocolMessage' || message.type === 'senderKeyDistributionMessage' || !message.type || message.type === '') return;
+        if (!Object.keys(store.groupMetadata).length) {
                 store.groupMetadata = await conn.groupFetchAllParticipating();
             }
             return;
-        }
+     }
 
-        if (CONFIG.app.mode === true && !message.isowner) return;
+        if (CONFIG.app.mode === true && !CONFIG.app.mods) return;
         const mek = message.body.trim().toLowerCase();
         const match = mek.split(/ +/).slice(1).join(" ");
         const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
