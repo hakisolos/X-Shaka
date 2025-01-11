@@ -72,7 +72,8 @@ async function startBot() {
             const match = args.split(" "); 
             const dun = commands.find((c) => c.command.toLowerCase() === command);
             if (dun) {
-                try { await dun.execute(message, conn, match);
+             try { 
+                await dun.execute(message, conn, match);
                 } catch (err) {
                     console.error(err);
                 } }}
