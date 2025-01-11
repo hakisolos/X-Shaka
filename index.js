@@ -90,19 +90,22 @@ async function startBot() {
         if (CONFIG.app.mode === true && !message.isowner) return;
 
         const mek = message.body.trim().toLowerCase();
-        const match = mek.split(/ +/).slice(1).join(" ");  // This gets the full query after the command
         const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
 
         console.log("------------------\n" +`user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` +"------------------");
 
-        // Check if it's a valid command
         if (iscmd) {
-            const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0].toLowerCase();  // Extract the command name
-            const command = commands.find((c) => c.command.toLowerCase() === args);
+            // Step 1: Extract the command and the rest of the query
+            const arg = mek.slice(CONFIG.app.prefix.length).trim().split(/ +/); // Split by spaces after the prefix
+            const args = arg[0].toLowerCase(); // The first word after the prefix is the command
+            const match = arg.slice(1).join(" "); // Everything after the command is the query
+
+            // Step 2: Find the matching command
+            const command = commands.find((c) => c.command.toLowerCase() === arg);
 
             if (command) {
                 try {
-                    // Now pass the full match (query) after the command to the command handler
+                    // Step 3: Pass the full query to the command handler
                     await command.execute(message, conn, args, match);
                 } catch (err) {
                     console.error(err);
@@ -142,4 +145,3 @@ async function startBot() {
 }
 
 setTimeout(startBot, 3000);
-    
