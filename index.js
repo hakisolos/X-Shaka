@@ -92,7 +92,7 @@ async function startBot() {
         const mek = message.body.trim().toLowerCase();
         const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
 
-        console.log("------------------\n" +`user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` +"------------------");
+        console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
 
         if (iscmd) {
             // Step 1: Extract command name and query
@@ -105,14 +105,11 @@ async function startBot() {
 
             if (command) {
                 try {
-                    // Step 3: Execute the command
-                    if (match || command.requiresQuery === false) {
-                        // If the command requires no query or has a valid match
+                    // Step 3: Handle command with or without query
+                    if (command.requiresQuery === false || match.length > 0) {
+                        // Execute command with the query or without it if it doesn't require one
                         await command.execute(message, conn, commandName, match);
-                    } else {
-                        // If the command expects a query but no query is provided
-                        await conn.sendMessage(message.key.remoteJid, { text: `This command requires a query. Example usage: ${CONFIG.app.prefix}${commandName} <query>` });
-                    }
+                    } else {            }
                 } catch (err) {
                     console.error("Error executing command:", err);
                 }
@@ -154,3 +151,4 @@ async function startBot() {
 }
 
 setTimeout(startBot, 3000);
+    
