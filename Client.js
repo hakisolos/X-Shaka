@@ -67,11 +67,11 @@ async function startBot() {
     if (isCmd) { const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
         const commando = mek.match(pattern);
         if (commando) { const command = commando[2]; 
-            const args = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
-            const match = args.split(" "); 
+            const arg = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
+            const args = arg.split(" "); 
             const dun = commands.find((c) => c.command.toLowerCase() === command);
             if (dun) {
-             try { await dun.execute(message, conn, match);
+             try { await dun.execute(message, conn, args);
                 } catch (err) {
                     console.error(err);
                 } }}
