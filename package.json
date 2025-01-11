@@ -1,11 +1,11 @@
 {
   "name": "x-astral",
   "version": "4.0.0",
-  "main": "index.js",
+  "main": "client.js",
   "type": "commonjs",
   "scripts": {
-    "start": "pm2 start index.js --attach --name xastral",
-    "stop":  "pm2 stop index.js"
+    "start": "pm2 start client.js --attach --name xastral",
+    "stop":  "pm2 stop client.js"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.2",
