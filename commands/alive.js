@@ -35,7 +35,7 @@ CreatePlug({
     }
 });
 
-CreatePlug({
+/*CreatePlug({
     command: 'runtime',
     category: 'mics',
     desc: 'Shows bot runtime',
@@ -46,4 +46,4 @@ CreatePlug({
         const txt = await runtime(uptime);
         await message.reply(`\`\`\`Bot uptime: ${txt}\`\`\``); 
     }
-});
+});*/
