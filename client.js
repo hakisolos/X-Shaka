@@ -91,11 +91,14 @@ async function startBot() {
         const isC = mek.match(pattern);
         if (isC) {
             const command = isC[2]; 
-            const args = match.split(" ")[0]; 
+          
+            const textt = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
+            const args = textt.split(" "); // splitted Array of Your given text, keep it in mind!
+
             const dun = commands.find((c) => c.command.toLowerCase() === command);
             if (dun) {
                 try {
-                    await dun.execute(message, conn, args, match);
+                    await dun.execute(message, conn, textt, args);
                 } catch (err) {
                     console.error(err);
                 }
