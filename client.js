@@ -67,24 +67,48 @@ async function startBot() {
 
     store.bind(conn.ev);
     conn.ev.on("creds.update", saveCreds);
-    conn.ev.on('messages.upsert', async ({ messages }) => {
+       
+conn.ev.on('messages.upsert', async ({ messages }) => {
     const msg = messages[0];
     if (!msg.message) return;
-    msg.message = Object.keys(msg.message)[0] === 'ephemeralMessage'
-        ? msg.message.ephemeralMessage.message
-        : msg.message;
-    let body = msg.message?.conversation ||
-        msg.message?.[getContentType(msg.message)]?.text ||
-        msg.message?.[getContentType(msg.message)]?.caption ||
-        (getContentType(msg.message) === 'listResponseMessage' && msg.message?.[getContentType(msg.message)]?.singleSelectReply?.selectedRowId) ||
-        (getContentType(msg.message) === 'buttonsResponseMessage' && msg.message?.[getContentType(msg.message)]?.selectedButtonId) ||
-        (getContentType(msg.message) === 'templateButtonReplyMessage' && msg.message?.[getContentType(msg.message)]?.selectedId) ||
-        '';
-    body = body.trim().toLowerCase(); 
-    const message = await serialize(msg, conn);
-    if (!message || !message.key || !body) {
-        return;}
+
+    // Initialize the message content and check for ephemeral message
+    let messageContent = msg.message;
+    if (messageContent && messageContent.ephemeralMessage) {
+        // If it's an ephemeral message, get the message inside it
+        messageContent = messageContent.ephemeralMessage.message;
+    }
+
+    // Get message type using getContentType
+    const messageType = getContentType(messageContent);
+    if (!messageType) return;
+
+    // Initialize the body variable
+    let body = '';
+
+    // Handle different message types and extract message body accordingly
+    if (messageType === 'conversation') {
+        body = messageContent.conversation || '';
+    } else if (messageType === 'extendedTextMessage') {
+        body = messageContent.extendedTextMessage.text || '';
+    } else if (messageType === 'imageMessage') {
+        body = messageContent.imageMessage.caption || '';
+    } else if (messageType === 'videoMessage') {
+        body = messageContent.videoMessage.caption || '';
+    } else if (messageType === 'documentMessage') {
+        body = messageContent.documentMessage.caption || '';
+    } else if (messageType === 'buttonsResponseMessage') {
+        body = messageContent.buttonsResponseMessage.selectedButtonId || '';
+    } else if (messageType === 'templateButtonReplyMessage') {
+        body = messageContent.templateButtonReplyMessage.selectedId || '';
+    }
+
+    // Serialize the message content, adding the extracted body
+    const message = await serialize({ ...msg, body }, conn);
+    if (!message || !message.key || !message.body) return;
+
     const me = message.key.remoteJid;
+
     if (
         message.sender !== me &&
         ['protocolMessage', 'reactionMessage'].includes(message.type) &&
@@ -97,11 +121,16 @@ async function startBot() {
     }
 
     if (CONFIG.app.mode === true && !message.isowner) return;
-    const match = body.split(/ +/).slice(1).join(" ");
-    const iscmd = body.startsWith(CONFIG.app.prefix.toLowerCase());
-    console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${body}\n` + "------------------");
-    if (body.startsWith(CONFIG.app.prefix.toLowerCase()) && iscmd) {
-        const args = body.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
+
+    // Use the extracted body for match
+    const mek = body.trim().toLowerCase();
+    const match = mek.split(/ +/).slice(1).join(" ");
+    const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
+
+    console.log("------------------\n" +`user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` +"------------------");
+
+    if (mek.startsWith(CONFIG.app.prefix.toLowerCase()) && iscmd) {
+        const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
         if (args) {
             const command = commands.find((c) => c.command.toLowerCase() === args);
             if (command) {
@@ -109,10 +138,12 @@ async function startBot() {
                     await command.execute(message, conn, args, match);
                 } catch (err) {
                     console.error(err);
-                }}
-        }}
-    });
-
+                }
+            }
+        }
+    }
+});
+     
     conn.ev.on("group-participants.update", async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
         for (let participant of participants) {
