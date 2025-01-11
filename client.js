@@ -87,15 +87,15 @@ async function startBot() {
     const match = mek.slice(CONFIG.app.prefix.length).trim(); 
     console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
     if (isCmd) {
-        const commandPattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
-        const isCommand = mek.match(commandPattern);
-        if (isCommand) {
-            const command = isCommand[2]; 
+        const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
+        const isC = mek.match(pattern);
+        if (isC) {
+            const command = isC[2]; 
             const args = match.split(" ")[0]; 
-            const matchedCommand = commands.find((c) => c.command.toLowerCase() === command);
-            if (matchedCommand) {
+            const dun = commands.find((c) => c.command.toLowerCase() === command);
+            if (dun) {
                 try {
-                    await matchedCommand.execute(message, conn, args, match);
+                    await dun.execute(message, conn, args, match);
                 } catch (err) {
                     console.error(err);
                 }
