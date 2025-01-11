@@ -64,16 +64,14 @@ async function startBot() {
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     const textt = mek.slice(CONFIG.app.prefix.length).trim(); 
     console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
-    if (isCmd) {
-        const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
+    if (isCmd) { const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
         const commando = mek.match(pattern);
-        if (isC) { const command = commando[2]; 
+        if (commando) { const command = commando[2]; 
             const args = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
             const match = args.split(" "); 
             const dun = commands.find((c) => c.command.toLowerCase() === command);
             if (dun) {
-             try { 
-                await dun.execute(message, conn, match);
+             try { await dun.execute(message, conn, match);
                 } catch (err) {
                     console.error(err);
                 } }}
