@@ -69,12 +69,12 @@ async function startBot() {
             }
             return;
      }
-
+      let { type, body } = message;
         if (CONFIG.app.mode === true && !CONFIG.app.mods) return;
         const mek = message.body.trim().toLowerCase();
         const match = mek.split(/ +/).slice(1).join(" ");
         const iscmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
-        console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? 'group' : 'private'}\nmessage: ${mek}\n` + "------------------");
+        console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? 'group' : 'private'}\nmessage: ${body || type}\n` + "------------------");
         if (mek.startsWith(CONFIG.app.prefix.toLowerCase()) && iscmd) {
             const args = mek.slice(CONFIG.app.prefix.length).trim().split(" ")[0];
             if (args) {
