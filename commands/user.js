@@ -32,5 +32,7 @@ CreatePlug({
             await conn.sendMessage(message.user, { image: { url } });
         } catch (err) { console.error(err); }
     }
+      }
+    }
 });
                                         
