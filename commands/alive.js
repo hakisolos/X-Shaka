@@ -1,5 +1,7 @@
 const { CreatePlug } = require('../lib/commands');
 const CONFIG = require('../config');
+const { runtime } = require('../lib/functions');
+
 
 CreatePlug({
     command: 'alive',
@@ -35,15 +37,14 @@ CreatePlug({
     }
 });
 
-/*CreatePlug({
+CreatePlug({
     command: 'runtime',
     category: 'mics',
     desc: 'Shows bot runtime',
     execute: async (message, conn) => {
-        const { runtime } = require('../lib/functions');
         await message.react('🗣️');
         const uptime = process.uptime();
         const txt = await runtime(uptime);
         await message.reply(`\`\`\`Bot uptime: ${txt}\`\`\``); 
     }
-});*/
+});
