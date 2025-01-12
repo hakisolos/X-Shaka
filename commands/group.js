@@ -1,6 +1,26 @@
 const { CreatePlug } = require('../lib/commands');
 
 CreatePlug({
+    command: 'aprove', 
+    category: 'group', 
+    desc: 'approve users from group joining', 
+    execute: async (message, conn, match) => { 
+  if (!message.isGroup) return ;
+  if (!message.isBotAdmin) return message.reply('I am not an admin here');
+  if (!message.isAdmin) return;
+  const participants = await conn.groupRequestParticipantsList(message.user);
+  if (!participants.length) return message.reply('_No users pending approva_');
+  const nun = participants.map(participant => participant.id);
+  const namees = participants.map(participant => participant.name || participant.id);
+  if (nun.length === 0) return;
+  await conn.groupRequestParticipantsUpdate(message.user, nun, 'approve');
+  let menu = '```*Approved Users:*\n';
+   namees.forEach((name, index) => {menu += `${index + 1}. ${name}\n`;});
+  menu += '```';
+  await conn.sendMessage(message.user, { text: menu });
+}});
+
+CreatePlug({
     command: 'kick',
     category: 'group',
     desc: 'Kick members by country code or kick all members',
