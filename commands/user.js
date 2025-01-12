@@ -1,5 +1,6 @@
 const { CreatePlug } = require('../lib/commands');
 const gTTS = require('gtts');
+const g_i_s = require('g-i-s');
 
 CreatePlug({
     command: 'tts',
@@ -26,5 +27,21 @@ CreatePlug({
         await conn.groupLeave(message.user);
     }
 });
-    
-                                                           
+
+CreatePlug({
+    command: 'img',
+    category: 'download',
+    desc: 'download images',
+    execute: async (message, conn, match) => {                   
+     if (!match) return message.reply('_example img so n goku_');
+      await message.react('✔️');
+      await message.reply('*Downloading 5 images...*');
+      await g_i_s({ searchTerm: match, queryStringAddition: '&safe=on' }, async (error, result) => {
+      if (error) return;
+     for (let i = 0; i < 5; i++) {
+        try { let url = result[Math.floor(Math.random() * result.length)]?.url;
+            if (url) await conn.sendMessage(message.user, { image: { url } });
+        } catch (err) { console.error(err); }
+    }
+});
+                                        
