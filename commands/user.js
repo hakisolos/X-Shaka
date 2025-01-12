@@ -18,17 +18,6 @@ CreatePlug({
 });
 
 CreatePlug({
-    command: 'leave',
-    category: 'admin',
-    desc: 'gc_leave',
-    execute: async (message, conn) => {
-        const isAdmin = message.isowner;
-        if (!isAdmin) return;
-        await conn.groupLeave(message.user);
-    }
-});
-
-CreatePlug({
     command: 'img',
     category: 'download',
     desc: 'download images',
