@@ -231,7 +231,7 @@ CreatePlug({
 
 CreatePlug({
     command: 'leave',
-    category: 'admin',
+    category: 'group',
     desc: 'gc_leave',
     execute: async (message, conn) => {
         const isAdmin = message.isowner;
