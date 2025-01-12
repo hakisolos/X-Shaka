@@ -47,7 +47,7 @@ CreatePlug({
     },
 });
                     
-/*CreatePlug({
+CreatePlug({
     command: 'kickall',
     category: 'group',
     desc: 'kick all_',
@@ -64,7 +64,7 @@ CreatePlug({
             await new Promise(resolve => setTimeout(resolve, 500)); 
         }
     },
-});*/
+});
 
 CreatePlug({
     command: 'lockinvite',
@@ -219,13 +219,14 @@ CreatePlug({
     command: 'setname',
     category: 'group',
     desc: 'Change the group name',
-    execute: async (message, conn, args) => {
+    execute: async (message, conn, match) => {
         if (!message.isGroup) return;
-        if(!message.isBotAdmin) return;
+        if (!message.isBotAdmin) return message.reply('_um not admin_');
         if (!message.isAdmin) return;
-        if (!args) return message.reply('_Please provide a name_');
+        const args = match || message?.message?.text?.split(' ').slice(1).join(' ');
+        if (!args) return message.reply('_Please provide a new group name_');
         await conn.groupUpdateSubject(message.user, args);
-        message.reply(`_Group name_: "${args}"`);
+        message.reply(`_Group name has been updated to: "${args}"_`);
     },
 });
 
