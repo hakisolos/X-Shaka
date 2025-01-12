@@ -64,19 +64,23 @@ async function startBot() {
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     const textt = mek.slice(CONFIG.app.prefix.length).trim(); 
     console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
-    if (isCmd) { const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
+    if (isCmd) { 
+        const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
         const commando = mek.match(pattern);
-        if (commando) { const command = commando[2]; 
-            const argi = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
-            const args = argi.join(" "); 
+        if (commando) { 
+            const command = commando[2]; 
+            const match = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
+            const args = match; 
             const dun = commands.find((c) => c.command.toLowerCase() === command);
             if (dun) {
-             try { await dun.execute(message, conn, argi,args);
+                try { 
+                    await dun.execute(message, conn, match, args);
                 } catch (err) {
                     console.error(err);
-                } }}
-        }
-   });
+                }
+            }}
+      }
+  });
 
     conn.ev.on('group-participants.update', async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
