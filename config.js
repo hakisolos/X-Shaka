@@ -10,6 +10,7 @@ const CONFIG = {
         session_name: process.env.SESSION_NAME || '',
         botname: process.env.BOTNAME || 'X-ASTRAL',
         version: require('./package.json').version,
+        packname: process.env.PACKNAME || '❤️NaxorDev',
         env: process.env.NODE_ENV || 'development',
         prefix: process.env.COMMAND_PREFIX || '?',
         mode: toBool(process.env.MODE || "true"),
