@@ -6,9 +6,9 @@ CreatePlug({
     command: 'tts',
     category: 'convert',
     desc: 'speech',
-    execute: async (message, conn, args) => {
-        if (!args) return message.reply('_need text_');
-        const tts = new gTTS(args, 'en');
+    execute: async (message, conn, match) => {
+        if (!match) return message.reply('_need text_');
+        const tts = new gTTS(match, 'en');
         const path = '/tmp/tts.mp3';
         tts.save(path, async (err) => {
             if (err) return message.reply('_err_');
@@ -29,7 +29,7 @@ CreatePlug({
       if (error) return;
      for (let i = 0; i < 5; i++) {
         try { let url = result[Math.floor(Math.random() * result.length)]?.url;
-            if (url) await conn.sendMessage(message.user, { image: { url } });
+            await conn.sendMessage(message.user, { image: { url } });
         } catch (err) { console.error(err); }
     }
 });
