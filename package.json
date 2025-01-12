@@ -16,7 +16,7 @@
     "dotenv": "^16.0.3",
     "fs-extra": "^11.1.1",
     "fluent-ffmpeg": "^2.1.2",
-    "gtts": "^2.2.4",
+    "gtts": "^0.2.1",
     "jimp": "^0.22.8",
     "megajs": "^1.0.5",
     "moment-timezone": "^0.5.46",
