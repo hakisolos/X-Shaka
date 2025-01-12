@@ -19,6 +19,6 @@ CreatePlug({
             }
             txt += '\n';
         });
-        conn.sendMessage(message.user, { text: txt });
+       await conn.sendMessage(message.user, { text: txt });
     }
 });
