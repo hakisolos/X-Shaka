@@ -2,6 +2,21 @@ const { CreatePlug } = require('../lib/commands');
 const CONFIG = require('../config');
 
 CreatePlug({
+    command: 'add',
+    category: 'group',
+    desc: 'Add a user to the group',
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if (!message.isBotAdmin) return message.reply('_not an admin_');
+        if (!message.isAdmin) return;
+        let user = message.body.includes('@') ? message.body.split('@')[1].split(' ')[0] + '@s.whatsapp.net' : match.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
+        if (!user || (match?.trim() === '' && !message.body.includes('@'))) return conn.sendMessage(message.user, { text: '_provide a valid number to add_' });
+        await conn.groupParticipantsUpdate(message.user, [user], 'add');
+        await conn.sendMessage(message.user, { text: `Successfully added ${message.body.includes('@') ? `@${message.body.split('@')[1].split(' ')[0]}` : match.trim()}`, mentions: [user] });
+    }
+});
+
+CreatePlug({
     command: 'aprove', 
     category: 'group', 
     desc: 'approve users from group joining', 
