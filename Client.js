@@ -59,7 +59,7 @@ async function startBot() {
         if (!Object.keys(store.groupMetadata).length) store.groupMetadata = await conn.groupFetchAllParticipating();
         return;
     }
-    if (CONFIG.app.mode === true && !message.isowner) return;
+    if (CONFIG.app.mode === true && !message.isOwner) return;
     const mek = message.body.trim().toLowerCase();
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     const textt = mek.slice(CONFIG.app.prefix.length).trim(); 
