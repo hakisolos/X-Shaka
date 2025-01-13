@@ -1,4 +1,5 @@
 const { CreatePlug } = require('../lib/commands');
+const CONFIG = require('../config');
 
 CreatePlug({
     command: 'aprove', 
@@ -235,8 +236,11 @@ CreatePlug({
     category: 'group',
     desc: 'gc_leave',
     execute: async (message, conn) => {
-        const isAdmin = message.isowner;
+        const isAdmin = message.isOwner;
         if (!isAdmin) return;
+        const owners = message.isOwner ? [...message.isOwner, CONFIG.app.me] : [CONFIG.app.me];
+        if (!owners.includes(message.user)) {
+        return;}
         await conn.groupLeave(message.user);
     }
 });
