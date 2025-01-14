@@ -24,8 +24,8 @@ CreatePlug({
   desc: 'Download TikTok videos',
   execute: async (message, conn, match) => {
     if (!match) return message.reply('_Please provide a TikTok URL_');
-    const videos = await tiktokdl(match).catch(error => message.reply(`Error: ${error.message}`));
-    if (videos) await conn.sendMessage(message.user, { video: { url: videos.hdVideoUrl }, caption: `*Title:* ${videos.title}`, footer: 'mad with ❣️' }).catch(error => message.reply(`Error: ${error.message}`));
+    const videos = await tiktokdl(match).catch(error => message.reply(`${error}`));
+    if (videos) await conn.sendMessage(message.user, { video: { url: videos.hdVideoUrl }, caption: `*Title:* ${videos.title}`, footer: 'mad with ❣️' }).catch(error => message.reply(`${error}`));
   },
 });
   
