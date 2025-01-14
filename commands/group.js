@@ -2,6 +2,29 @@ const { CreatePlug } = require('../lib/commands');
 const CONFIG = require('../config');
 
 CreatePlug({
+    command: 'aunmute',
+    category: 'group',
+    desc: 'Schedule a group unmute at a specific time',
+    execute: async (message, conn, args) => {
+        if (!message.isGroup || !message.isBotAdmin || !message.isAdmin) return message.reply('_Not authorized_');
+        if (!args[0]) return message.reply('_Provide a time (e.g., 14:30)_');
+        const [hour, minute] = args[0].split(':').map(Number);
+        if (isNaN(hour) || isNaN(minute)) return message.reply('_Invalid time format_');
+        const now = new Date();
+        const unmuteTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
+        if (unmuteTime <= now) return message.reply('_Time must be in the future_');
+        const data = await conn.groupMetadata(message.user);
+        if (!data.announce) return message.reply('_Group is already unmuted_')
+        const delay = unmuteTime - now;
+        message.reply(`_Group will be unmuted at ${args[0]}_`);
+        setTimeout(async () => {
+            await conn.groupSettingUpdate(message.user, 'not_announcement');
+            message.reply('_The group is now unmuted_');
+        }, delay);
+    },
+});
+
+CreatePlug({
     command: 'amute',
     category: 'group',
     desc: 'Schedule a group mute at a specific time',
