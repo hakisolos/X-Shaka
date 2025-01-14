@@ -63,6 +63,7 @@ async function startBot() {
     const mek = message.body.trim().toLowerCase();
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     const textt = mek.slice(CONFIG.app.prefix.length).trim(); 
+    var owner = CONFIG.app.me;
     console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
     if (isCmd) { 
         const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
@@ -74,7 +75,7 @@ async function startBot() {
             const dun = commands.find((c) => c.command.toLowerCase() === command);
             if (dun) {
                 try { 
-                    await dun.execute(message, conn, match, args);
+                    await dun.execute(message, conn, match, args, owner);
                 } catch (err) {
                     console.error(err);
                 }
