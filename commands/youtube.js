@@ -1,5 +1,6 @@
 const { CreatePlug } = require('../lib/commands');
 const YouTube = require('youtube-sr').default;
+const tiktokdl = require('./downloads/tiktokdl'); 
 
 CreatePlug({
   command: 'yts',
@@ -17,3 +18,14 @@ CreatePlug({
   },
 });
         
+CreatePlug({
+  command: 'tiktok',
+  category: 'download',
+  desc: 'Download TikTok videos',
+  execute: async (message, conn, match) => {
+    if (!match) return message.reply('_Please provide a TikTok URL_');
+    const videos = await tiktokdl(match).catch(error => message.reply(`Error: ${error.message}`));
+    if (videos) await conn.sendMessage(message.user, { video: { url: videos.hdVideoUrl }, caption: `*Title:* ${videos.title}`, footer: 'mad with ❣️' }).catch(error => message.reply(`Error: ${error.message}`));
+  },
+});
+  
