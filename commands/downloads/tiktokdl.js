@@ -1,12 +1,13 @@
-var fetch = require('node-fetch');
+const axios = require('axios');
 
 const tiktokdl = async (url) => {
-  const api = `https://diegoson-naxor-api.hf.space/tiktok?url=${url}`;
+  const api = `https://diegoson-naxor-api.hf.space/tiktok?url=${encodeURIComponent(url)}`;
   try {
-    const res = await fetch(api);
-    if (!res.ok) {
-      throw new Error('err');}
-    const data = await res.json();
+    const res = await axios.get(api);
+    if (res.status !== 200) {
+      throw new Error('Failed');
+    }
+    const data = res.data;
     if (data.status === 200) {
       const videoData = data.data;
       return {
@@ -27,3 +28,4 @@ const tiktokdl = async (url) => {
 };
 
 module.exports = tiktokdl;
+        
