@@ -1,4 +1,4 @@
-var fetch = require('fetch');
+var fetch = require('node-fetch');
 
 const tiktokdl = async (url) => {
   const api = `https://diegoson-naxor-api.hf.space/tiktok?url=${url}`;
