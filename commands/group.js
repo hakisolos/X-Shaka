@@ -80,6 +80,23 @@ CreatePlug({
 });
 
 CreatePlug({
+  command: 'approve',
+  category: 'group',
+  desc: 'Approve users from group joining',
+  execute: async (message, conn, match) => {
+    if (!message.isGroup) return;
+    if (!message.isBotAdmin) return message.reply('_not admin_');
+    if (!message.isAdmin) return;
+    const res = await conn.groupRequestParticipantsList(message.user);
+    if (!res || res.length === 0) return;
+    for (const participant of res) {
+      const jid = participant.jid || `${participant.id}@s.whatsapp.net`; 
+      await conn.groupRequestParticipantsUpdate(message.user,[jid],'reject');}
+      message.reply(`_Pending rejected_`);
+  },
+});
+
+CreatePlug({
     command: 'kick',
     category: 'group',
     desc: 'Kick members by country code or kick all members',
