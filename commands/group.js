@@ -63,24 +63,30 @@ CreatePlug({
 });
 
 CreatePlug({
-    command: 'aprove', 
-    category: 'group', 
-    desc: 'approve users from group joining', 
-    execute: async (message, conn, match) => { 
-  if (!message.isGroup) return ;
-  if (!message.isBotAdmin) return message.reply('I am not an admin here');
-  if (!message.isAdmin) return;
-  const participants = await conn.groupRequestParticipantsList(message.user);
-  if (!participants.length) return message.reply('_No users pending approva_');
-  const nun = participants.map(participant => participant.id);
-  const namees = participants.map(participant => participant.name || participant.id);
-  if (nun.length === 0) return;
-  await conn.groupRequestParticipantsUpdate(message.user, nun, 'approve');
-  let menu = '```*Approved Users:*\n';
-   namees.forEach((name, index) => {menu += `${index + 1}. ${name}\n`;});
-  menu += '```';
-  await conn.sendMessage(message.user, { text: menu });
-}});
+  command: 'approve',
+  category: 'group',
+  desc: 'Approve users from group joining',
+  execute: async (message, conn, match) => {
+    if (!message.isGroup) return message.reply('_This command can only be used in groups_');
+    if (!message.isBotAdmin) return message.reply('_I need to be an admin to perform this action_');
+    if (!message.isAdmin) return message.reply('_Only group admins can use this command_');
+    const res = await conn.groupRequestParticipantsList(message.user);
+    if (!res || res.length === 0) {
+      return message.reply('_No pending join requests found_');
+    }
+    for (const participant of res) {
+      const jid = participant.jid || `${participant.id}@s.whatsapp.net`; 
+      await conn.groupRequestParticipantsUpdate(
+        message.user,
+        [jid],
+        'approve'
+      );
+    }
+
+     message.reply(`_Approved ${res.length} user(s) successfully_`);
+  },
+});
+
 
 CreatePlug({
     command: 'kick',
