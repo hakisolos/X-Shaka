@@ -1,43 +1,25 @@
-/*const { CreatePlug } = require('../lib/commands');
-const fetch = require('node-fetch');
-const { facebook_dl, tiktok_dl }  = require('../lib/scrappers.js'); 
+const { CreatePlug } = require('../lib/commands');
+const fetch = require('node-fetch'); 
 
 CreatePlug({
-  command: 'fb',
+  command: 'apk',
   category: 'download',
-  desc: 'Download fb vid',
+  desc: 'Download',
   execute: async (message, conn, match) => {
-    if (!match) return message.reply('_Please provide a Facebook URL_');
-    const { "HD (720p)": hdUrl, "SD (360p)": sdUrl } = await facebook_dl(match);
-    if (!hdUrl && !sdUrl) return message.reply('Not available');
-    await message.reply('_Downloading..._');
-    const video_version = hdUrl || sdUrl;
-    const max = hdUrl ? 'HD (720p)' : 'SD (360p)';
-    const res = await fetch(video_version);
-    if (!res.ok) return message.reply('err');
-    await conn.sendMessage(message.user, { video: { url: video_version }, caption: `\n*Quality*: ${max}` }, { quoted: message });
+    if (!match) return message.reply('_Please provide app name_');
+    const search = `https://bk9.fun/search/apk?q=${match}`;
+    const resi = await fetch(search).then((res) => res.json());
+    if (!resi || !resi.BK9 || resi.BK9.length === 0) return;
+    const down = `https://bk9.fun/download/apk?id=${resi.BK9[0].id}`;
+    const mep = await fetch(down).then((res) => res.json());
+    if (!mep || !mep.BK9 || !mep.BK9.dllink) return message.reply('_err');
+    const detail = {
+      document: { url: mep.BK9.dllink },
+      fileName: mep.BK9.name,
+      mimetype: "application/vnd.android.package-archive",
+      caption: `*${mep.BK9.name}*\nDownload your APK now`,
+    };
+
+    await conn.sendMessage(message.user, detail, { quoted: message });
   },
 });
-
-CreatePlug({
-  command: 'tiktok',
-  category: 'download',
-  desc: 'Download tiktok vid',
-  execute: async (message, conn, match) => {
-    if (!match) return message.reply('_Please provide a tiktok url_');
-    
-    await message.reply('_Downloading..._');
-    
-    const v_data = await tiktok_dl(match);
-        console.log('TikTok video data:', v_data);
-    
-    if (!v_data || !v_data.playUrl) {
-      return message.reply('_Could not retrieve the video or the video URL is missing._');
-    }
-
-    await conn.sendMessage(message.user, {
-      video: { url: v_data.playUrl },
-      caption: `*comments:* ${v_data.commentCount}\n*share count:* ${v_data.shareCount}\n*music author:* ${v_data.musicAuthor}`,
-    }, { quoted: message });
-  },
-});*/
