@@ -1,5 +1,6 @@
 const axios = require('axios');
-const EventSource = require('eventsource'); 
+const { EventSource } = require('eventsource-polyfill'); // Alternative polyfill
+
 const session_hash = Math.random().toString(36).slice(2);
 
 const logoGenerator = {
