@@ -1,11 +1,11 @@
 {
   "name": "x-astral",
   "version": "4.0.0",
-  "main": "Client.js",
+  "main": "Socket.js",
   "type": "commonjs",
   "scripts": {
-    "start": "pm2 start Client.js --attach --name xastral",
-    "stop": "pm2 stop Client.js"
+    "start": "pm2 start Socket.js --attach --name xastral",
+    "stop": "pm2 stop Socket.js"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.2",
@@ -18,7 +18,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "gtts": "^0.2.1",
     "jimp": "*",
-    "g-i-s":  "*",
+    "wa-sticker-formatter": "^4.4.4",
     "megajs": "^1.3.5",
     "moment-timezone": "^0.5.46",
     "node-cache": "^5.1.2",
