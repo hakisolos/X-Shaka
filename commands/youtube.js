@@ -1,7 +1,7 @@
 const { CreatePlug } = require('../lib/commands');
 const YouTube = require('youtube-sr').default;
 const tiktokdl = require('./downloads/tiktokdl'); 
-const cnv = require('./downloads/ytdl'); 
+const logoGenerator = require('./downloads/ytdl'); 
 
 CreatePlug({
   command: 'yts',
@@ -30,23 +30,24 @@ CreatePlug({
   },
 });
 
+
 CreatePlug({
-  command: 'ytmp3',
-  category: 'convert',
-  desc: 'Download YouTube audio',
+  command: 'logo',
+  category: 'logo generator',
+  desc: 'generate logo',
   execute: async (message, conn, match) => {
-    const url = match[1]; 
-    if (!url) return message.reply('_Need yt link_');
-    const result = await cnv.convert(url, 'audio');
-    if (result && result.download_url) {
-      await conn.sendMessage(
-        message.user,
-        { audio: { url: result.download_url }, mimetype: 'audio/mp4' },
-        { quoted: message }
-      );
-    } else  {
-      message.reply('err');
+    if (!match) return message.reply('_example logo black Cate on s');
+     try {
+      const prompt = match.trim();
+      const res = await logoGenerator.create(prompt);
+      if (res && res.output_url) {
+       await conn.sendMessage(message.user, { image: { url: res.output_url } });
+      } else {
+        message.reply('err');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      message.reply('An error occurred while generating the logo.');
     }
-  },
+  }
 });
-      
