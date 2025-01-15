@@ -13,7 +13,6 @@
     "axios": "^1.7.9",
     "chalk": "^4.1.0",
     "cheerio": "*",
-    "eventsource-polyfill": "*",
     "dotenv": "^16.4.7",
     "fs-extra": "^11.1.1",
     "fluent-ffmpeg": "^2.1.2",
