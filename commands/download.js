@@ -1,5 +1,6 @@
 const { CreatePlug } = require('../lib/commands');
 const fetch = require('node-fetch'); 
+const { Sticker, StickerTypes } = require('wa-sticker-formatter');
 
 CreatePlug({
   command: 'apk',
@@ -18,3 +19,23 @@ CreatePlug({
     await conn.sendMessage(message.user, detail, { quoted: message });
   },
 });
+
+CreatePlug({
+  command: 'sticker',
+  category: 'media',
+  desc: 'Convert an image or video to a sticker',
+  execute: async (message, conn) => {
+    if (!message.quoted) return message.reply('_Reply to an image or video_');
+    const media = await message.downloadAndSaveMedia();
+    const sticker = new Sticker(media, {
+      pack: CONFIG.app.packname,
+      type: StickerTypes.FULL, 
+      quality: 100, 
+      background: 'transparent'
+    });
+
+    const stickerBuffer = await sticker.toBuffer();
+    await conn.sendMessage(message.user, { sticker: stickerBuffer }, { quoted: message });
+  },
+});
+      
