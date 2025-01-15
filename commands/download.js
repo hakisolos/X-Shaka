@@ -26,7 +26,7 @@ CreatePlug({
   desc: 'Convert an image or video to a sticker',
   execute: async (message, conn) => {
     if (!message.quoted) return message.reply('_Reply to an image or video_');
-    const media = await message.downloadAndSaveMedia();
+    const media = await message.downloadMedia();
     const sticker = new Sticker(media, {
       pack: CONFIG.app.packname,
       type: StickerTypes.FULL, 
