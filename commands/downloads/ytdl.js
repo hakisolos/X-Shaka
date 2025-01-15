@@ -1,6 +1,5 @@
 const axios = require('axios');
-const EventSource = require('eventsource');
-
+const EventSource = require('eventsource'); 
 const session_hash = Math.random().toString(36).slice(2);
 
 const logoGenerator = {
@@ -43,7 +42,9 @@ const logoGenerator = {
   },
   cekStatus: () => {
     return new Promise((resolve, reject) => {
-      const eventSource = new EventSource('https://fantaxy-ofai-flx-logo.hf.space/gradio_api/queue/data?session_hash=' + session_hash);
+      const eventSource = new EventSource(
+        'https://fantaxy-ofai-flx-logo.hf.space/gradio_api/queue/data?session_hash=' + session_hash
+      );
 
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -72,4 +73,4 @@ const logoGenerator = {
 };
 
 module.exports = logoGenerator;
-      
+        
