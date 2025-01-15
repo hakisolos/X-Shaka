@@ -1,6 +1,7 @@
 const { CreatePlug } = require('../lib/commands');
 const fetch = require('node-fetch'); 
 const { Sticker, StickerTypes } = require('wa-sticker-formatter');
+const CONFIG = require('../config');
 
 CreatePlug({
   command: 'apk',
