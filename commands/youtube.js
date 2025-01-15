@@ -1,6 +1,7 @@
 const { CreatePlug } = require('../lib/commands');
 const YouTube = require('youtube-sr').default;
 const tiktokdl = require('./downloads/tiktokdl'); 
+const cnv = require('./downloads/ytdl'); 
 
 CreatePlug({
   command: 'yts',
@@ -28,4 +29,24 @@ CreatePlug({
     if (videos) await conn.sendMessage(message.user, { video: { url: videos.hdVideoUrl }, caption: `*Title:* ${videos.title}\n *Music*: ${videos.musicAuthor}`, }).catch(error => message.reply(`${error}`));
   },
 });
-  
+
+CreatePlug({
+  command: 'ytmp3',
+  category: 'convert',
+  desc: 'Download YouTube audio',
+  execute: async (message, conn, match) => {
+    const url = match[1]; 
+    if (!url) return message.reply('_Need yt link_');
+    const result = await cnv.convert(url, 'audio');
+    if (result && result.download_url) {
+      await conn.sendMessage(
+        message.user,
+        { audio: { url: result.download_url }, mimetype: 'audio/mp4' },
+        { quoted: message }
+      );
+    } else  {
+      message.reply('err');
+    }
+  },
+});
+      
