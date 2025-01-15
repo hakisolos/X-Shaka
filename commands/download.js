@@ -14,7 +14,7 @@ CreatePlug({
     const down = `https://bk9.fun/download/apk?id=${resi.BK9[0].id}`;
     const mep = await fetch(down).then((res) => res.json());
     if (!mep || !mep.BK9 || !mep.BK9.dllink) return message.reply('_err');
-    const detail = { document: { url: mep.BK9.dllink },fileName: mep.BK9.name, mimetype: "application/vnd.android.package-archive",caption: `*${mep.BK9.name}*\nDownloaded ur APK\n Made with❣️`,};
+    const detail = { document: { url: mep.BK9.dllink },fileName: mep.BK9.name, mimetype: "application/vnd.android.package-archive",caption: `*${mep.BK9.name}*\nMade with❣️`,};
     await conn.sendMessage(message.user, detail, { quoted: message });
   },
 });
