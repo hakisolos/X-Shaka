@@ -8,12 +8,10 @@ const Func = async (url, platform) => {
   let _api;
   if (platform === 'facebook') {
     _api = `https://api.yanzbotz.live/api/downloader/facebook?url=${url}&apiKey=jawa`;
-  } else if (platform === 'tiktok') {
-    _api = `https://api.yanzbotz.live/api/download/tiktok?url=${url}&apiKey=jawa`;
   } else if (platform === 'instagram') {
     _api = `https://api.yanzbotz.live/api/downloader/instagram?url=${url}&apiKey=jawa`;
   } else {
-    throw new Error('Use "facebook", "tiktok", or "instagram"');}
+    throw new Error('Use "facebook","instagram"');}
   const response = await fetch(_api);
   const data = await response.json();
   if (data.status !== 200 || !data.result) {
@@ -26,41 +24,6 @@ const Func = async (url, platform) => {
       thumbnail: thumb,
       videoHD: video_hd,
       videoSD: video_sd,
-    };
-  }
-
-  if (platform === 'tiktok') {
-    const {
-      type,
-      name,
-      username,
-      profile,
-      views,
-      likes,
-      comments,
-      favorite,
-      shares,
-      sound,
-      description,
-      image,
-    } = data.result;
-
-    return {
-      platform,
-      type, 
-      name,
-      username,
-      profilePicture: profile,
-      stats: {
-        views,
-        likes,
-        comments,
-        favorites: favorite,
-        shares,
-      },
-      sound,
-      description,
-      content: type === 'image' ? image : null,
     };
   }
 
