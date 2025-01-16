@@ -158,16 +158,17 @@ CreatePlug({
 CreatePlug({
     command: 'tagall',
     category: 'group',
-    desc: 'taga users',
+    desc: 'Tag all users in the group',
     execute: async (message, conn, args) => {
         if (!message.isGroup) return;
         var data = await conn.groupMetadata(message.user);
         var participants = data.participants.map(p => p.id.replace('@s.whatsapp.net', ''));
-        const msg = `⛊──⛾「 Tag All 」⛾──⛊\n`;
+        const msg = `⛊──⛾「 Tag All 」⛾──⛊\n\n👥 Mentioning all:\n`;
         const _object = participants.map(p => `@${p}`).join('\n');
         const _m = msg + _object;
-        message.reply(_m, {
-            mentions: participants.map(p => p + '@s.whatsapp.net')
+        conn.sendMessage(message.user, {
+            text: _m,
+            mentions: participants.map(p => p + '@s.whatsapp.net'),
         });
     },
 });
