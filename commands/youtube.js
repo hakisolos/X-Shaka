@@ -37,10 +37,10 @@ CreatePlug({
   execute: async (message, conn, match) => {
     if (!match) return message.reply('_Please provide a Facebook video URL_');
     const result = await Func(match, 'facebook');
-    if (result.platform === 'facebook' && result.videoHD) {
+    if (result.platform === 'facebook' && result.videoHD && result.videoSD) {
       await conn.sendMessage(message.user, {
-        video: { url: result.videoHD },
-        caption: `*Desc*: ${result.description}`,
+        video: { url: result.videoSD },
+        caption: `*Made with❣️*`,
       });
     } else {}
   },
