@@ -1,7 +1,5 @@
-const { downloadMediaMessage } = require('@whiskeysockets/baileys');
 const { CreatePlug } = require('../lib/commands');
 const fetch = require('node-fetch'); 
-const { Sticker, StickerTypes } = require('wa-sticker-formatter');
 const CONFIG = require('../config');
 
 CreatePlug({
@@ -23,20 +21,23 @@ CreatePlug({
 });
 
 CreatePlug({
-  command: 'sticker',
+  command: 'emojimix',
   category: 'media',
-  desc: 'Convert an image or video to a sticker',
-  execute: async (message, conn) => {
-    if (!message.quoted) return message.reply('_Reply to an image or video_');
-    const msg = message.quoted.message[message.quoted.type];
-    const media = await downloadMediaMessage(msg, 'buffer');
-    const sticker = new Sticker(media, {
-      pack: CONFIG.app.packname,
-      type: StickerTypes.FULL,
-      quality: 100,
-      background: 'transparent',
-    });
-    const st = await sticker.toBuffer();
-    await conn.sendMessage(message.user, { sticker: st }, { quoted: message });
+  desc: 'Combine two emojis into a mixed emoji sticker',
+  execute: async (message, conn, match) => {
+    await message.react('🔥');
+    if (!match || !match.includes('+')) return message.reply('_Example usage: emojimix ❤️+🔥_');
+    const [emoji1, emoji2] = match.split('+').map(e => e.trim());
+    if (!emoji1 || !emoji2) return message.reply('_Please provide two emojis separated by "+"._');
+    const url = `https://api.yanzbotz.live/api/tools/emojimix?emoji1=${emoji1}&emoji2=${emoji2}`;
+    const res = await fetch(url);
+    if (!re.ok) return;
+    const data = await res.json();
+    if (!data || data.status !== true || !data.result) 
+      return message.reply('_err_');
+    const st = data.result;
+    await conn.sendMessage( message.user,{ sticker: { url: st }, packname: CONFIG.app.packname, },{ quoted: message }).catch(err => {
+    console.error(err);
+      });
   },
 });
