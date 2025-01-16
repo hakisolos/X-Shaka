@@ -47,7 +47,6 @@ async function startBot() {
     });
 
     store.bind(conn.ev);
-    conn.ev.on('creds.update', saveCreds);
     conn.ev.on('messages.upsert', async ({ messages }) => {
     const msg = messages[0];
     if (!msg.message) return;
@@ -55,33 +54,31 @@ async function startBot() {
     const message = await serialize(msg, conn);
     if (!message || !message.key || !message.body) return;
     const me = message.key.remoteJid;
-    if (message.sender !== me && ['protocolMessage', 'reactionMessage'].includes(message.type) && message.key.remoteJid === 'status@broadcast') {
-        if (!Object.keys(store.groupMetadata).length) store.groupMetadata = await conn.groupFetchAllParticipating();
-        return;
-    }
+    if (message.sender !== me && ['protocolMessage', 'reactionMessage'].includes(message.type) && me === 'status@broadcast') {
+      if (!Object.keys(store.groupMetadata).length) store.groupMetadata = await conn.groupFetchAllParticipating();
+        return;}
     if (CONFIG.app.mode === true && !message.isOwner) return;
     const mek = message.body.trim().toLowerCase();
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
-    const textt = mek.slice(CONFIG.app.prefix.length).trim(); 
-    var owner = CONFIG.app.me;
+    const textt = mek.slice(CONFIG.app.prefix.length).trim();
+    const owner = CONFIG.app.me;
     console.log("------------------\n" + `user: ${message.sender}\nchat: ${message.isGroup ? "group" : "private"}\nmessage: ${mek}\n` + "------------------");
-    if (isCmd) { 
+    if (isCmd) {
         const pattern = new RegExp(`^(${CONFIG.app.prefix})(\\S+)`);
         const commando = mek.match(pattern);
-        if (commando) { 
-            const command = commando[2]; 
-            const match = message.body ? message.body.trim().split(/ +/).slice(1).join(" ") : ''; 
-            const args = match; 
+        if (commando) {
+            const command = commando[2];
+            const match = message.body.trim().split(/ +/).slice(1).join(" ");
+            const args = match;
             const dun = commands.find((c) => c.command.toLowerCase() === command);
             if (dun) {
-                try { 
-                    await dun.execute(message, conn, match, args, owner);
-                } catch (err) {
-                    console.error(err);
+                await dun.execute(message, conn, match, args, owner).catch((err) => console.error(err));
+                if (dun.on && message.body) {
+                    await dun.on(message, conn, match, args).catch((err) => console.error(err));
                 }
             }}
-      }
-  });
+         }
+     });
 
     conn.ev.on('group-participants.update', async ({ id, participants, action }) => {
         const time = new Date().toLocaleTimeString();
