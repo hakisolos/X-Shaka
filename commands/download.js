@@ -25,19 +25,18 @@ CreatePlug({
   category: 'media',
   desc: 'Combine two emojis into a mixed emoji sticker',
   execute: async (message, conn, match) => {
-    await message.react('🔥');
     if (!match || !match.includes('+')) return message.reply('_Example usage: emojimix ❤️+🔥_');
     const [emoji1, emoji2] = match.split('+').map(e => e.trim());
-    if (!emoji1 || !emoji2) return message.reply('_Please provide two emojis separated by "+"._');
+    if (!emoji1 || !emoji2) return message.reply('_Please provide two emojis separated by "+"_');
     const url = `https://api.yanzbotz.live/api/tools/emojimix?emoji1=${emoji1}&emoji2=${emoji2}`;
     const res = await fetch(url);
     if (!res.ok) return;
     const data = await res.json();
-    if (!data || data.status !== true || !data.result) 
+    if (!data || data.status !== 200 || !data.result || !data.result[0].media_formats.png_transparent.url) 
       return message.reply('_err_');
-    const st = data.result;
-    await conn.sendMessage( message.user,{ sticker: { url: st }, packname: CONFIG.app.packname, },{ quoted: message }).catch(err => {
+    const _sti = data.result[0].media_formats.png_transparent.url; 
+    await conn.sendMessage(message.user,{sticker: { url: _sti },packname: CONFIG.app.packname, },{ quoted: message }).catch(err => {
     console.error(err);
-      });
+          });
   },
 });
