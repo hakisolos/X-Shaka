@@ -40,7 +40,7 @@ CreatePlug({
     if (result.platform === 'facebook' && result.videoHD) {
       await conn.sendMessage(message.user, {
         video: { url: result.videoHD },
-        caption: `*Desc*: ${result.desc}`,
+        caption: `*Desc*: ${result.description}`,
       });
     } else {}
   },
@@ -61,20 +61,3 @@ CreatePlug({
     } else {}
   },
 });
-
-CreatePlug({
-  command: 'tik',
-  category: 'download',
-  desc: 'Download TikTok videos',
-  execute: async (message, conn, match) => {
-    if (!match) return message.reply('_Please provide a TikTok video URL_');
-    const result = await Func(match, 'tiktok');
-    if (result.platform === 'tiktok' && result.content) {
-      await conn.sendMessage(message.user, {
-        video: { url: result.content },
-        caption: `*username:* ${result.username}\n*Likes:* ${result.stats.likes}\n*Shares:* ${result.stats.shares}`,
-      });
-    } else {}
-  },
-});
-        
