@@ -28,15 +28,10 @@ CreatePlug({
     if (!match || !match.includes('+')) return message.reply('_Example usage: emojimix ❤️+🔥_');
     const [emoji1, emoji2] = match.split('+').map(e => e.trim());
     if (!emoji1 || !emoji2) return message.reply('_Please provide two emojis separated by "+"_');
-    const url = `https://api.yanzbotz.live/api/tools/emojimix?emoji1=${emoji1}&emoji2=${emoji2}`;
-    const res = await fetch(url);
+    const res = await fetch(`https://api.yanzbotz.live/api/tools/emojimix?emoji1=${emoji1}&emoji2=${emoji2}`);
     if (!res.ok) return;
-    const data = await res.json();
-    if (!data || data.status !== 200 || !data.result || !data.result[0].media_formats.png_transparent.url) 
-      return message.reply('_err_');
-    const _sti = data.result[0].media_formats.png_transparent.url; 
-    await conn.sendMessage(message.user,{sticker: { url: _sti },packname: CONFIG.app.packname, },{ quoted: message }).catch(err => {
-    console.error(err);
-          });
+    const data = await res.json(), _sti = data?.result?.[0]?.media_formats?.png_transparent?.url;
+    if (!data || data.status !== 200 || !_sti) return message.reply('_Error_');
+    await conn.sendMessage(message.user, {sticker: {url: _sti}, packname: CONFIG.app.packname}, {quoted: message}).catch(console.error);
   },
 });
