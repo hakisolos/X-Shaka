@@ -11,12 +11,24 @@ const Func = async (url, platform) => {
   } else if (platform === 'instagram') {
     _api = `https://api.yanzbotz.live/api/downloader/instagram?url=${url}&apiKey=jawa`;
   } else {
-    throw new Error('Use "facebook","instagram"');}
+    throw new Error('Use "facebook","instagram"');
+  }
+
   const response = await fetch(_api);
-  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(`Failed to fetch data from ${platform}`);
+  }
+  const contentType = response.headers.get('content-type');
+  let data;
+    if (contentType && contentType.includes('application/json')) {
+    data = await response.json();
+  } else {
+    throw new Error('Invalid response format. Expected JSON');
+  }
   if (data.status !== 200 || !data.result) {
-    throw new Error(`err ${platform}`);}
-  if (platform === 'facebook') {
+    throw new Error(`Error: ${platform}: ${data.status}`);
+  }
+   if (platform === 'facebook') {
     const { desc, thumb, video_hd, video_sd } = data.result;
     return {
       platform,
@@ -31,11 +43,12 @@ const Func = async (url, platform) => {
     const { type, thumbnail, url } = data.result[0];
     return {
       platform,
-      type, 
+      type,
       thumbnail,
-      mediaUrl: url, 
+      mediaUrl: url,
     };
   }
 };
 
 module.exports = { Func };
+  
