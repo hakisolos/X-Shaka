@@ -14,7 +14,7 @@ const Func = async (url, platform) => {
     _api = `https://api.yanzbotz.live/api/downloader/instagram?url=${url}&apiKey=jawa`;
   } else {
     throw new Error('Use "facebook", "tiktok", or "instagram"');}
-  const response = await fetch(apiUrl);
+  const response = await fetch(_api);
   const data = await response.json();
   if (data.status !== 200 || !data.result) {
     throw new Error(`err ${platform}`);}
