@@ -40,7 +40,7 @@ CreatePlug({
     if (result.platform === 'facebook' && result.videoHD) {
       await conn.sendMessage(message.user, {
         video: { url: result.videoHD },
-        caption: `*Likes*: ${result.likes || 'ehe'}\n*Shares:* ${result.shares || 'N/A'}`,
+        caption: `*Desc*: ${result.desc}`,
       });
     } else {}
   },
