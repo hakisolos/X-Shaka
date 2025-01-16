@@ -1,11 +1,11 @@
 {
   "name": "x-astral",
   "version": "4.0.0",
-  "main": "Socket.js",
+  "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "pm2 start Socket.js --attach --name xastral",
-    "stop": "pm2 stop Socket.js"
+    "start": "pm2 start index.js --attach --name xastral",
+    "stop": "pm2 stop index.js"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.2",
