@@ -28,10 +28,12 @@ CreatePlug({
     command: 'amute',
     category: 'group',
     desc: 'Schedule a group mute at a specific time',
-    execute: async (message, conn, args) => {
-        if (!message.isGroup || !message.isBotAdmin || !message.isAdmin) return message.reply('_Not authorized_');
-        if (!args[0]) return message.reply('_Provide a time (e.g., 12:40)_');
-        const [hour, minute] = args[0].split(':').map(Number);
+    execute: async (message, conn, match) => {
+        if (!message.isGroup) return;
+        if(!message.isBotAdmin) return message.reply('_not admin_');
+        if(!message.isAdmin) return;
+        if (!match) return message.reply('_Provide a time (e.g., 12:40)_');
+        const [hour, minute] = match.split(':').map(Number);
         if (isNaN(hour) || isNaN(minute)) return message.reply('_Invalid time format_');
         const now = new Date();
         const muteTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
@@ -39,7 +41,7 @@ CreatePlug({
         const data = await conn.groupMetadata(message.user);
         if (data.announce) return message.reply('_Group is already muted_');
         const delay = muteTime - now;
-        message.reply(`_Group will be muted at ${args[0]}_`);
+        message.reply(`_Group will be muted at ${match}_`);
         setTimeout(async () => {
             await conn.groupSettingUpdate(message.user, 'announcement');
             message.reply('_The group is now muted_');
