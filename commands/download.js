@@ -31,7 +31,7 @@ CreatePlug({
     if (!emoji1 || !emoji2) return message.reply('_Please provide two emojis separated by "+"._');
     const url = `https://api.yanzbotz.live/api/tools/emojimix?emoji1=${emoji1}&emoji2=${emoji2}`;
     const res = await fetch(url);
-    if (!re.ok) return;
+    if (!res.ok) return;
     const data = await res.json();
     if (!data || data.status !== true || !data.result) 
       return message.reply('_err_');
