@@ -56,7 +56,7 @@ CreatePlug({
     if (result.platform === 'instagram' && result.mediaUrl) {
       await conn.sendMessage(message.user, {
         video: { url: result.mediaUrl },
-        caption: `*Likes:* ${result.likes || 'N/A'}\n*Shares:* ${result.shares || 'N/A'}`,
+        caption: `*Insta*\nMade with❣️`,
       });
     } else {}
   },
