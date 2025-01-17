@@ -1,6 +1,7 @@
 const { CreatePlug } = require('../lib/commands');
 const fetch = require('node-fetch'); 
 const CONFIG = require('../config');
+const { Func } = require('./downloads/fbdl');
 
 CreatePlug({
   command: 'apk',
@@ -35,3 +36,20 @@ CreatePlug({
     await conn.sendMessage(message.user, _sti, { quoted: message, sticker: {} });
   },
 });
+
+
+CreatePlug({
+  command: 'facebook',
+  category: 'download',
+  desc: 'Download Facebook videos',
+  execute: async (message, conn, match) => {
+    if (!match) return message.reply('_Please provide a Facebook video URL_');
+    const void = await Func(match);
+    if (!void) return message.reply('_err_');
+    const smd = void["720p"] || void["360p"];
+    const quality = void["720p"] ? '720p (HD)' : '360p (SD)';
+    if (!smd) return;
+    await conn.sendMessage(message.user, { video: { url: smd }, caption: `*Quality:* ${quality}\nMade with ❣️` });
+  }
+});
+    
