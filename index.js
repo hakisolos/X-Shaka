@@ -57,7 +57,7 @@ async function startBot() {
     if (message.sender !== me && ['protocolMessage', 'reactionMessage'].includes(message.type) && me === 'status@broadcast') {
       if (!Object.keys(store.groupMetadata).length) store.groupMetadata = await conn.groupFetchAllParticipating();
         return;}
-    if (CONFIG.app.mode === true && !message.isFromMe && CONFIG.app.mods) return;
+    if (CONFIG.app.mode === true && !message.isFromMe && !CONFIG.app.mods) return;
     const mek = message.body.trim().toLowerCase();
     const isCmd = mek.startsWith(CONFIG.app.prefix.toLowerCase());
     const textt = mek.slice(CONFIG.app.prefix.length).trim();
