@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const CONFIG = require('../config');
 
 CreatePlug({
-  command: 'apk',
+  command: 'app',
   category: 'download',
   desc: 'Search and download APKs',
   execute: async (message, conn, match) => {
