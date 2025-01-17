@@ -31,22 +31,6 @@ CreatePlug({
 });
 
 CreatePlug({
-  command: 'fb',
-  category: 'download',
-  desc: 'Download Facebook videos',
-  execute: async (message, conn, match) => {
-    if (!match) return message.reply('_Please provide a Facebook video URL_');
-    const result = await Func(match, 'facebook');
-    if (result.platform === 'facebook' && result.videoHD && result.videoSD) {
-      await conn.sendMessage(message.user, {
-        video: { url: result.videoSD },
-        caption: `*Made with❣️*`,
-      });
-    } else {}
-  },
-});
-
-CreatePlug({
   command: 'instagram',
   category: 'download',
   desc: 'Download Instagram videos',
