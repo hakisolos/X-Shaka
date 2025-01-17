@@ -2,14 +2,32 @@ const { CreatePlug } = require('../lib/commands');
 const fetch = require('node-fetch'); 
 const CONFIG = require('../config');
 const { Func } = require('./downloads/fbdl');
+const { Ring } = require('./downloads/Ring');
 
+CreatePlug({
+  command: 'ringtone',
+  category: 'download',
+  desc: 'send ringtones based on a query',
+  execute: async (message, conn, match) => {
+    if (!match) return message.reply('Please provide a search query');
+    await message.react('❣️');
+    const results = await Ring(match);
+    if (!results?.length) return;
+    const ringtone = results[0];
+    await conn.sendMessage(message.user, {audio: { url: ringtone.audio },mimetype: 'audio/mpeg', fileName: `${ringtone.title}.mp3`, caption: `*Title:* ${ringtone.title}\nMade with❣️`
+    }).catch(err => {
+      console.error(err.message);
+          });
+  }
+});
+    
 CreatePlug({
   command: 'apk',
   category: 'download',
   desc: 'Download',
   execute: async (message, conn, match) => {
     if (!match) return message.reply('_Please provide app name_');
-    await message.react('🗣️');
+    await message.react('❣️');
     const search = `https://bk9.fun/search/apk?q=${match}`;
     const smd = await fetch(search).then((res) => res.json());
     if (!smd || !smd.BK9 || smd.BK9.length === 0) return;
@@ -44,6 +62,7 @@ CreatePlug({
   desc: 'Download Facebook videos',
   execute: async (message, conn, match) => {
     if (!match) return message.reply('_Please provide a Facebook video URL_');
+    await message.react('❣️');
     const voidi = await Func(match);
     if (!voidi) return message.reply('_err_');
     const smd = voidi["720p"] || voidi["360p"];
