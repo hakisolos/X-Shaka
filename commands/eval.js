@@ -1,11 +1,18 @@
-const { serialize } = require('../lib/messages');
 const CONFIG = require('../config');
-const message = await serialize(msg);
-const { body } = message;
-const owner = CONFIG.app.mods;
-if (body.startsWith('$')) {
-  if (!owner.includes(message.sender)) return;
-  const code = body.slice(1).trim();
-  const result = await eval(code);
-  message.reply(`\`\`\`\n${result}\n\`\`\``);
-    }
+const util = require('util');
+const { CreatePlug } = require('../lib/commands');
+
+CreatePlug({
+  command: 'eval',
+  category: 'admin',
+  desc: 'Evaluate JavaScript code (admin only).',
+  execute: async (message, conn, match) => {
+    const owner = CONFIG.app.mods;
+    if (!owner.includes(message.sender)) return;
+    if (!match) return message.reply('undefined');
+    const result = await eval(match);
+    const output = typeof result !== 'string' ? util.inspect(result) : result;
+    message.reply(`\n\`\`\`\n${output}\n\`\`\``);
+  }
+});
+                                     
