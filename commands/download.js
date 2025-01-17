@@ -14,9 +14,9 @@ CreatePlug({
     const smd = await fetch(search).then((res) => res.json());
     if (!smd || !smd.BK9 || smd.BK9.length === 0) return;
     const down = `https://bk9.fun/download/apk?id=${smd.BK9[0].id}`;
-    const void = await fetch(down).then((res) => res.json());
-    if (!void || !void.BK9 || !void.BK9.dllink) return message.reply('_err');
-    const detail = { document: { url: void.BK9.dllink },fileName: void.BK9.name, mimetype: "application/vnd.android.package-archive",caption: `*${void.BK9.name}*\nMade with❣️`,};
+    const voidi = await fetch(down).then((res) => res.json());
+    if (!voidi || !voidi.BK9 || !voidi.BK9.dllink) return message.reply('_err');
+    const detail = { document: { url: voidi.BK9.dllink },fileName: voidi.BK9.name, mimetype: "application/vnd.android.package-archive",caption: `*${voidi.BK9.name}*\nMade with❣️`,};
     await conn.sendMessage(message.user, detail, { quoted: message });
   },
 });
@@ -44,10 +44,10 @@ CreatePlug({
   desc: 'Download Facebook videos',
   execute: async (message, conn, match) => {
     if (!match) return message.reply('_Please provide a Facebook video URL_');
-    const void = await Func(match);
-    if (!void) return message.reply('_err_');
-    const smd = void["720p"] || void["360p"];
-    const quality = void["720p"] ? '720p (HD)' : '360p (SD)';
+    const voidi = await Func(match);
+    if (!voidi) return message.reply('_err_');
+    const smd = voidi["720p"] || voidi["360p"];
+    const quality = voidi["720p"] ? '720p (HD)' : '360p (SD)';
     if (!smd) return;
     await conn.sendMessage(message.user, { video: { url: smd }, caption: `*Quality:* ${quality}\nMade with ❣️` });
   }
