@@ -55,14 +55,24 @@ CreatePlug({
     desc: 'Add a user to the group',
     execute: async (message, conn, match) => {
         if (!message.isGroup) return;
-        if (!message.isBotAdmin) return message.reply('_not an admin_');
-        if (!message.isAdmin) return;
-        let user = message.body.includes('@') ? message.body.split('@')[1].split(' ')[0] + '@s.whatsapp.net' : match.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
-        if (!user || (match?.trim() === '' && !message.body.includes('@'))) return conn.sendMessage(message.user, { text: '_provide a valid number to add_' });
-        await conn.groupParticipantsUpdate(message.user, [user], 'add');
-        await conn.sendMessage(message.user, { text: `Successfully added ${message.body.includes('@') ? `@${message.body.split('@')[1].split(' ')[0]}` : match.trim()}`, mentions: [user] });
+        if(!message.isBotAdmin) return message.reply('_not admin_');
+        if(!message.isAdmin) return;
+        let user = message.body.includes('@') 
+            ? message.body.split('@')[1].split(' ')[0] + '@s.whatsapp.net' 
+            : match.replace(/[^0-9]/g, '') + '@s.whatsapp.net';
+        if (!user || (match?.trim() === '' && !message.body.includes('@'))) 
+        return conn.sendMessage(message.user, { text: '_provide a valid number to add_' });
+        const result = await conn.groupParticipantsUpdate(message.user, [user], 'add');
+        if (result?.status === 403 || result?.status === 'failed') {
+            const _code = await conn.groupInviteCode(message.user);
+            await conn.sendMessage(user, { text: `*_Click here_*: https://chat.whatsapp.com/${_code}` });
+            await conn.sendMessage(message.user, { text: `Couldnt add\ninvite send ${message.body.includes('@') ? `@${message.body.split('@')[1].split(' ')[0]}` : match.trim()}`, mentions: [user] });
+        } else {
+            await conn.sendMessage(message.user, { text: `_Added_ ${message.body.includes('@') ? `@${message.body.split('@')[1].split(' ')[0]}` : match.trim()}`, mentions: [user] });
+        }
     }
 });
+
 
 CreatePlug({
   command: 'approve',
