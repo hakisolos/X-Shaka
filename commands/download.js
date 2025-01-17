@@ -3,6 +3,27 @@ const fetch = require('node-fetch');
 const CONFIG = require('../config');
 const { Func } = require('./downloads/fbdl');
 const { Ring } = require('./downloads/Ring');
+const { Ytdl } = require('./downloads/Ytdl');
+
+CreatePlug({
+  command: 'song',
+  category: 'download',
+  desc: 'Download audio from YouTube',
+  execute: async (message, conn, match) => {
+    if (!match) return message.reply('_Please provide a song name_');
+    await message.react('❣️');
+    const result = await Ytdl(match).catch(() => null);
+    if (!result) return message.reply('_err_');
+    const audio = result.downloadLinks.find(item => item.format === 'audio');
+    if (!audio) return;
+    message.reply(`*🎵 Title:* ${result.title}\n\n_Downloading audio..._`);
+    await conn.sendMessage(message.user, {audio: { url: audio.link },
+      mimetype: 'audio/mpeg',
+      fileName: `${result.title}.mp3`,
+    });
+  },
+});
+
 
 CreatePlug({
   command: 'ringtone',
