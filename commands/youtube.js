@@ -24,6 +24,7 @@ CreatePlug({
   category: 'download',
   desc: 'Download TikTok videos',
   execute: async (message, conn, match) => {
+    await message.react('❣️');
     if (!match) return message.reply('_Please provide a TikTok URL_');
     const videos = await tiktokdl(match).catch(error => message.reply(`${error}`));
     await conn.sendMessage(message.user, { video: { url: videos.hdVideoUrl }, caption: `*Title:* ${videos.title}\n *Music*: ${videos.musicAuthor}\nMade with❣️`, }).catch(error => message.reply(`${error}`));
@@ -35,6 +36,7 @@ CreatePlug({
   category: 'download',
   desc: 'Download Instagram videos',
   execute: async (message, conn, match) => {
+    await message.react('❣️');
     if (!match) return message.reply('_Please provide an Instagram video URL_');
     const result = await Func(match, 'instagram');
     if (result.platform === 'instagram' && result.mediaUrl) {
