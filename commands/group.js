@@ -2,19 +2,27 @@ const { CreatePlug } = require('../lib/commands');
 const CONFIG = require('../config');
 
 CreatePlug({
-command: 'tagadmin',
-category: 'group',
-desc: 'Tag admins in the group',
-execute: async (message, conn, args) => {
-if (!message.isGroup) return;
-await message.react('🐂');
-var data = await conn.groupMetadata(message.user);
-var admins = data.participants.filter(p => p.isAdmin).map(p => p.id.replace('@s.whatsapp.net', ''));
-const msg = `🔰──⛾「 Tag Admin 」⛾──🔰\n\n👥 Mentioning admins:\n`;
-const _object = admins.map(p => `@${p}`).join('\n');
-const _m = msg + _object;
-await conn.sendMessage(message.user, { text: _m, mentions: admins.map(p => p + '@s.whatsapp.net'), });
-},
+  command: 'tagadmin',
+  category: 'group',
+  desc: 'Tag admins in the group for hlp',
+  execute: async (message, conn, match) => {
+    const args = match || message?.text?.split(' ').slice(1).join(' ');
+    if (!message.isGroup) return; 
+    await message.react('🐂'); 
+    const data = await conn.groupMetadata(message.user);
+    const admins = data.participants
+      .filter(p => p.isAdmin)
+      .map(p => p.id.replace('@s.whatsapp.net', '')); 
+    if (admins.length === 0) return;
+    const voidi = args || '👥 Mentioning admins:';
+    const msg = `🔰──⛾「 Tag Admin 」⛾──🔰\n\n${voidi}\n`;
+    const _object = admins.map(p => `@${p}`).join('\n');
+    const _m = msg + _object;
+    await conn.sendMessage(message.user, {
+      text: _m,
+      mentions: admins.map(p => `${p}@s.whatsapp.net`),
+    });
+  },
 });
 
 CreatePlug({
