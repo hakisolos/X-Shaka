@@ -8,4 +8,21 @@ async function ChatGPT(input) {
   return data.content;
 }
 
-module.exports = { ChatGPT };
+async function GeminiAI(text) {
+  const url = `https://api.ahmmikun.live/api/ai/gemini?text=${text}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!data.data.status) throw new Error('err');
+  return data.data.response;
+}
+
+async function SimAI(query) {
+  const url = `https://api.ahmmikun.live/api/ai/simai?q=${query}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!data.data.status) throw new Error('err');
+  return data.data.response;
+}
+
+
+module.exports = { ChatGPT,GeminiAI, SimAI};
