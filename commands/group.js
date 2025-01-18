@@ -2,6 +2,22 @@ const { CreatePlug } = require('../lib/commands');
 const CONFIG = require('../config');
 
 CreatePlug({
+command: 'tagadmin',
+category: 'group',
+desc: 'Tag admins in the group',
+execute: async (message, conn, args) => {
+if (!message.isGroup) return;
+await message.react('🐂');
+var data = await conn.groupMetadata(message.user);
+var admins = data.participants.filter(p => p.isAdmin).map(p => p.id.replace('@s.whatsapp.net', ''));
+const msg = `🔰──⛾「 Tag Admin 」⛾──🔰\n\n👥 Mentioning admins:\n`;
+const _object = admins.map(p => `@${p}`).join('\n');
+const _m = msg + _object;
+await conn.sendMessage(message.user, { text: _m, mentions: admins.map(p => p + '@s.whatsapp.net'), });
+},
+});
+
+CreatePlug({
   command: 'gpp',
   category: 'group',
   desc: 'Get group profile picture',
@@ -22,7 +38,7 @@ CreatePlug({
     if (!message.isBotAdmin) return message.reply('_Im not admin_');
     if (!message.isAdmin) return;
     if (!message.quoted) return message.reply('_Reply to an image_');
-    const q = message.quoted;
+    const q = message.quoted.imageMessage;
     if (!q.image) return message.reply('_Only images are supported_');
     const media = await q.downloadMedia();
     await conn.updateGroupPicture(message.user, media);
