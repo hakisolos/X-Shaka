@@ -3,7 +3,6 @@ const fetch = require('node-fetch');
 const CONFIG = require('../config');
 const { Func } = require('./downloads/fbdl');
 const { Ring } = require('./downloads/Ring');
-const { Ytdl } = require('./downloads/Ytdl');
 
 CreatePlug({
   command: 'ringtone',
