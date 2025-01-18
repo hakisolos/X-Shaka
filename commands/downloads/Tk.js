@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-async function TK(username) {
+async function TKAnnis(username) {
   const url = `https://bk9.fun/stalk/tiktok?q=${username}`;
   const res = await fetch(url);
   const data = await res.json();
@@ -18,5 +18,5 @@ async function TK(username) {
   return null;
 }
 
-module.exports = { TK };
+module.exports = { TKAnnis };
     
