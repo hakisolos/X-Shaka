@@ -2,51 +2,47 @@ const { CreatePlug } = require('../lib/commands');
 const CONFIG = require('../config');
 
 CreatePlug({
-    command: 'aunmute',
-    category: 'group',
-    desc: 'Schedule a group unmute at a specific time',
-    execute: async (message, conn, args) => {
-        if (!message.isGroup || !message.isBotAdmin || !message.isAdmin) return message.reply('_Not authorized_');
-        if (!args[0]) return message.reply('_Provide a time (e.g., 14:30)_');
-        const [hour, minute] = args[0].split(':').map(Number);
-        if (isNaN(hour) || isNaN(minute)) return message.reply('_Invalid time format_');
-        const now = new Date();
-        const unmuteTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
-        if (unmuteTime <= now) return message.reply('_Time must be in the future_');
-        const data = await conn.groupMetadata(message.user);
-        if (!data.announce) return message.reply('_Group is already unmuted_')
-        const delay = unmuteTime - now;
-        message.reply(`_Group will be unmuted at ${args[0]}_`);
-        setTimeout(async () => {
-            await conn.groupSettingUpdate(message.user, 'not_announcement');
-            message.reply('_The group is now unmuted_');
-        }, delay);
-    },
+  command: 'gpp',
+  category: 'group',
+  desc: 'Get group profile picture',
+  execute: async (message, conn) => {
+    if (!message.isGroup) return;
+    const groupPic = await conn.groupProfilePicture(message.user);
+    if (!groupPic) return;
+    await conn.sendMessage(message.user, { image: groupPic });
+  },
 });
 
 CreatePlug({
-    command: 'amute',
-    category: 'group',
-    desc: 'Schedule a group mute at a specific time',
-    execute: async (message, conn, match) => {
-        if (!message.isGroup) return;
-        if(!message.isBotAdmin) return message.reply('_not admin_');
-        if(!message.isAdmin) return;
-        if (!match) return message.reply('_Provide a time (e.g., 12:40)_');
-        const [hour, minute] = match.split(':').map(Number);
-        if (isNaN(hour) || isNaN(minute)) return message.reply('_Invalid time format_');
-        const now = new Date();
-        const muteTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
-        if (muteTime <= now) return message.reply('_Time must be in the future_');
-        const data = await conn.groupMetadata(message.user);
-        if (data.announce) return message.reply('_Group is already muted_');
-        const delay = muteTime - now;
-        message.reply(`_Group will be muted at ${match}_`);
-        setTimeout(async () => {
-            await conn.groupSettingUpdate(message.user, 'announcement');
-            message.reply('_The group is now muted_');
-        }, delay);
-    },
+  command: 'setgpp',
+  category: 'group',
+  desc: 'Set group profile picture',
+  execute: async (message, conn) => {
+    if (!message.isGroup) return;
+    if (!message.isBotAdmin) return message.reply('_Im not admin_');
+    if (!message.isAdmin) return;
+    if (!message.quoted) return message.reply('_Reply to an image_');
+    const q = message.quoted;
+    if (!q.image) return message.reply('_Only images are supported_');
+    const media = await q.downloadMedia();
+    await conn.updateGroupPicture(message.user, media);
+    message.reply('_Group picture has been updated_');
+  },
+});
+
+CreatePlug({
+  command: 'setdesc',
+  category: 'group',
+  desc: 'Change the group description',
+  execute: async (message, conn, match) => {
+    if (!message.isGroup) return;
+    if (!message.isBotAdmin) return message.reply('_Im not admin_');
+    if (!message.isAdmin) return;
+    const args = match || message?.message?.text?.split(' ').slice(1).join(' ');
+    if (!args) return message.reply('_Please provide a new group description_');
+    await conn.groupUpdateDescription(message.user, args);
+    message.reply(`_Group description has been updated to: "${args}"_`);
+  },
 });
 
 CreatePlug({
@@ -302,21 +298,6 @@ CreatePlug({
         var _invites  = await conn.groupInviteCode(message.user);
         await message.reply(`*Group Link*:\nhttps://chat.whatsapp.com/${_invites}`);
     }
-});
-
-CreatePlug({
-    command: 'setname',
-    category: 'group',
-    desc: 'Change the group name',
-    execute: async (message, conn, match) => {
-        if (!message.isGroup) return;
-        if (!message.isBotAdmin) return message.reply('_um not admin_');
-        if (!message.isAdmin) return;
-        const args = match || message?.message?.text?.split(' ').slice(1).join(' ');
-        if (!args) return message.reply('_Please provide a new group name_');
-        await conn.groupUpdateSubject(message.user, args);
-        message.reply(`_Group name has been updated to: "${args}"_`);
-    },
 });
 
 CreatePlug({
