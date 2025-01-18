@@ -12,7 +12,7 @@ CreatePlug({
     if (!match) return message.reply('_Please provide a search query_');
     var results = await PlaySearch(match);
     if (results.length === 0) return;
-    var voidi = results.slice(0, 5).map(app => 
+    const voidi = results.slice(0, 5).map(app => 
       `*${app.name}*\nDeveloper: ${app.developer}\nRating: ${app.rating}\n[Install](${app.link})\n[Developer Page](${app.developerPage})\n\nMade with❣️`
     ).join('\n\n');
     return message.reply(voidi);
