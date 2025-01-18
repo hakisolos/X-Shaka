@@ -25,35 +25,16 @@ CreatePlug({
   },
 });
 
-const axios = require('axios');
-const model = [
-    "yanzgpt-revolution-25b-v3.5", 
-    "yanzgpt-legacy-72b-v3.5" 
-];
 
-const GPT4o = (query) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const response = await axios("https://api.yanzgpt.my.id/v1/chat", {
-                headers: {
-                    authorization: "Bearer yzgpt-sc4tlKsMRdNMecNy",
-                    "content-type": "application/json"
-                },
-                data: {
-                    messages: [
-                        {
-                            role: "user",
-                            content: query
-                        }
-                    ],
-                    model: "yanzgpt-revolution-25b-v3.5"
-                },
-                method: "POST"
-            });
-            resolve(response.data.choices[0].message.content);
-        } catch (error) {
-            reject(error.response ? error.response.data : error.message);
-        }
-    });
-};
-
+CreatePlug({
+    command: 'gpt',
+    category: 'Artificial',
+    desc: 'Interact with GPT4-o',
+    execute: async (message, conn, match) => {
+        if (!match) return message.reply('_Please provide a prompt_');
+        await message.react('🗣️');
+        const voidi = await GPT4o(match);
+        await message.reply(voidi);
+    }
+});
+  
