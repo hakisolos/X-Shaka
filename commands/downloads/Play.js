@@ -1,5 +1,4 @@
 const fetch = require('node-fetch');
-/* @NaxorDev*/
 
 async function PlaySearch(query) {
     const url = `https://api.rendigital.store/endepoin/playstore?query?${query}`;
