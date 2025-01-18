@@ -16,13 +16,13 @@ async function GeminiAI(text) {
   return data.data.response;
 }
 
-async function SimAI(query) {
+/*async function SimAI(query) {
   const url = `https://api.ahmmikun.live/api/ai/simai?q=${query}`;
   const res = await fetch(url);
   const data = await res.json();
   if (!data.data.status) throw new Error('err');
   return data.data.response;
 }
+*/
 
-
-module.exports = { ChatGPT,GeminiAI, SimAI};
+module.exports = { ChatGPT,GeminiAI };
