@@ -15,7 +15,7 @@ CreatePlug({
     const voidi = results.slice(0, 5).map(app => 
       `*${app.name}*\nDeveloper: ${app.developer}\nRating: ${app.rating}\n[Install](${app.link})\n[Developer Page](${app.developerPage})\n\nMade with❣️`
     ).join('\n\n');
-    return message.reply(voidi);
+    await conn.sendMessage(message.user, { image: { url: app.image }, caption:voidi});
   },
 });
 
