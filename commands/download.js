@@ -98,24 +98,55 @@ CreatePlug({
 });
 
 CreatePlug({
+  command: 'spotify',
+  category: 'download',
+  desc: 'Download media from Spotify',
+  execute: async (message, conn, match) => {
+    await message.react('🗣️');
+    if (!match) return message.reply('Please provide a valid Spotify URL.');
+    const Object = await APIUtils.Spotify(match);
+    if (Object) {
+      await conn.sendMessage(message.user, {
+        audio: { url: Object.downloadLink,
+          mimetype: 'audio/mpeg', 
+        },
+        contextInfo: { externalAdReply: { title: Object.trackName, body: `${Object.albumName} by ${Object.albumArtist}`,
+            mediaType: 3,
+            mediaUrl: Object.trackUrl, thumbnailUrl: Object.coverUrl,
+            sourceUrl: Object.trackUrl,
+          },
+        },
+      });
+    }},
+});
+
+CreatePlug({
   command: 'ytmp3',
   category: 'download',
   desc: 'Download audio from YouTube',
   execute: async (message, conn, match) => {
     await message.react('🗣️');
-    if (!match) return message.reply('Please provide a valid YouTube URL');
+    if (!match) return message.reply('Please provide a valid YouTube url');
     const voidi = await APIUtils.Ytmp3(match);
     if (voidi) {
       await conn.sendMessage(message.user, {
         audio: {
           url: voidi.downloadLink,
-        }, mimetype: 'audio/mp3',
-        
+          mimetype: 'audio/mpeg', 
+        },
+        contextInfo: {
+          externalAdReply: { title: voidi.title,
+            body: "Ytmp3 Downloader", mediaType: 3,
+            mediaUrl: match,
+            thumbnailUrl: 'https://i.ytimg.com/vi/default.jpg', 
+            sourceUrl: match,
+          },
+        },
       });
-    } else {
-        }
-  },
+    }},
 });
+
+
 
 CreatePlug({
   command: 'ytmp4',
