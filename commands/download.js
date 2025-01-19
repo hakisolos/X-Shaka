@@ -1,4 +1,5 @@
 const { CreatePlug } = require('../lib/commands');
+const getBuffer = require('./downloads/getBuffer');
 const fetch = require('node-fetch'); 
 const CONFIG = require('../config');
 const { Func } = require('./downloads/fbdl');
@@ -66,19 +67,21 @@ CreatePlug({
   desc: 'Download media from Spotify',
   execute: async (message, conn, match) => {
     await message.react('🗣️');
-    if (!match) return message.reply('_Please provide a valid Spotify url_');
+    if (!match) return message.reply('_Please provide a valid Spotify URL_');
     const voidi = await APIUtils.Spotify(match);
-     await conn.sendMessage(message.user, {
-        audio: {
-        url: voidi.downloadLink, mimetype: 'audio/mpeg', ptt: false, },
-        contextInfo: { externalAdReply: { title: voidi.trackName, body: `${voidi.albumName} by ${voidi.albumArtist}`,
-            mediaType: 3,
-            mediaUrl: voidi.trackUrl, thumbnailUrl: voidi.coverUrl,
-            sourceUrl: voidi.trackUrl,
-          },
-        },
-      });
-    }});
+    const thumb = voidi.coverUrl ? await getBuffer(voidi.coverUrl) : null;
+    await conn.sendMessage(message.user, {
+      audio: {
+        url: voidi.downloadLink,
+        mimetype: 'audio/mpeg',
+        ptt: false,
+      },
+      contextInfo: {
+        jpegThumbnail: thumb,
+      },
+    });
+  },
+});
 
 CreatePlug({
   command: 'ytmp3',
