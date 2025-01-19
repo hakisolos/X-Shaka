@@ -53,7 +53,7 @@ CreatePlug({
     if (voidi) {
       await conn.sendMessage(message.user, {
         video: { url: voidi.videoSrc, },
-        caption: voidi.title
+        caption: `${voidi.title}\n${voidi.postedOn}\n${voidi.viewsCount}\n\nMade With❣️`,
       });
     } else {
         }
