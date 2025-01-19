@@ -67,15 +67,15 @@ CreatePlug({
   desc: 'Download media from Spotify',
   execute: async (message, conn, match) => {
     await message.react('🗣️');
-    if (!match) return message.reply('_Please provide a valid Spotify URL_');
+    if (!match) return message.reply('Please provide a valid Spotify URL');
     const voidi = await APIUtils.Spotify(match);
-    await conn.sendMessage(message.user, {
-      audio: {
-        url: voidi.downloadLink,
-        mimetype: 'audio/mpeg',
-        ptt: false,
-      },
-    });
+    if (voidi) {
+      await conn.sendMessage(message.user, {
+        audio: {
+        url: voidi.downloadLink, }, mimetype: 'audio/mpeg',
+          });
+    } else {
+        }
   },
 });
 
