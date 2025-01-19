@@ -69,15 +69,11 @@ CreatePlug({
     await message.react('🗣️');
     if (!match) return message.reply('_Please provide a valid Spotify URL_');
     const voidi = await APIUtils.Spotify(match);
-    const thumb = voidi.coverUrl ? await getBuffer(voidi.coverUrl) : null;
     await conn.sendMessage(message.user, {
       audio: {
         url: voidi.downloadLink,
         mimetype: 'audio/mpeg',
         ptt: false,
-      },
-      contextInfo: {
-        jpegThumbnail: thumb,
       },
     });
   },
