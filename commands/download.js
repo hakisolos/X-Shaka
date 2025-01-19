@@ -12,7 +12,7 @@ CreatePlug({
   execute: async (message, conn, match) => {
     await message.react('🗣️');
     if (!match) return message.reply('Please provide a valid Twitter URL');
-    const voidi = await APIUtils.Twitt(match);
+    const voidi = await APIUtils.twitt(match);
     if (voidi) {
       await conn.sendMessage(message.user, {
         video: { url: voidi.downloadLink,
