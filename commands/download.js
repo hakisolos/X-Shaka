@@ -61,25 +61,6 @@ CreatePlug({
 });
 
 CreatePlug({
-  command: 'youtube',
-  category: 'download',
-  desc: 'Download media from YouTube',
-  execute: async (message, conn, match) => {
-    await message.react('🗣️');
-    if (!match) return message.reply('_Please provide a query_');
-    const voidi = await APIUtils.YouTube(match);
-    if (voidi) {
-      await conn.sendMessage(message.user, {
-        video: {
-        url: voidi.videoUrl, },
-        caption: voidi.title
-      });
-    } else {
-          }
-  },
-});
-
-CreatePlug({
   command: 'spotify',
   category: 'download',
   desc: 'Download media from Spotify',
@@ -87,10 +68,9 @@ CreatePlug({
     await message.react('🗣️');
     if (!match) return message.reply('_Please provide a valid Spotify url_');
     const Object = await APIUtils.Spotify(match);
-    if (Object) {
-      await conn.sendMessage(message.user, {
-        audio: { url: Object.downloadLink,
-        }, mimetype: 'audio/mpeg', 
+     await conn.sendMessage(message.user, {
+        audio: {
+        url: voidi.downloadLink, }, mimetype: 'audio/mpeg',
         contextInfo: { externalAdReply: { title: Object.trackName, body: `${Object.albumName} by ${Object.albumArtist}`,
             mediaType: 3,
             mediaUrl: Object.trackUrl, thumbnailUrl: Object.coverUrl,
@@ -109,7 +89,6 @@ CreatePlug({
     await message.react('🗣️');
     if (!match) return message.reply('_Please provide a valid YouTube url_');
     const voidi = await APIUtils.Ytmp3(match);
-    if (voidi) {
       await conn.sendMessage(message.user, {
         audio: {
           url: voidi.downloadLink,
@@ -137,8 +116,7 @@ CreatePlug({
     await message.react('🗣️');
     if (!match) return message.reply('_Please provide a valid YouTube url_');
     const voidi = await APIUtils.Ytmp4(match);
-    if (voidi) {
-      await conn.sendMessage(message.user, {
+    await conn.sendMessage(message.user, {
         video: {
           url: voidi.downloadLink,
         }, caption: `${voidi.title}\n\nMade with❣️`,
