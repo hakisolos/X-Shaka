@@ -30,8 +30,8 @@ CreatePlug({
   desc: 'Download media from SnackVideo',
   execute: async (message, conn, match) => {
     await message.react('🗣️');
-    if (!match) return message.reply('Please provide a valid SnackVideo URL.');
-    const voidi = await APIUtils.fetchSnackVideoData(match);
+    if (!match) return message.reply('Please provide a valid url');
+    const voidi = await APIUtils.SnackVideo(match);
     if (voidi) {
       await conn.sendMessage(message.user, {
         video: { url: voidi.videoUrl, },
@@ -50,7 +50,7 @@ CreatePlug({
     await message.react('🗣️');
     if (!match) return message.reply('Please provide a valid SeeGore URL');
     const voidi = await APIUtils.SeeGore(match);
-    if (seeGoreData) {
+    if (voidi) {
       await conn.sendMessage(message.user, {
         video: { url: voidi.videoSrc, },
         caption: voidi.title
@@ -71,9 +71,8 @@ CreatePlug({
     if (voidi) {
       await conn.sendMessage(message.user, {
         audio: {
-        url: voidi.downloadLink, },
-        caption: `${voidi.trackName}\n${voidi.artist}\n\nMade with❣️`, 
-      });
+        url: voidi.downloadLink, }, mimetype: 'audio/mpeg',
+          });
     } else {
         }
   },
@@ -110,7 +109,7 @@ CreatePlug({
       await conn.sendMessage(message.user, {
         audio: {
           url: voidi.downloadLink,
-        }, mimetype: 'audio/mpeg',
+        }, mimetype: 'audio/mp3',
         
       });
     } else {
