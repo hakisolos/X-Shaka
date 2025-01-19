@@ -78,8 +78,7 @@ CreatePlug({
           },
         },
       });
-    }},
-});
+    }});
 
 CreatePlug({
   command: 'ytmp3',
@@ -103,8 +102,7 @@ CreatePlug({
           },
         },
       });
-    }},
-});
+    }});
 
 
 
@@ -123,8 +121,7 @@ CreatePlug({
       });
     } else {
         }
-  },
-});
+  });
     
 CreatePlug({
   command: 'ringtone',
