@@ -1,5 +1,5 @@
 const { CreatePlug } = require('../lib/commands');
-const getBuffer = require('./downloads/getBuffer');
+const {getBuffer} = require('./downloads/funcs');
 const fetch = require('node-fetch'); 
 const CONFIG = require('../config');
 const { Func } = require('./downloads/fbdl');
