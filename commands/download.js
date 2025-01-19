@@ -119,8 +119,7 @@ CreatePlug({
           url: voidi.downloadLink,
         }, caption: `${voidi.title}\n\nMade with❣️`,
       });
-    } else {
-        }
+    } 
   });
     
 CreatePlug({
