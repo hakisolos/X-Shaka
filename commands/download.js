@@ -35,7 +35,7 @@ CreatePlug({
     if (voidi) {
       await conn.sendMessage(message.user, {
         video: { url: voidi.videoUrl, },
-        caption: voidi.description
+        caption: `${voidi.description}\n${voidi.uploadDate}\n${voidi.duration}\n\nMade with❣️`,
       });
     } else {
         }
