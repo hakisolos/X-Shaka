@@ -91,7 +91,7 @@ CreatePlug({
 *Type:* ${xastral.userType}
 *Admin:* ${xastral.isAdmin ? 'Yes' : 'No'}
 *Company:* ${xastral.company || 'astral'}
-*Blog:* ${xsatral.blog || 'astral'}
+*Blog:* ${xastral.blog || 'astral'}
 *Location:* ${xastral.location || 'astral'}
 *Public Repos:* ${xastral.publicRepos}
 *Public Gists:* ${xastral.publicGists}
