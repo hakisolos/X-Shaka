@@ -3,6 +3,7 @@ const { TNewsDetails } = require('./downloads/tech');
 const { TKAnnis } = require('./downloads/Tk');  
 const { PlaySearch } = require('./downloads/Play');
 var { AnimeS } = require('./downloads/anime');
+const { APIS } = require('./downloads/search'); 
 
 CreatePlug({
   command: 'playstore',
@@ -36,7 +37,7 @@ CreatePlug({
 });
       
 CreatePlug({
-  command: 'stalktk',
+  command: 'tiktokstalk',
   category: 'social',
   desc: 'Get TikTok profile details',
   execute: async (message, conn, match) => {
@@ -48,6 +49,62 @@ CreatePlug({
       
     });
   }
+});
+
+CreatePlug({
+  command: 'npmstalk',
+  category: 'Utility',
+  desc: 'Fetch information about an NPM package.',
+  execute: async (message, conn, match) => {
+    await message.react('📦');
+    if (!match) return message.reply('_Please provide the name of the npm package_');
+    const p = await APIS.npmSearch(match);
+    if (!p) return message.reply('_err_');
+    const voidi = `
+*Package Name:* ${p.packageName}
+*Latest Version:* ${p.latestVersion}
+*Initial Version:* ${p.initialVersion}
+*Total Updates:* ${p.updatesCount}
+*Latest Dependencies Count:* ${p.latestDependenciesCount}
+*Initial Dependencies Count:* ${p.initialDependenciesCount}
+*First Published:* ${p.firstPublished}
+*Last Updated:* ${p.lastUpdated}
+    `.trim();
+    await conn.sendMessage(message.user, { text: voidi });
+  },
+});
+
+CreatePlug({
+  command: 'githubstalk',
+  category: 'Utility',
+  desc: 'Fetch information about a GitHub user',
+  execute: async (message, conn, match) => {
+    await message.react('👤');
+    if (!match)  return message.reply('Please provide the git username');
+    const xastral = await APIS.GIT(match);
+    if (!xastral) return;
+    const msg = `
+*Username:* ${xastral.username}
+*Nickname:* ${xastral.nickname || 'astral'}
+*Bio:* ${xastral.bio || 'astral'}
+*Profile URL:* ${xastral.profileUrl}
+*Type:* ${xastral.userType}
+*Admin:* ${xastral.isAdmin ? 'Yes' : 'No'}
+*Company:* ${xastral.company || 'astral'}
+*Blog:* ${xsatral.blog || 'astral'}
+*Location:* ${xastral.location || 'astral'}
+*Public Repos:* ${xastral.publicRepos}
+*Public Gists:* ${xastral.publicGists}
+*Followers:* ${xastral.followers}
+*Following:* ${xastral.following}
+*Account Created:* ${xastral.accountCreated}
+*Last Updated:* ${xastral.lastUpdated}
+    `.trim();
+await conn.sendMessage(message.user, {
+      image: { url: xastral.profilePicture },
+      caption: msg, 
+    });
+  },
 });
 
 CreatePlug({
