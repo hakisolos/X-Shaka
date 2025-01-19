@@ -1,4 +1,4 @@
-async function fetchSoundCloudDetails(url) {
+async function SoundCloud(url) {
   const search = `https://api.siputzx.my.id/api/d/soundcloud?url=${url}`;
   const res = await fetch(apiUrl);
   if (!res.ok) {
@@ -17,7 +17,7 @@ async function fetchSoundCloudDetails(url) {
   return { success: false, message: 'Failed to fetch details.' };
 }
 
-async function fetchCapCutDetails(capcutUrl) {
+async function CapCut(capcutUrl) {
   const _api = `https://api.siputzx.my.id/api/d/capcut?url=${capcutUrl}`;
   const response = await fetch(_api);
   if (!response.ok) {
@@ -39,3 +39,27 @@ async function fetchCapCutDetails(capcutUrl) {
   return { success: false, message: 'Failed to fetch details.' };
 }
 
+async function MusicApple(musicAppleUrl) {
+  const _api = `https://api.siputzx.my.id/api/d/musicapple?url=${musicAppleUrl}`;
+  const response = await fetch(_api);
+  if (!response.ok) {
+  return { success: false, message: `${response.status}` };
+  }
+  const data = await response.json();
+  if (data.status) {
+    return {
+      success: true,
+      url: data.data.url,
+      pageTitle: data.data.pageTitle,
+      description: data.data.description,
+      keywords: data.data.keywords,
+      artworkUrl: data.data.artworkUrl,
+      appleTitle: data.data.appleTitle,
+      appleDescription: data.data.appleDescription,
+      musicReleaseDate: data.data.musicReleaseDate,
+      mp3DownloadLink: data.data.mp3DownloadLink,
+    };
+  }
+
+  return { success: false, message: 'Failed to fetch details.' };
+}
