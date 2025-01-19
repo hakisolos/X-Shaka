@@ -70,7 +70,7 @@ CreatePlug({
     const voidi = await APIUtils.Spotify(match);
      await conn.sendMessage(message.user, {
         audio: {
-        url: voidi.downloadLink, }, mimetype: 'audio/mpeg', ptt: false,
+        url: voidi.downloadLink, mimetype: 'audio/mpeg', ptt: false, },
         contextInfo: { externalAdReply: { title: voidi.trackName, body: `${voidi.albumName} by ${voidi.albumArtist}`,
             mediaType: 3,
             mediaUrl: voidi.trackUrl, thumbnailUrl: voidi.coverUrl,
