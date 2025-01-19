@@ -3,7 +3,140 @@ const fetch = require('node-fetch');
 const CONFIG = require('../config');
 const { Func } = require('./downloads/fbdl');
 const { Ring } = require('./downloads/Ring');
+const APIUtils = require('./downloads/APIUtils');
 
+CreatePlug({
+  command: 'twitter',
+  category: 'download',
+  desc: 'Download media from Twitter',
+  execute: async (message, conn, match) => {
+    await message.react('🗣️');
+    if (!match) return message.reply('Please provide a valid Twitter URL');
+    const voidi = await APIUtils.Twitt(match);
+    if (voidi) {
+      await conn.sendMessage(message.user, {
+        video: { url: voidi.downloadLink,
+           },
+        caption: voidi.videoDescription
+      });
+    } else {
+    }
+  },
+});
+
+CreatePlug({
+  command: 'snackvideo',
+  category: 'download',
+  desc: 'Download media from SnackVideo',
+  execute: async (message, conn, match) => {
+    await message.react('🗣️');
+    if (!match) return message.reply('Please provide a valid SnackVideo URL.');
+    const voidi = await APIUtils.fetchSnackVideoData(match);
+    if (voidi) {
+      await conn.sendMessage(message.user, {
+        video: { url: voidi.videoUrl, },
+        caption: voidi.description
+      });
+    } else {
+        }
+  },
+});
+
+CreatePlug({
+  command: 'seegore',
+  category: 'download',
+  desc: 'Download media from SeeGore',
+  execute: async (message, conn, match) => {
+    await message.react('🗣️');
+    if (!match) return message.reply('Please provide a valid SeeGore URL');
+    const voidi = await APIUtils.SeeGore(match);
+    if (seeGoreData) {
+      await conn.sendMessage(message.user, {
+        video: { url: voidi.videoSrc, },
+        caption: voidi.title
+      });
+    } else {
+        }
+  },
+});
+
+CreatePlug({
+  command: 'spotify',
+  category: 'download',
+  desc: 'Download media from Spotify',
+  execute: async (message, conn, match) => {
+    await message.react('🗣️');
+    if (!match) return message.reply('Please provide a valid Spotify URL.');
+    const voidi = await APIUtils.Spotify(match);
+    if (voidi) {
+      await conn.sendMessage(message.user, {
+        audio: {
+        url: voidi.downloadLink, },
+        caption: `${voidi.trackName}\n${voidi.artist}\n\nMade with❣️`, 
+      });
+    } else {
+        }
+  },
+});
+
+CreatePlug({
+  command: 'youtube',
+  category: 'download',
+  desc: 'Download media from YouTube',
+  execute: async (message, conn, match) => {
+    await message.react('🗣️');
+    if (!match) return message.reply('Please provide a query');
+    const voidi = await APIUtils.YouTube(match);
+    if (voidi) {
+      await conn.sendMessage(message.user, {
+        video: {
+        url: voidi.videoUrl, },
+        caption: voidi.title
+      });
+    } else {
+          }
+  },
+});
+
+CreatePlug({
+  command: 'ytmp3',
+  category: 'download',
+  desc: 'Download audio from YouTube',
+  execute: async (message, conn, match) => {
+    await message.react('🗣️');
+    if (!match) return message.reply('Please provide a valid YouTube URL');
+    const voidi = await APIUtils.Ytmp3(match);
+    if (voidi) {
+      await conn.sendMessage(message.user, {
+        audio: {
+          url: voidi.downloadLink,
+        }, mimetype: 'audio/mpeg',
+        
+      });
+    } else {
+        }
+  },
+});
+
+CreatePlug({
+  command: 'ytmp4',
+  category: 'download',
+  desc: 'Download video from YouTube',
+  execute: async (message, conn, match) => {
+    await message.react('🗣️');
+    if (!match) return message.reply('Please provide a valid YouTube URL');
+    const voidi = await APIUtils.Ytmp4(match);
+    if (voidi) {
+      await conn.sendMessage(message.user, {
+        video: {
+          url: voidi.downloadLink,
+        }, caption: voidi.title
+      });
+    } else {
+        }
+  },
+});
+    
 CreatePlug({
   command: 'ringtone',
   category: 'download',
