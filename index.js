@@ -104,7 +104,7 @@ async function startBot() {
         if (connection === 'open') {
             console.log('Connection established ✅');
             await getPlugins();
-            console.log('Wabot is online now ✅');
+            console.log('x-shaka ✅');
         }
     });
 }
