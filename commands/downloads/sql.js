@@ -104,3 +104,50 @@ async function YtPost(ytUrl) {
 
   return { success: false, message: 'err' };
 }
+
+async function Pinterest(pinterestUrl) {
+  const apu = `https://api.siputzx.my.id/api/d/pinterest?url=${pinterestUrl}`;
+  const response = await fetch(apu);
+  if (!response.ok) {
+  return { success: false, message: `HTTP error! Status: ${response.status}` };}
+  const data = await response.json();
+  if (data.status) {
+    return {
+      success: true,
+      id: data.data.id,
+      createdAt: data.data.created_at,
+      videoUrl: data.data.url
+    };
+  }
+
+  return { success: false, message: 'err' };
+}
+
+async function SaveFrom(videoUrl) {
+  const apu = `https://api.siputzx.my.id/api/d/savefrom?url=${videoUrl}`;
+  const response = await fetch(apu);
+  if (!response.ok) {
+  return { success: false, message: `${response.status}` };
+  }
+  const data = await response.json();
+  if (data.status) {
+    return {
+      success: true,
+      id: data.data[0].id,
+      title: data.data[0].meta.title,
+      author: data.data[0].meta.author.nickname,
+      videoUrl: data.data[0].video_quality.map(quality => ({
+        quality,
+        url: data.data[0].hd.url
+      })),
+      thumb: data.data[0].thumb,
+      formats: data.data[0].data.map(item => ({
+        format: item.name,
+        ext: item.ext,
+        url: item.url
+      }))
+    };
+  }
+
+  return { success: false, message: 'err' };
+}
