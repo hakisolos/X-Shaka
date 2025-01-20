@@ -5,6 +5,7 @@ const CONFIG = require('../config');
 const { Func } = require('./downloads/fbdl');
 const { Ring } = require('./downloads/Ring');
 const APIUtils = require('./downloads/APIUtils');
+const { SoundCloud, CapCut, MusicApple, AppleMusicSearch, YtPost, Pinterest, SaveFrom, Lahelu } = require('./downloads/sql');
 
 CreatePlug({
   command: 'twitter',
