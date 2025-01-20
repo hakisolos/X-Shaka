@@ -151,3 +151,42 @@ async function SaveFrom(videoUrl) {
 
   return { success: false, message: 'err' };
 }
+
+async function Lahelu(laheluUrl) {
+  const ap = `https://api.siputzx.my.id/api/d/lahelu?url=${laheluUrl}`;
+  const response = await fetch(ap);
+  if (!response.ok) {
+  return { success: false, message: `${response.status}` };}
+  const data = await response.json();
+  if (data.status) {
+    const result = data.result;
+    return {
+      success: true,
+      title: result.title,
+      postId: result.postId,
+      userId: result.userId,
+      hashtags: result.hashtags,
+      media: result.media,
+      mediaThumbnail: result.mediaThumbnail,
+      mediaWidth: result.mediaWidth,
+      mediaHeight: result.mediaHeight,
+      user: {
+        username: result.userInfo.username,
+        avatar: result.userInfo.visual?.find(v => v.type === 0)?.value,
+        description: result.userInfo.description,
+        totalUpvotes: result.userInfo.totalUpvotes,
+        totalDownvotes: result.userInfo.totalDownvotes,
+        totalPosts: result.userInfo.totalPosts,
+      },
+      topic: {
+        title: result.topicInfo.title,
+        description: result.topicInfo.description,
+        totalMembers: result.topicInfo.totalMembers,
+        visual: result.topicInfo.visual?.find(v => v.type === 0)?.value,
+      },
+    };
+  }
+
+  return { success: false, message: 'err' };
+}
+
