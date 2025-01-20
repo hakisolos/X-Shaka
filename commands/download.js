@@ -272,3 +272,18 @@ CreatePlug({
     }
   },
 });
+
+CreatePlug({
+  command: 'searchapplemusic',
+  category: 'search',
+  desc: 'Searches for music on Apple Music',
+  execute: async (message, conn, match) => {
+    await message.react('🔍');
+    if (!match) return message.reply('Provide a query to search');
+    const result = await AppleMusicSearch(match);
+    if (!result.success) return;
+    const Object = result.results.map(item => 
+    `🎵 *${item.title}*\n👤 Artist: ${item.artist}\n🔗 [Listen] ${item.link}\nMade with❣️`).join('\n\n');
+    await message.reply(Object);
+  },
+});
