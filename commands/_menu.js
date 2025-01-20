@@ -1,8 +1,8 @@
-const { commands, CreatePlug } = require('../lib/commands');
+const { commands, haki } = require('../lib/commands');
 const { monospace } = require('../lib/monospace');
 const CONFIG = require('../config');
 
-CreatePlug({
+haki({
     command: 'menu',
     category: 'general',
     desc: 'types',
@@ -48,7 +48,7 @@ CreatePlug({
     }
 });
 
-CreatePlug({
+haki({
     command: 'list',
     category: 'general',
     desc: 'Display commands list_',
