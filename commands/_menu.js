@@ -21,29 +21,39 @@ haki({
             const date = now.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' });
             const time = now.toLocaleTimeString('en-ZA', { timeZone: 'Africa/Johannesburg' });
 
-            return `╭──╼【 ${monospace((CONFIG.app.botname || 'BOT').toUpperCase())} 】\n` +
-                   `┃ ✦ Prefix  : ${CONFIG.app.prefix || '/'}\n` +
-                   `┃ ✦ User    : ${message.pushName || 'unknown'}\n` +
-                   `┃ ✦ Mode    : ${process.env.MODE}\n` +
-                   `┃ ✦ Date    : ${date}\n` +
-                   `┃ ✦ Time    : ${time}\n` +
-                   `┃ ✦ Version : ${CONFIG.app.version || '4.0.0'}\n` +
-                   `╰──────────╼`;
+            return `┏━━【 ${monospace((CONFIG.app.botname || 'BOT').toUpperCase())} 】━━┛\n` +
+                   `┃ ⍟ Prefix  : ${CONFIG.app.prefix || '/'}\n` +
+                   `┃ ⍟ User    : ${message.pushName || 'unknown'}\n` +
+                   `┃ ⍟ Mode    : ${process.env.MODE}\n` +
+                   `┃ ⍟ Date    : ${date}\n` +
+                   `┃ ⍟ Time    : ${time}\n` +
+                   `┃ ⍟ Version : ${CONFIG.app.version || '4.0.0'}\n` +
+                   `┛━━━━━━━━━━━━━━━━━━━━━┛`;
         };
 
         const _cxl = (category, cmds) => {
-            return `╭───╼【 *${monospace(category.toUpperCase())}* 】\n` +
-                   cmds.map(cmd => `┃ ∘ \`\`\`${cmd.toLowerCase()}\`\`\``).join('\n') + '\n' +
-                   `╰──────────╼`;
+            return `┏━━【 ${monospace(category.toUpperCase())} 】━━┛\n` +
+                   cmds.map(cmd => `┃ → \`\`\`${cmd.toLowerCase()}\`\`\``).join('\n') + '\n' +
+                   `┛━━━━━━━━━━━━━━━━━━━━━┛`;
         };
 
-       let msg = namo() + '\n\n';
+        let msg = namo() + '\n\n';
         for (const [category, cmds] of Object.entries(gorized)) {
-            msg += _cxl(category, cmds) + '\n\n';}
-        msg += `made with ❣️`;
-        const sent = await conn.sendMessage(message.user, { text: msg.trim() }, { quoted: message });
+            msg += _cxl(category, cmds) + '\n\n';
+        }
+        msg += `┏━┛ Made with ❣️ ┛`;
+
+        // Replace this with the path to your image or the URL
+        const imagePath = 'https://files.catbox.moe/8p7zpk.jpg'; // You can use an URL as well
+
+        // Send the image along with the text as the caption
+        const sent = await conn.sendMessage(message.user, { 
+            image: { url: imagePath }, // Use a URL for remote images or path for local images
+            caption: msg.trim() // Caption text (menu message)
+        }, { quoted: message });
+
         if (!sent) {
-            await message.reply('err');
+            await message.reply('Oops! Something went wrong.');
         }
     }
 });
