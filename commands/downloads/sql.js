@@ -134,7 +134,7 @@ module.exports = {
         success: true,
         id: data.data[0].id,
         title: data.data[0].meta.title,
-        author: data.data[0].meta.author.nickname,
+        //author: data.data[0].meta.author.name,
         videoUrl: data.data[0].video_quality.map(quality => ({
           quality,
           url: data.data[0].hd.url
