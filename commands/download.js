@@ -69,14 +69,19 @@ CreatePlug({
   execute: async (message, conn, match) => {
     await message.react('🗣️');
     if (!match) return message.reply('Please provide a valid Spotify URL');
-    const voidi = await APIUtils.Spotify(match);
-    if (voidi) {
-      await conn.sendMessage(message.user, {
-        audio: {
-        url: voidi.downloadLink, }, mimetype: 'audio/mpeg',
-          });
-    } else {
-        }
+    const result = await APIUtils.Spotify(match);
+    if (!result) return;
+    await conn.sendMessage(message.user, {
+      audio: { url: result.downloadLink},mimetype: 'audio/mpeg',
+      contextInfo: {
+        externalAdReply: {
+          title: 'Spotify',
+          body: 'spotify',
+          thumbnailUrl: '',
+          showAdAttribution: true,
+        },
+      },
+    });
   },
 });
 
@@ -153,15 +158,15 @@ CreatePlug({
   desc: 'soundcloud audio dl',
   execute: async (message, conn, match) => {
     await message.react('🎧');
-    if (!match) return message.reply('Provide a soundcloud url');
+    if(!match) return message.reply('_provide SoundCloud url_');
     const result = await SoundCloud(match);
     if (!result.success) return;
     await conn.sendMessage(message.user, {
-      audio: { url: result.audioUrl}, mimetype: 'audio/mpeg',
+      audio: { url: result.audioUrl},mimetype: 'audio/mpeg',
       contextInfo: {
         externalAdReply: {
           title: `${result.title}`,
-          body: `Now playing: ${result.title}`,
+          body: result.title,
           thumbnailUrl: result.thumbnail,
           showAdAttribution: true,
         },
