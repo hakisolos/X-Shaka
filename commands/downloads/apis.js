@@ -36,3 +36,5 @@ async function getAppRuntime() {
     throw new Error("err");
   }
 }
+
+module.exports = { getSpotifyBangers, getAppRuntime };
