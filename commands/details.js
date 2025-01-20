@@ -38,7 +38,7 @@ CreatePlug({
       
 CreatePlug({
   command: 'tiktokstalk',
-  category: 'social',
+  category: 'Utility',
   desc: 'Get TikTok profile details',
   execute: async (message, conn, match) => {
     if (!match) return message.reply('_Please provide a TikTok username_');  
