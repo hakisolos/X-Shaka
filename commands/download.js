@@ -236,7 +236,7 @@ CreatePlug({
     if (!match) return message.reply('Provide a video url');
     const result = await SaveFrom(match);
     if (!result.success) return;
-    const caption = result.title ? `${result.title}\n${result.author}\nMade with❣️` : 'Made with❣️';
+    const caption = result.title ? `${result.titl}\nMade with❣️` : 'Made with❣️';
     await conn.sendMessage(message.user, {
       video: { url: result.videoUrl[0].url },
       caption: caption,
