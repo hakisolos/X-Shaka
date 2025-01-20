@@ -304,7 +304,7 @@ CreatePlug({
       contextInfo: {
         externalAdReply: {
           title: result.title,
-          body: result.description',
+          body: result.description,
           thumbnailUrl: result.coverUrl,
           showAdAttribution: true,
         },
