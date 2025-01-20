@@ -157,7 +157,7 @@ CreatePlug({
     const result = await SoundCloud(match);
     if (!result.success) return;
     await conn.sendMessage(message.user, {
-      audio: { url: result.audioUrl, mimetype: 'audio/mpeg' },
+      audio: { url: result.audioUrl}, mimetype: 'audio/mpeg',
       contextInfo: {
         externalAdReply: {
           title: `${result.title}`,
@@ -172,15 +172,15 @@ CreatePlug({
 
 CreatePlug({
   command: 'applemusic',
-  category: 'Media',
-  desc: 'Fetches Apple Music details.',
+  category: 'download',
+  desc: 'Fetches Apple Music details',
   execute: async (message, conn, match) => {
     await message.react('🎵');
     if (!match) return message.reply('Provide an Apple Music url');
     const result = await MusicApple(match);
     if (!result.success) return;
     await conn.sendMessage(message.user, {
-      audio: { url: result.mp3DownloadLink, mimetype: 'audio/mpeg' },
+      audio: { url: result.mp3DownloadLink},mimetype: 'audio/mpeg',
       contextInfo: {
         externalAdReply: {
           title: `${result.appleTitle}`,
@@ -195,14 +195,14 @@ CreatePlug({
 
 CreatePlug({
   command: 'ytpost',
-  category: 'details',
+  category: 'download',
   desc: 'Fetches YouTube post details',
   execute: async (message, conn, match) => {
     await message.react('📹');
     if (!match) return message.reply('Provide a YouTube url');
     const result = await YtPost(match);
     if (!result.success) return;
-    const caption = result.content ? `${result.content}\nMade with❣️` : 'Made with❣️';
+    const caption = result.content ? `${result.content}\n${result.postld}\nMade with❣️` : 'Made with❣️';
     await conn.sendMessage(message.user, {
       image: { url: result.images[0] },
       caption: caption,
@@ -212,14 +212,14 @@ CreatePlug({
 
 CreatePlug({
   command: 'pinterest',
-  category: 'Media',
+  category: 'download',
   desc: 'Fetches Pinterest video details.',
   execute: async (message, conn, match) => {
     await message.react('📌');
     if (!match) return message.reply('Provide a Pinterest url');
     const result = await Pinterest(match);
     if (!result.success) return;
-    const caption = result.id ? `Post ID: ${result.id}\nMade with❣️` : 'Made with❣️';
+    const caption = result.id ? `Post ID: ${result.id}\n\n${result.createdAt}\nMade with❣️` : 'Made with❣️';
     await conn.sendMessage(message.user, {
       video: { url: result.videoUrl },
       caption: caption,
@@ -229,14 +229,14 @@ CreatePlug({
 
 CreatePlug({
   command: 'savefrom',
-  category: 'Media',
+  category: 'download',
   desc: 'Fetches video download options from SaveFrom.',
   execute: async (message, conn, match) => {
     await message.react('📥');
     if (!match) return message.reply('Provide a video url');
     const result = await SaveFrom(match);
     if (!result.success) return;
-    const caption = result.title ? `${result.title}\nMade with❣️` : 'Made with❣️';
+    const caption = result.title ? `${result.title}\n${result.author}\nMade with❣️` : 'Made with❣️';
     await conn.sendMessage(message.user, {
       video: { url: result.videoUrl[0].url },
       caption: caption,
