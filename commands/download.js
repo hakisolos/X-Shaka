@@ -287,3 +287,29 @@ CreatePlug({
     await message.reply(Object);
   },
 });
+
+CreatePlug({
+  command: 'capcut',
+  category: 'download',
+  desc: 'Fetches CapCut video details',
+  execute: async (message, conn, match) => {
+    await message.react('🎥');
+    if (!match) return message.reply('Provide a CapCut url');
+    const result = await CapCut(match);
+    if (!result.success) return;
+    const caption = result.title ? `${result.title}\nMade with❣️` : 'Made with❣️';
+    await conn.sendMessage(message.user, {
+      video: { url: result.originalVideoUrl },
+      caption: caption,
+      contextInfo: {
+        externalAdReply: {
+          title: result.title,
+          body: result.description',
+          thumbnailUrl: result.coverUrl,
+          showAdAttribution: true,
+        },
+      },
+    });
+  },
+});
+
