@@ -80,32 +80,6 @@ CreatePlug({
 });
 
 CreatePlug({
-  command: 'ytmp3',
-  category: 'download',
-  desc: 'Download audio from YouTube',
-  execute: async (message, conn, match) => {
-    await message.react('🗣️');
-    if (!match) return message.reply('_Please provide a valid YouTube url_');
-    const voidi = await APIUtils.Ytmp3(match);
-      await conn.sendMessage(message.user, {
-        audio: {
-          url: voidi.downloadLink,
-          mimetype: 'audio/mpeg', 
-        },
-        contextInfo: {
-          externalAdReply: { title: voidi.title,
-            body: "Ytmp3 Downloader", mediaType: 3,
-            mediaUrl: match,
-            thumbnailUrl: 'https://i.ytimg.com/vi/default.jpg', 
-            sourceUrl: match,
-          },
-        },
-      });
-    }});
-
-
-
-CreatePlug({
   command: 'ytmp4',
   category: 'download',
   desc: 'Download video from YouTube',
@@ -157,23 +131,6 @@ CreatePlug({
 });
 
 CreatePlug({
-  command: 'emojimix',
-  category: 'media',
-  desc: 'Combine two emojis into a mixed emoji sticker',
-  execute: async (message, conn, match) => {
-    if (!match || !match.includes(',')) return message.reply('_Example usage: emojimix ❤️+🔥_');
-    const [emoji1, emoji2] = match.split('+').map(e => e.trim());
-    if (!emoji1 || !emoji2) return message.reply('_Please provide two emojis separated by "+"_');
-    const res = await fetch(`https://api.yanzbotz.live/api/tools/emojimix?emoji1=${emoji1}&emoji2=${emoji2}`);
-    if (!res.ok) return message.reply('_err_');
-    const data = await res.json(), _sti = data?.result?.[0]?.media_formats?.png_transparent?.url;
-    if (!data || data.status !== 200 || !_sti) return message.reply('_Error_');
-    await conn.sendMessage(message.user, _sti, { quoted: message, sticker: {} });
-  },
-});
-
-
-CreatePlug({
   command: 'facebook',
   category: 'download',
   desc: 'Download Facebook videos',
@@ -189,3 +146,128 @@ CreatePlug({
   }
 });
     
+CreatePlug({
+  command: 'soundcloud',
+  category: 'download',
+  desc: 'soundcloud audio dl',
+  execute: async (message, conn, match) => {
+    await message.react('🎧');
+    if (!match) return message.reply('Provide a soundcloud url');
+    const result = await SoundCloud(match);
+    if (!result.success) return;
+    await conn.sendMessage(message.user, {
+      audio: { url: result.audioUrl, mimetype: 'audio/mpeg' },
+      contextInfo: {
+        externalAdReply: {
+          title: `${result.title}`,
+          body: `Now playing: ${result.title}`,
+          thumbnailUrl: result.thumbnail,
+          showAdAttribution: true,
+        },
+      },
+    });
+  },
+});
+
+CreatePlug({
+  command: 'applemusic',
+  category: 'Media',
+  desc: 'Fetches Apple Music details.',
+  execute: async (message, conn, match) => {
+    await message.react('🎵');
+    if (!match) return message.reply('Provide an Apple Music url');
+    const result = await MusicApple(match);
+    if (!result.success) return;
+    await conn.sendMessage(message.user, {
+      audio: { url: result.mp3DownloadLink, mimetype: 'audio/mpeg' },
+      contextInfo: {
+        externalAdReply: {
+          title: `${result.appleTitle}`,
+          body: result.appleTitle,
+          thumbnailUrl: result.artworkUrl,
+          showAdAttribution: true,
+        },
+      },
+    });
+  },
+});
+
+CreatePlug({
+  command: 'ytpost',
+  category: 'details',
+  desc: 'Fetches YouTube post details',
+  execute: async (message, conn, match) => {
+    await message.react('📹');
+    if (!match) return message.reply('Provide a YouTube url');
+    const result = await YtPost(match);
+    if (!result.success) return;
+    const caption = result.content ? `${result.content}\nMade with❣️` : 'Made with❣️';
+    await conn.sendMessage(message.user, {
+      image: { url: result.images[0] },
+      caption: caption,
+    });
+  },
+});
+
+CreatePlug({
+  command: 'pinterest',
+  category: 'Media',
+  desc: 'Fetches Pinterest video details.',
+  execute: async (message, conn, match) => {
+    await message.react('📌');
+    if (!match) return message.reply('Provide a Pinterest url');
+    const result = await Pinterest(match);
+    if (!result.success) return;
+    const caption = result.id ? `Post ID: ${result.id}\nMade with❣️` : 'Made with❣️';
+    await conn.sendMessage(message.user, {
+      video: { url: result.videoUrl },
+      caption: caption,
+    });
+  },
+});
+
+CreatePlug({
+  command: 'savefrom',
+  category: 'Media',
+  desc: 'Fetches video download options from SaveFrom.',
+  execute: async (message, conn, match) => {
+    await message.react('📥');
+    if (!match) return message.reply('Provide a video url');
+    const result = await SaveFrom(match);
+    if (!result.success) return;
+    const caption = result.title ? `${result.title}\nMade with❣️` : 'Made with❣️';
+    await conn.sendMessage(message.user, {
+      video: { url: result.videoUrl[0].url },
+      caption: caption,
+    });
+  },
+});
+
+CreatePlug({
+  command: 'lahelu',
+  category: 'download',
+  desc: 'Fetches Lahelu post details',
+  execute: async (message, conn, match) => {
+    await message.react('📑');
+    if (!match) return message.reply('Provide a Lahelu url');
+    const result = await Lahelu(match);
+    if (!result.success) return;
+    const caption = result.title ? `${result.title}\nMade with❣️` : 'Made with❣️';
+    if (result.media && result.media.length > 0) {
+      const mediaUrl = result.media[0];  
+      if (mediaUrl.endsWith('.mp4')) {
+        await conn.sendMessage(message.user, {
+          video: { url: mediaUrl },
+          caption: caption,
+        });
+      } else {
+        await conn.sendMessage(message.user, {
+          image: { url: mediaUrl },
+          caption: caption,
+        });
+      }
+    } else {
+      await message.reply('No');
+    }
+  },
+});
