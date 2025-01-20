@@ -1,5 +1,6 @@
 const { CreatePlug } = require('../lib/commands');
 const { ChatGPT, GeminiAI } = require('./downloads/gpt');
+const { Yousearch, BlackBox, Diffuser, AoyoContent, Venice, Mistral } = require('./downloads/naxor');
 
 CreatePlug({
   command: 'gemini',
@@ -39,3 +40,75 @@ CreatePlug({
     }
 });
   
+  CreatePlug({
+    command: 'yousearch',
+    category: 'Artficial',
+    desc: '',
+    execute: async (message, conn, match) => {
+      await message.react('💡');
+      if (!match) return message.reply('Please provide a query');
+      const voidi = await Yousearch(match);
+      return message.reply(voidi);
+    }
+  });
+
+  CreatePlug({
+    command: 'venice',
+    category: 'Artficial',
+    desc: 'Interact with the Venice AI',
+    execute: async (message, conn, match) => {
+      await message.react('💬');
+      if (!match) return message.reply('Please provide a prompt');
+      const voidi = await Venice(match);
+      return message.reply(voidi);
+    }
+  });
+
+  CreatePlug({
+    command: 'diffuser',
+    category: 'Artficial',
+    desc: 'Generate an image based on a prompt',
+    execute: async (message, conn, match) => {
+      await message.react('🎨');
+      if (!match) return message.reply('Please provide a prompt');
+      const voidi = await Diffuser(match);
+      await conn.sendMessage(message.user, { image: { url: voidi }, caption: `Diffuser\nMade with❣️` });
+    }
+  });
+
+ CreatePlug({
+    command: 'blackbox',
+    category: 'Artficial',
+    desc: 'bbb_',
+    execute: async (message, conn, match) => {
+      await message.react('📦');
+      if (!match) return message.reply('_Please provide content_');
+      const voidi = await BlackBox(match);
+      return message.reply(voidi);
+    }
+  });
+
+  CreatePlug({
+    command: 'aoyo',
+    category: 'Artficial',
+    desc: 'Fetch information using the Aoyo',
+    execute: async (message, conn, match) => {
+      await message.react('📜');
+      if (!match) return message.reply('Please provide content');
+      const voidi = await AoyoContent(match);
+      return message.reply(voidi);
+    }
+  });
+
+  CreatePlug({
+    command: 'mistral',
+    category: 'Artficial',
+    desc: 'Interact with the Mistral-7B Instruct',
+    execute: async (message, conn, match) => {
+      await message.react('🤖');
+      if (!match) return message.reply('Please provide content');
+      const res = await Mistral(match);
+      return message.reply(res);
+    }
+  });
+    
