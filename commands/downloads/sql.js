@@ -86,3 +86,21 @@ async function AppleMusicSearch(query) {
 
   return { success: false, message: 'err' };
 }
+
+async function YtPost(ytUrl) {
+  const ap = `https://api.siputzx.my.id/api/d/ytpost?url=${ytUrl}`;
+  const response = await fetch(ap);
+  if (!response.ok) {
+  return { success: false, message: `${response.status}` };}
+  const data = await response.json();
+  if (data.status) {
+    return {
+      success: true,
+      postId: data.data.postId,
+      content: data.data.content,
+      images: data.data.images
+    };
+  }
+
+  return { success: false, message: 'err' };
+}
